@@ -1,9 +1,12 @@
 import abc
 
-from typing import Optional
+from typing import Optional, Tuple
 
 import numpy as np
 import pysindy as ps
+
+from pydmd import DMD
+from pydmd.dmd import compute_tlsq
 
 import autokoopman.trajectory as atraj
 
@@ -23,17 +26,31 @@ class NextStepEstimator(abc.ABC):
 
     Requires that the data be uniform time
     """
+
     @abc.abstractmethod
-    def fit(self, X: np.ndarray, Y: np.ndarray) -> None:
+    def fit(self, X: np.ndarray, Y: np.ndarray, sampling_period) -> None:
         pass
 
     def fit_trajs(self, X: atraj.UniformTimeTrajectoriesData) -> None:
         """an alternative fit method that uses a trajectories data structure"""
-        pass
+        self.fit(*X.next_step_matrices)
+        self.sampling_period = X.sampling_period
+        self.names = X.state_names
 
     @abc.abstractmethod
     def predict(self, X: np.ndarray) -> np.ndarray:
         pass
+
+    def predict_traj(self, iv: np.ndarray, tspan: Tuple[float, float]) -> atraj.Trajectory:
+        times = np.arange(tspan[0], tspan[1] + self.sampling_period, self.sampling_period)
+        states = np.zeros((len(times), len(self.names)))
+        states[0] = iv
+        #states = [np.array(iv).flatten()]
+        for idx, _ in enumerate(times[1:]):
+            states[idx + 1] = self.predict(states[idx]).flatten()
+        #    states.append(self.predict(np.array([states[-1]])).flatten())
+        #states = np.array(states)
+        return atraj.Trajectory(times, states, self.names)
 
 
 class SindyEstimator(TrajectoryEstimator):
@@ -56,5 +73,36 @@ class SindyEstimator(TrajectoryEstimator):
         return atraj.Trajectory(times, ret, self._model.feature_names)
 
 
+class MultiDMD(DMD):
+    def fit_multi(self, X, Y):
+        """
+        Compute the Dynamic Modes Decomposition to the input data.
+        :param X: the input snapshots.
+        :type X: numpy.ndarray or iterable
+        """
+        self._snapshots, self._snapshots_shape = self._col_major_2darray(X)
+
+        #n_samples = self._snapshots.shape[1]
+        #X = self._snapshots[:, :-1]
+        #Y = self._snapshots[:, 1:]
+
+        X, Y = compute_tlsq(X, Y, self.tlsq_rank)
+        self._svd_modes, _, _ = self.operator.compute_operator(X, Y)
+
+        # Default timesteps
+        #self._set_initial_time_dictionary(
+        #    {"t0": 0, "tend": n_samples - 1, "dt": 1}
+        #)
+
+        self._b = self._compute_amplitudes()
+
+        return self
+
+
 class DMDEstimator(NextStepEstimator):
-    ...
+    def fit(self, X: np.ndarray, Y: np.ndarray) -> None:
+        self.dmd = MultiDMD(svd_rank=-1)
+        self.dmd.fit_multi(X, Y)
+
+    def predict(self, X: np.ndarray) -> np.ndarray:
+        return np.real(self.dmd.predict(np.atleast_2d(X).T)).T

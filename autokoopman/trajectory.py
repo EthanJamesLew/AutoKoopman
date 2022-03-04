@@ -172,6 +172,9 @@ class TrajectoriesData:
 
 class UniformTimeTrajectoriesData(TrajectoriesData):
     """a dataset of uniform time trajectories"""
+    @property
+    def sampling_period(self) -> float:
+        return [v.sampling_period for _, v in self._trajs.items()][0]
 
     @classmethod
     def from_pandas(cls, data_df: pd.DataFrame, threshold=None):

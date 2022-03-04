@@ -3,11 +3,14 @@ from typing import Tuple
 
 import numpy as np
 
+import autokoopman.trajectory as atraj
+
 
 class ContinuousSystem(abc.ABC):
+    """a continuous time system with defined gradient"""
     def solve_ivp(self, initial_state: np.ndarray,
                   tspan: Tuple[float, float],
-                  sampling_period: float = 0.1):
+                  sampling_period: float = 0.1) -> atraj.UniformTimeTrajectory:
         pass
 
     @abc.abstractmethod

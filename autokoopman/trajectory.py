@@ -1,13 +1,9 @@
 from typing import Tuple, Hashable, Dict, Sequence, Set
+
 import numpy as np
 import pandas as pd
 
-
-def _clip_str(s, nlength=20):
-    if len(s) <= nlength:
-        return s
-    else:
-        return f"{s[:nlength]}..."
+from autokoopman.format import _clip_list
 
 
 class Trajectory:
@@ -59,7 +55,7 @@ class Trajectory:
         return UniformTimeTrajectory(self.states, sp, self.names, start_time=start, threshold=self._threshold)
 
     def __repr__(self):
-        return f"<{self.__class__.__name__} Dim: {self.dimension}, Length: {self.size}, State Names: [{_clip_str(', '.join(self.names))}]>"
+        return f"<{self.__class__.__name__} Dim: {self.dimension}, Length: {self.size}, State Names: [{_clip_list(self.names)}]>"
 
 
 class UniformTimeTrajectory(Trajectory):
@@ -123,9 +119,9 @@ class TrajectoriesData:
         # form the dataframe
         serial_data = np.vstack([np.hstack(
             [
-                traji.times,
+                traji.times[:, np.newaxis],
                 traji.states,
-                [namei] * len(traji.times)
+                np.array([namei] * len(traji.times), dtype=type(namei))[:, np.newaxis]
             ]
         ) for idx, (namei, traji) in enumerate(self._trajs.items())])
         columns = [self.time_id_hname, *self.state_names, self.traj_id_hname]
@@ -163,12 +159,20 @@ class TrajectoriesData:
 
     def __repr__(self):
         return f"<{self.__class__.__name__} N Trajs: {self.n_trajs}, Traj " \
-               f"Names: [{_clip_str(', '.join([str(s) for s in list(self.traj_names)]))}], State " \
-               f"Names: [{_clip_str(', '.join(self.state_names))}]>"
+               f"Names: [{_clip_list(list(self.traj_names))}], State " \
+               f"Names: [{_clip_list(self.state_names)}]>"
+
+    def __iter__(self):
+        for _, v in self._trajs.items():
+            yield v
+
+    def __len__(self):
+        return len(self._trajs)
 
 
 class UniformTimeTrajectoriesData(TrajectoriesData):
     """a dataset of uniform time trajectories"""
+
     @classmethod
     def from_pandas(cls, data_df: pd.DataFrame, threshold=None):
         """csv deserialization"""
@@ -179,4 +183,12 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
 
     @property
     def next_step_matrices(self) -> Tuple[np.ndarray, np.ndarray]:
-        ...
+        X = np.vstack(
+            [x.states[:-1, :] for _, x in self._trajs.items()]
+        ).T
+
+        Xp = np.vstack(
+            [x.states[1:, :] for _, x in self._trajs.items()]
+        ).T
+
+        return X, Xp

@@ -19,6 +19,7 @@ class KoopmanObservable(abc.ABC):
         """observable combination operator"""
         # TODO: implement combine
         return CombineObservable([self, obs])
+        # identity | rffs
 
 
 class CombineObservable(KoopmanObservable):

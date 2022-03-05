@@ -59,8 +59,8 @@ class SymbolicContinuousSystem(ContinuousSystem):
         self._mat = sp.Matrix(self._exprs)
         self._fmat = sp.lambdify((self._variables,), self._mat)
 
-    def gradient(self, time: float, initial_state: np.ndarray) -> np.ndarray:
-        return np.array(self._fmat(np.array([time, *initial_state]))).flatten()
+    def gradient(self, time: float, state: np.ndarray) -> np.ndarray:
+        return np.array(self._fmat(np.array([time, *state]))).flatten()
 
     @property
     def names(self) -> Sequence[str]:

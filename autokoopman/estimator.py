@@ -1,3 +1,8 @@
+"""
+Model has:
+
+* a set of hyperparameters
+"""
 import abc
 
 from typing import Optional, Tuple
@@ -21,36 +26,37 @@ class TrajectoryEstimator(abc.ABC):
         pass
 
 
-class NextStepEstimator(abc.ABC):
+class NextStepEstimator(TrajectoryEstimator):
     """Estimator of discrete time dynamical systems
 
     Requires that the data be uniform time
     """
 
     @abc.abstractmethod
-    def fit(self, X: np.ndarray, Y: np.ndarray, sampling_period) -> None:
-        pass
-
-    def fit_trajs(self, X: atraj.UniformTimeTrajectoriesData) -> None:
+    def fit_next_step(self, X: np.ndarray, Y: np.ndarray) -> None:
         """an alternative fit method that uses a trajectories data structure"""
-        self.fit(*X.next_step_matrices)
-        self.sampling_period = X.sampling_period
-        self.names = X.state_names
+        pass
 
     @abc.abstractmethod
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict_next_step(self, X: np.ndarray) -> np.ndarray:
         pass
+
+    def fit(self, X: atraj.TrajectoriesData) -> None:
+        assert isinstance(X, atraj.UniformTimeTrajectoriesData), f"X must be uniform time"
+        self.fit_next_step(*X.next_step_matrices)
+        self.sampling_period = X.sampling_period
+        self.names = X.state_names
 
     def predict_traj(self, iv: np.ndarray, tspan: Tuple[float, float]) -> atraj.Trajectory:
         times = np.arange(tspan[0], tspan[1] + self.sampling_period, self.sampling_period)
         states = np.zeros((len(times), len(self.names)))
         states[0] = iv
-        #states = [np.array(iv).flatten()]
         for idx, _ in enumerate(times[1:]):
-            states[idx + 1] = self.predict(states[idx]).flatten()
-        #    states.append(self.predict(np.array([states[-1]])).flatten())
-        #states = np.array(states)
+            states[idx + 1] = self.predict_next_step(states[idx]).flatten()
         return atraj.Trajectory(times, states, self.names)
+
+    def predict(self, iv: np.ndarray, times: np.ndarray) -> atraj.Trajectory:
+        return self.predict_traj(iv, (float(np.min(times)), float(np.max(times))))
 
 
 class SindyEstimator(TrajectoryEstimator):
@@ -60,9 +66,9 @@ class SindyEstimator(TrajectoryEstimator):
     def fit(self, X: atraj.TrajectoriesData) -> None:
         if self._usr_sindy is None:
             self._model = self.model = ps.SINDy(feature_names=X.state_names,
-                                 differentiation_method=ps.FiniteDifference(),
-                                 optimizer=ps.SR3(threshold=0.04, thresholder="l1"),
-                                 feature_library=ps.PolynomialLibrary(degree=3))
+                                                differentiation_method=ps.FiniteDifference(),
+                                                optimizer=ps.SR3(threshold=0.04, thresholder="l1"),
+                                                feature_library=ps.PolynomialLibrary(degree=3))
 
         else:
             self._model = self._usr_sindy
@@ -82,17 +88,17 @@ class MultiDMD(DMD):
         """
         self._snapshots, self._snapshots_shape = self._col_major_2darray(X)
 
-        #n_samples = self._snapshots.shape[1]
-        #X = self._snapshots[:, :-1]
-        #Y = self._snapshots[:, 1:]
+        # n_samples = self._snapshots.shape[1]
+        # X = self._snapshots[:, :-1]
+        # Y = self._snapshots[:, 1:]
 
         X, Y = compute_tlsq(X, Y, self.tlsq_rank)
         self._svd_modes, _, _ = self.operator.compute_operator(X, Y)
 
         # Default timesteps
-        #self._set_initial_time_dictionary(
+        # self._set_initial_time_dictionary(
         #    {"t0": 0, "tend": n_samples - 1, "dt": 1}
-        #)
+        # )
 
         self._b = self._compute_amplitudes()
 
@@ -100,9 +106,9 @@ class MultiDMD(DMD):
 
 
 class DMDEstimator(NextStepEstimator):
-    def fit(self, X: np.ndarray, Y: np.ndarray) -> None:
+    def fit_next_step(self, X: np.ndarray, Y: np.ndarray) -> None:
         self.dmd = MultiDMD(svd_rank=-1)
         self.dmd.fit_multi(X, Y)
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict_next_step(self, X: np.ndarray) -> np.ndarray:
         return np.real(self.dmd.predict(np.atleast_2d(X).T)).T

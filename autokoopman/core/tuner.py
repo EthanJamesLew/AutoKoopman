@@ -1,6 +1,7 @@
 import abc
 import random
-from typing import Sequence
+from typing import Sequence, Callable
+import numpy as np
 
 from autokoopman.core.estimator import TrajectoryEstimator
 from autokoopman.core.format import _clip_list
@@ -42,19 +43,32 @@ class FiniteParameter(Parameter):
 
 
 class ContinuousParameter(Parameter):
-    def __init__(self, name: str, domain_lower, domain_upper):
+    @staticmethod
+    def loguniform(low=0.1, high=1, size=None):
+        return np.exp(np.random.uniform(np.log(low), np.log(high), size))
+
+    @staticmethod
+    def uniform(low=0, high=1, size=None):
+        return np.random.uniform(low, high, size)
+
+    def __init__(self, name: str, domain_lower, domain_upper, distribution="uniform"):
         super(ContinuousParameter, self).__init__(name)
         assert domain_upper >= domain_lower
         self._interval = (domain_lower, domain_upper)
+        self.distribution = distribution
 
     def is_member(self, item) -> bool:
         return item >= self._interval[0] and item <= self._interval[1]
 
     def random(self):
-        return (
-            random.random() * (self._interval[1] - self._interval[0])
-            + self._interval[0]
-        )
+        if isinstance(self.distribution, Callable):
+            return self.distribution()
+        elif hasattr(self, self.distribution):
+            return getattr(self, self.distribution)(
+                self._interval[0], self._interval[1]
+            )
+        else:
+            raise ValueError(f"cannot find distribution {self.distribution}")
 
 
 class DiscreteParameter(FiniteParameter):

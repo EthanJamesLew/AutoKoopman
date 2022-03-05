@@ -18,7 +18,9 @@ class FourierSindy(atune.HyperparameterMap):
             atune.ParameterSpace(
                 "sindy-fourier",
                 [
-                    atune.ContinuousParameter("sr3-threshold", *threshold_range),
+                    atune.ContinuousParameter(
+                        "sr3-threshold", *threshold_range, distribution="loguniform"
+                    ),
                     atune.DiscreteParameter("n-frequency", 1, 4),
                 ],
             )
@@ -43,7 +45,9 @@ class PolynomialSindy(atune.HyperparameterMap):
             atune.ParameterSpace(
                 "sindy-poly",
                 [
-                    atune.ContinuousParameter("sr3-threshold", *threshold_range),
+                    atune.ContinuousParameter(
+                        "sr3-threshold", *threshold_range, distribution="loguniform"
+                    ),
                     atune.DiscreteParameter("poly-degree", 1, 4),
                 ],
             )

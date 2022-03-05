@@ -1,10 +1,12 @@
 # AutoKoopman
 
+![Conda CI Workflow](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml/badge.svg)
+
 ## Outline
 
 ### Overview
 AutoKoopman is a python library for the use of Koopman operator methods for system analysis and control. The library presents a simple
-interface to learn Koopman linearized systems with reasonable defaults. Also, it presents a variety of linearization methods under a 
+interface to learn Koopman linearized systems with reasonable defaults. Also, it presents a variety of linearization methods under a
 common class interfaces.
 
 ### User Story
@@ -38,4 +40,3 @@ have measurements of their system with no prior model.
 ##### Biological
 
 #### F-16 Fighting Falcon GCAS
-

@@ -1,5 +1,7 @@
 # AutoKoopman
 
+![Conda CI Workflow](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml/badge.svg)
+
 ## Outline
 
 ### Overview

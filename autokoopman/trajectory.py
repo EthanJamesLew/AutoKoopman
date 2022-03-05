@@ -48,6 +48,13 @@ class Trajectory:
         dtimes = np.diff(time_steps)
         return np.all([ti < self._threshold for ti in np.abs(dtimes)])
 
+    def interp_uniform_time(self, sampling_period) -> 'UniformTimeTrajectory':
+        from scipy.interpolate import interp1d
+        ts = np.arange(np.min(self._times), np.max(self._times) + sampling_period, sampling_period)
+        f = interp1d(self._times, self._states, fill_value='extrapolate', axis=0)
+        states = f(ts)
+        return UniformTimeTrajectory(states, sampling_period, self.names, float(np.min(ts)), threshold=self._threshold)
+
     def to_uniform_time_traj(self) -> 'UniformTimeTrajectory':
         assert self.is_uniform_time, f"trajectory must be uniform time to apply"
         sp = np.diff(self._times)[0]
@@ -132,6 +139,13 @@ class TrajectoriesData:
         df = self.to_pandas()
         # write to csv
         df.to_csv(fname, index=False)
+
+    def interp_uniform_time(self, sampling_period) -> 'UniformTimeTrajectoriesData':
+        return UniformTimeTrajectoriesData(
+            {
+                k: v.interp_uniform_time(sampling_period) for k, v in self._trajs.items()
+            }
+        )
 
     def __init__(self, trajs: Dict[Hashable, Trajectory]):
         self._trajs: Dict[Hashable, Trajectory] = trajs

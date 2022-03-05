@@ -68,12 +68,19 @@ class ParameterSpace(Parameter):
     def __init__(self, name: str, coords: Sequence[Parameter]):
         super(ParameterSpace, self).__init__(name)
         self._coords = coords
+        self._cdict = {c.name: c for c in self._coords}
 
     def is_member(self, item) -> bool:
         return all([itemi in coordi for itemi, coordi in zip(item, self._coords)])
 
     def random(self):
         return [coordi.random() for coordi in self._coords]
+
+    def __getitem__(self, item):
+        assert (
+            item in self._cdict
+        ), f"coordinate {item} was not found in space (values are {list(self._cdict.keys())})"
+        return self._cdict[item]
 
     @property
     def dimension(self):

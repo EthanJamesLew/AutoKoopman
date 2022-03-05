@@ -1,8 +1,8 @@
-from autokoopman.estimator import TrajectoryEstimator
-from typing import Sequence, Union
+from autokoopman.core.estimator import TrajectoryEstimator
+from typing import Sequence
 import random
 import abc
-from autokoopman.format import _clip_list
+from autokoopman.core.format import _clip_list
 
 
 class Parameter:

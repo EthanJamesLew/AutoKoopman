@@ -5,8 +5,8 @@ import numpy as np
 import sympy as sp
 import scipy.integrate as scint
 
-import autokoopman.trajectory as atraj
-from autokoopman.format import _clip_list
+import autokoopman.core.trajectory as atraj
+from autokoopman.core.format import _clip_list
 
 
 class System(abc.ABC):

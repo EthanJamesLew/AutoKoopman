@@ -1,4 +1,4 @@
-import autokoopman.system as asys
+import autokoopman.core.system as asys
 import sympy as sp
 
 

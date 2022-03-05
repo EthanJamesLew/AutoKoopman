@@ -3,7 +3,7 @@ from typing import Tuple, Hashable, Dict, Sequence, Set
 import numpy as np
 import pandas as pd
 
-from autokoopman.format import _clip_list
+from autokoopman.core.format import _clip_list
 
 
 class Trajectory:

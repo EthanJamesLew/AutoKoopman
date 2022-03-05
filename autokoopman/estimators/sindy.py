@@ -1,7 +1,7 @@
 from typing import Optional
 
 import numpy as np
-import pysindy as ps
+import pysindy as ps  # type: ignore
 
 import autokoopman.core.estimator as aest
 import autokoopman.core.system as asys

@@ -95,7 +95,7 @@ class HyperparameterMap:
         self.parameter_space = parameter_space
 
     @abc.abstractmethod
-    def get_model(hyperparams: Sequence) -> TrajectoryEstimator:
+    def get_model(self, hyperparams: Sequence) -> TrajectoryEstimator:
         raise NotImplementedError
 
 

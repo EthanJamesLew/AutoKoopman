@@ -1,6 +1,6 @@
 import numpy as np
-from pydmd import DMD
-from pydmd.dmd import compute_tlsq
+from pydmd import DMD  # type: ignore
+from pydmd.dmd import compute_tlsq  # type: ignore
 
 import autokoopman.core.estimator as aest
 import autokoopman.core.system as asys

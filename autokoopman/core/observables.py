@@ -2,7 +2,7 @@ import abc
 from typing import Sequence
 
 import numpy as np
-import sympy as sp
+import sympy as sp  # type: ignore
 
 
 class KoopmanObservable(abc.ABC):

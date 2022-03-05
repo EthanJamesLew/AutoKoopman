@@ -2,8 +2,8 @@ import abc
 from typing import Callable, Sequence, Tuple
 
 import numpy as np
-import scipy.integrate as scint
-import sympy as sp
+import scipy.integrate as scint  # type: ignore
+import sympy as sp  # type: ignore
 
 import autokoopman.core.trajectory as atraj
 from autokoopman.core.format import _clip_list
@@ -28,7 +28,7 @@ class System(abc.ABC):
         ret = {}
         for idx, state in enumerate(initial_states):
             ret[idx] = self.solve_ivp(state, tspan, sampling_period)
-        return atraj.UniformTimeTrajectoriesData(ret)
+        return atraj.UniformTimeTrajectoriesData(ret)  # type: ignore
 
     @property
     @abc.abstractmethod
@@ -71,7 +71,7 @@ class ContinuousSystem(System):
         ret = {}
         for idx, state in enumerate(initial_states):
             ret[idx] = self.solve_ivp(state, tspan, sampling_period)
-        return atraj.UniformTimeTrajectoriesData(ret)
+        return atraj.UniformTimeTrajectoriesData(ret)  # type: ignore
 
     @abc.abstractmethod
     def gradient(self, time: float, state: np.ndarray) -> np.ndarray:

@@ -14,6 +14,7 @@ from pydmd import DMD
 from pydmd.dmd import compute_tlsq
 
 import autokoopman.trajectory as atraj
+import autokoopman.system as asys
 
 
 class TrajectoryEstimator(abc.ABC):
@@ -21,8 +22,9 @@ class TrajectoryEstimator(abc.ABC):
     def fit(self, X: atraj.TrajectoriesData) -> None:
         pass
 
+    @property
     @abc.abstractmethod
-    def predict(self, iv: np.ndarray, times: np.ndarray) -> atraj.Trajectory:
+    def model(self) -> asys.System:
         pass
 
 
@@ -37,26 +39,11 @@ class NextStepEstimator(TrajectoryEstimator):
         """an alternative fit method that uses a trajectories data structure"""
         pass
 
-    @abc.abstractmethod
-    def predict_next_step(self, X: np.ndarray) -> np.ndarray:
-        pass
-
     def fit(self, X: atraj.TrajectoriesData) -> None:
         assert isinstance(X, atraj.UniformTimeTrajectoriesData), f"X must be uniform time"
         self.fit_next_step(*X.next_step_matrices)
         self.sampling_period = X.sampling_period
         self.names = X.state_names
-
-    def predict_traj(self, iv: np.ndarray, tspan: Tuple[float, float]) -> atraj.Trajectory:
-        times = np.arange(tspan[0], tspan[1] + self.sampling_period, self.sampling_period)
-        states = np.zeros((len(times), len(self.names)))
-        states[0] = iv
-        for idx, _ in enumerate(times[1:]):
-            states[idx + 1] = self.predict_next_step(states[idx]).flatten()
-        return atraj.Trajectory(times, states, self.names)
-
-    def predict(self, iv: np.ndarray, times: np.ndarray) -> atraj.Trajectory:
-        return self.predict_traj(iv, (float(np.min(times)), float(np.max(times))))
 
 
 class SindyEstimator(TrajectoryEstimator):
@@ -65,7 +52,7 @@ class SindyEstimator(TrajectoryEstimator):
 
     def fit(self, X: atraj.TrajectoriesData) -> None:
         if self._usr_sindy is None:
-            self._model = self.model = ps.SINDy(feature_names=X.state_names,
+            self._model = ps.SINDy(feature_names=X.state_names,
                                                 differentiation_method=ps.FiniteDifference(),
                                                 optimizer=ps.SR3(threshold=0.04, thresholder="l1"),
                                                 feature_library=ps.PolynomialLibrary(degree=3))
@@ -77,6 +64,11 @@ class SindyEstimator(TrajectoryEstimator):
     def predict(self, iv: np.ndarray, times: np.ndarray) -> atraj.Trajectory:
         ret = self._model.simulate(iv, times)
         return atraj.Trajectory(times, ret, self._model.feature_names)
+
+    @property
+    def model(self) -> asys.ContinuousSystem:
+        gradient_f = lambda t, x: self._model.predict(np.atleast_2d(x))
+        return asys.GradientContinuousSystem(gradient_f, self._model.feature_names)
 
 
 class MultiDMD(DMD):
@@ -110,5 +102,7 @@ class DMDEstimator(NextStepEstimator):
         self.dmd = MultiDMD(svd_rank=-1)
         self.dmd.fit_multi(X, Y)
 
-    def predict_next_step(self, X: np.ndarray) -> np.ndarray:
-        return np.real(self.dmd.predict(np.atleast_2d(X).T)).T
+    @property
+    def model(self) -> asys.System:
+        step_func = lambda t, x: np.real(self.dmd.predict(np.atleast_2d(x).T)).T
+        return asys.StepDiscreteSystem(step_func, self.names)

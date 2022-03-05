@@ -1,5 +1,5 @@
 import abc
-from typing import Tuple, Sequence
+from typing import Tuple, Sequence, Callable
 
 import numpy as np
 import sympy as sp
@@ -9,7 +9,37 @@ import autokoopman.trajectory as atraj
 from autokoopman.format import _clip_list
 
 
-class ContinuousSystem(abc.ABC):
+class System(abc.ABC):
+    @abc.abstractmethod
+    def solve_ivp(self,
+                  initial_state: np.ndarray,
+                  tspan: Tuple[float, float],
+                  sampling_period: float = 0.1) -> atraj.UniformTimeTrajectory:
+        raise NotImplementedError
+
+    def solve_ivps(self,
+                   initial_states: np.ndarray,
+                   tspan: Tuple[float, float],
+                   sampling_period: float = 0.1) -> atraj.UniformTimeTrajectoriesData:
+        ret = {}
+        for idx, state in enumerate(initial_states):
+            ret[idx] = self.solve_ivp(state, tspan, sampling_period)
+        return atraj.UniformTimeTrajectoriesData(ret)
+
+    @property
+    @abc.abstractmethod
+    def names(self) -> Sequence[str]:
+        pass
+
+    @property
+    def dimension(self) -> int:
+        return len(self.names)
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__} Dimensions: {self.dimension} States: {_clip_list(self.names)}>"
+
+
+class ContinuousSystem(System):
     """a continuous time system with defined gradient"""
     def solve_ivp(self,
                   initial_state: np.ndarray,
@@ -34,17 +64,22 @@ class ContinuousSystem(abc.ABC):
     def gradient(self, time: float, state: np.ndarray) -> np.ndarray:
         raise NotImplementedError
 
-    @property
+
+class DiscreteSystem(System):
+    def solve_ivp(self,
+                  initial_state: np.ndarray,
+                  tspan: Tuple[float, float],
+                  sampling_period: float = 0.1) -> atraj.UniformTimeTrajectory:
+        times = np.arange(tspan[0], tspan[1] + sampling_period, sampling_period)
+        states = np.zeros((len(times), len(self.names)))
+        states[0] = np.array(initial_state).flatten()
+        for idx, time in enumerate(times[1:]):
+            states[idx + 1] = self.step(float(time), states[idx]).flatten()
+        return atraj.UniformTimeTrajectory(states, sampling_period, self.names, tspan[0])
+
     @abc.abstractmethod
-    def names(self) -> Sequence[str]:
-        pass
-
-    @property
-    def dimension(self) -> int:
-        return len(self.names)
-
-    def __repr__(self):
-        return f"<{self.__class__.__name__} Dimensions: {self.dimension} States: {_clip_list(self.names)}>"
+    def step(self, time: float, state: np.ndarray) -> np.ndarray:
+        raise NotImplementedError
 
 
 class SymbolicContinuousSystem(ContinuousSystem):
@@ -68,7 +103,29 @@ class SymbolicContinuousSystem(ContinuousSystem):
 
 
 class GradientContinuousSystem(ContinuousSystem):
-    ...
+    def __init__(self, gradient_func: Callable[[float, np.ndarray], np.ndarray], names):
+        self._names = names
+        self._gradient_func = gradient_func
+
+    def gradient(self, time: float, state: np.ndarray) -> np.ndarray:
+        return self._gradient_func(time, state)
+
+    @property
+    def names(self):
+        return self._names
+
+
+class StepDiscreteSystem(DiscreteSystem):
+    def __init__(self, step_func: Callable[[float, np.ndarray], np.ndarray], names):
+        self._names = names
+        self._step_func = step_func
+
+    def step(self, time: float, state: np.ndarray) -> np.ndarray:
+        return self._step_func(time, state)
+
+    @property
+    def names(self):
+        return self._names
 
 
 class LinearContinuousSystem(ContinuousSystem):

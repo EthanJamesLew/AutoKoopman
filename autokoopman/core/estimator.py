@@ -4,13 +4,12 @@ Model has:
 * a set of hyperparameters
 """
 import abc
-
 from typing import Optional
 
 import numpy as np
 
-import autokoopman.core.trajectory as atraj
 import autokoopman.core.system as asys
+import autokoopman.core.trajectory as atraj
 
 
 class TrajectoryEstimator(abc.ABC):
@@ -36,9 +35,9 @@ class NextStepEstimator(TrajectoryEstimator):
         pass
 
     def fit(self, X: atraj.TrajectoriesData) -> None:
-        assert isinstance(X, atraj.UniformTimeTrajectoriesData), f"X must be uniform time"
+        assert isinstance(
+            X, atraj.UniformTimeTrajectoriesData
+        ), "X must be uniform time"
         self.fit_next_step(*X.next_step_matrices)
         self.sampling_period = X.sampling_period
         self.names = X.state_names
-
-

@@ -39,5 +39,7 @@ class DMDEstimator(aest.NextStepEstimator):
 
     @property
     def model(self) -> asys.System:
-        step_func = lambda t, x: np.real(self.dmd.predict(np.atleast_2d(x).T)).T
+        def step_func(t, x):
+            return np.real(self.dmd.predict(np.atleast_2d(x).T)).T
+
         return asys.StepDiscreteSystem(step_func, self.names)

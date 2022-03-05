@@ -19,11 +19,11 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     package_dir={"": ".", "autokoopman": "autokoopman"},
-    install_requires = [
-        'numpy>=1.20.0',
-        'matplotlib>=3.4.3',
-        'scipy>=1.7.1',
-        'tqdm>=4.62.2',
+    install_requires=[
+        "numpy>=1.20.0",
+        "matplotlib>=3.4.3",
+        "scipy>=1.7.1",
+        "tqdm>=4.62.2",
     ],
     packages=setuptools.find_packages(where="."),
     python_requires=">=3.9",

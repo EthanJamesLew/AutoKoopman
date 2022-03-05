@@ -1,6 +1,8 @@
 import abc
 from typing import Sequence
+
 import numpy as np
+import sympy as sp
 
 
 class KoopmanObservable(abc.ABC):
@@ -16,7 +18,7 @@ class KoopmanObservable(abc.ABC):
     def obs_grad(self, X: np.ndarray) -> np.ndarray:
         raise NotImplementedError
 
-    def __or__(self, obs: 'KoopmanObservable'):
+    def __or__(self, obs: "KoopmanObservable"):
         """observable combination operator"""
         # TODO: implement combine
         return CombineObservable([self, obs])
@@ -61,40 +63,58 @@ class SymbolicObservable(KoopmanObservable):
     def obs_grad(self, X: np.ndarray) -> np.ndarray:
         return np.array(self._gd(list(X))).T
 
-    def __add__(self, obs: 'SymbolicObservable'):
-        return SymbolicObservable(list({*self._variables, *obs._variables}),
-                                  [xi + yi for xi, yi in zip(self._observables, obs._observables)])
+    def __add__(self, obs: "SymbolicObservable"):
+        return SymbolicObservable(
+            list({*self._variables, *obs._variables}),
+            [xi + yi for xi, yi in zip(self._observables, obs._observables)],
+        )
 
-    def __sub__(self, obs: 'SymbolicObservable'):
-        return SymbolicObservable(list({*self._variables, *obs._variables}),
-                                  [xi - yi for xi, yi in zip(self._observables, obs._observables)])
+    def __sub__(self, obs: "SymbolicObservable"):
+        return SymbolicObservable(
+            list({*self._variables, *obs._variables}),
+            [xi - yi for xi, yi in zip(self._observables, obs._observables)],
+        )
 
-    def __mul__(self, obs: 'SymbolicObservable'):
-        return SymbolicObservable(list({*self._variables, *obs._variables}),
-                                  [xi * yi for xi, yi in zip(self._observables, obs._observables)])
+    def __mul__(self, obs: "SymbolicObservable"):
+        return SymbolicObservable(
+            list({*self._variables, *obs._variables}),
+            [xi * yi for xi, yi in zip(self._observables, obs._observables)],
+        )
 
-    def __truediv__(self, obs: 'SymbolicObservable'):
-        return SymbolicObservable(list({*self._variables, *obs._variables}),
-                                  [xi / yi for xi, yi in zip(self._observables, obs._observables)])
+    def __truediv__(self, obs: "SymbolicObservable"):
+        return SymbolicObservable(
+            list({*self._variables, *obs._variables}),
+            [xi / yi for xi, yi in zip(self._observables, obs._observables)],
+        )
 
     def __rdiv__(self, other):
         if isinstance(other, SymbolicObservable):
-            return SymbolicObservable(list({*self._variables, *other._variables}),
-                                      [xi / yi for xi, yi in zip(self._observables, other._observables)])
+            return SymbolicObservable(
+                list({*self._variables, *other._variables}),
+                [xi / yi for xi, yi in zip(self._observables, other._observables)],
+            )
         else:
-            return SymbolicObservable(self._variables, [other / yi for yi in self._observables])
+            return SymbolicObservable(
+                self._variables, [other / yi for yi in self._observables]
+            )
 
     def __rmul__(self, other):
         if isinstance(other, SymbolicObservable):
-            return SymbolicObservable(list({*self._variables, *other._variables}),
-                                      [xi * yi for xi, yi in zip(self._observables, other._observables)])
+            return SymbolicObservable(
+                list({*self._variables, *other._variables}),
+                [xi * yi for xi, yi in zip(self._observables, other._observables)],
+            )
         else:
-            return SymbolicObservable(self._variables, [other * yi for yi in self._observables])
+            return SymbolicObservable(
+                self._variables, [other * yi for yi in self._observables]
+            )
 
     def __or__(self, other):
         if isinstance(other, SymbolicObservable):
-            return SymbolicObservable(list({*self._variables, *other._variables}),
-                                      [*self._observables, *other._observables])
+            return SymbolicObservable(
+                list({*self._variables, *other._variables}),
+                [*self._observables, *other._observables],
+            )
         else:
             return CombineObservable([self, other])
 

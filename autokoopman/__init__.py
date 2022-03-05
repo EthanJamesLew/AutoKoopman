@@ -9,5 +9,15 @@ __email__ = "ethanlew16@gmail.com"
 __status__ = "Prototype"
 
 
-from autokoopman.core.trajectory import Trajectory, TrajectoriesData, UniformTimeTrajectory, UniformTimeTrajectoriesData
-from autokoopman.core.system import ContinuousSystem, DiscreteSystem, GradientContinuousSystem, SymbolicContinuousSystem
+from autokoopman.core.system import (
+    ContinuousSystem,
+    DiscreteSystem,
+    GradientContinuousSystem,
+    SymbolicContinuousSystem,
+)
+from autokoopman.core.trajectory import (
+    TrajectoriesData,
+    Trajectory,
+    UniformTimeTrajectoriesData,
+    UniformTimeTrajectory,
+)

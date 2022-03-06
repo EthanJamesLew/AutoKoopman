@@ -211,11 +211,12 @@ class HyperparameterTuner(abc.ABC):
         if self.n_splits is not None:
             kf = KFold(n_splits=self.n_splits)
         yield score
-        for _ in tqdm.tqdm(range(nattempts), total=nattempts):
-            param = yield score  # self._parameter_model.parameter_space.random()
 
+        for _ in tqdm.tqdm(range(nattempts), total=nattempts):
+            param = yield score
+            assert isinstance(param, Sequence), "yielded param must be a sequence"
+            model = self._parameter_model.get_model(param)
             if self.n_splits is None:
-                model = self._parameter_model.get_model(param)
                 model.fit(self._training_data)
                 prediction_data = self.generate_predictions(model, self._training_data)
                 score = scoring_func(self._training_data, prediction_data)
@@ -240,6 +241,11 @@ class HyperparameterTuner(abc.ABC):
                 best_model = model
                 best_params = param
                 best_score = score
+                assert (
+                    (best_model is not None)
+                    and (best_params is not None)
+                    and (best_score is not None)
+                )
                 self.best_result = TuneResults(
                     model=best_model, param=best_params, score=best_score
                 )

@@ -34,13 +34,13 @@ class Parameter:
 class FiniteParameter(Parameter):
     def __init__(self, name: str, elements: Sequence):
         super(FiniteParameter, self).__init__(name)
-        self._elements = tuple(elements)
+        self.elements = tuple(elements)
 
     def is_member(self, item) -> bool:
-        return item in self._elements
+        return item in self.elements
 
     def random(self):
-        return random.choice(self._elements)
+        return random.choice(self.elements)
 
 
 class ContinuousParameter(Parameter):
@@ -97,6 +97,10 @@ class ParameterSpace(Parameter):
         ), f"coordinate {item} was not found in space (values are {list(self._cdict.keys())})"
         return self._cdict[item]
 
+    def __iter__(self):
+        for c in self._coords:
+            yield c
+
     @property
     def dimension(self):
         return len(self._coords)
@@ -127,7 +131,23 @@ class TuneResults(TypedDict):
     score: float
 
 
-class HyperparameterTuner:
+class TrajectoryScoring:
+    @staticmethod
+    def end_point_score(true_data: TrajectoriesData, prediction_data: TrajectoriesData):
+        errors = (prediction_data - true_data).norm()
+        end_errors = np.array([s.states[-1] for s in errors])
+        return np.sqrt(np.mean((end_errors) ** 2))
+
+    @staticmethod
+    def total_score(true_data: TrajectoriesData, prediction_data: TrajectoriesData):
+        errors = (prediction_data - true_data).norm()
+        end_errors = np.array(
+            [np.sqrt(np.mean((s.states.flatten()) ** 2)) for s in errors]
+        )
+        return np.sqrt(np.mean((end_errors) ** 2))
+
+
+class HyperparameterTuner(abc.ABC):
     """
     with training data and a model, determine ideal hyperparameters
     """
@@ -146,20 +166,6 @@ class HyperparameterTuner:
             preds[k] = sivp_interp
         return TrajectoriesData(preds)
 
-    @staticmethod
-    def end_point_score(true_data: TrajectoriesData, prediction_data: TrajectoriesData):
-        errors = (prediction_data - true_data).norm()
-        end_errors = np.array([s.states[-1] for s in errors])
-        return np.sqrt(np.mean((end_errors) ** 2))
-
-    @staticmethod
-    def total_score(true_data: TrajectoriesData, prediction_data: TrajectoriesData):
-        errors = (prediction_data - true_data).norm()
-        end_errors = np.array(
-            [np.sqrt(np.mean((s.states.flatten()) ** 2)) for s in errors]
-        )
-        return np.sqrt(np.mean((end_errors) ** 2))
-
     def __init__(
         self, parameter_model: HyperparameterMap, training_data: TrajectoriesData
     ):
@@ -167,31 +173,50 @@ class HyperparameterTuner:
         self._training_data = training_data
         self.scores = []
         self.best_scores = []
+        self.best_result = None
 
     def _reset_scores(self):
         self.scores = []
         self.best_scores = []
+        self.best_result = None
 
-    def tune(self, nattempts=100) -> TuneResults:
+    @abc.abstractmethod
+    def tune(
+        self,
+        nattempts=100,
+        scoring_func: Callable[
+            [TrajectoriesData, TrajectoriesData], float
+        ] = TrajectoryScoring.total_score,
+    ) -> TuneResults:
+        pass
+
+    def tune_sampling(
+        self,
+        nattempts,
+        scoring_func: Callable[[TrajectoriesData, TrajectoriesData], float],
+    ):
         import tqdm
 
         self._reset_scores()
         best_model = None
         best_params = None
         best_score = None
+        score = None
+        yield score
         for _ in tqdm.tqdm(range(nattempts), total=nattempts):
-            param = self._parameter_model.parameter_space.random()
+            param = yield score  # self._parameter_model.parameter_space.random()
             model = self._parameter_model.get_model(param)
             model.fit(self._training_data)
 
             prediction_data = self.generate_predictions(model, self._training_data)
-            score = self.total_score(self._training_data, prediction_data)
+            score = scoring_func(self._training_data, prediction_data)
 
             if len(self.scores) == 0 or score < np.min(self.scores):
                 best_model = model
                 best_params = param
                 best_score = score
+                self.best_result = TuneResults(
+                    model=best_model, param=best_params, score=best_score
+                )
             self.scores.append(score)
             self.best_scores.append(np.min(self.scores))
-
-        return TuneResults(model=best_model, param=best_params, score=best_score)

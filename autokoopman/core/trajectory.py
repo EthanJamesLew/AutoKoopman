@@ -52,21 +52,24 @@ class Trajectory:
         dtimes = np.diff(time_steps)
         return bool(np.all([ti < self._threshold for ti in np.abs(dtimes)]))
 
-    def interp_uniform_time(self, sampling_period) -> "UniformTimeTrajectory":
+    def interp1d(self, times) -> "Trajectory":
         from scipy.interpolate import interp1d  # type: ignore
 
+        times = np.array(times)
+        f = interp1d(
+            np.array(self._times),
+            np.array(self._states),
+            fill_value="extrapolate",
+            axis=0,
+        )
+        states = f(times)
+        return Trajectory(times, states, self.names, threshold=self._threshold)
+
+    def interp_uniform_time(self, sampling_period) -> "UniformTimeTrajectory":
         ts = np.arange(
             np.min(self._times), np.max(self._times) + sampling_period, sampling_period
         )
-        f = interp1d(self._times, self._states, fill_value="extrapolate", axis=0)
-        states = f(ts)
-        return UniformTimeTrajectory(
-            states,
-            sampling_period,
-            self.names,
-            float(np.min(ts)),
-            threshold=self._threshold,
-        )
+        return self.interp1d(ts).to_uniform_time_traj()
 
     def to_uniform_time_traj(self) -> "UniformTimeTrajectory":
         assert self.is_uniform_time, "trajectory must be uniform time to apply"
@@ -77,7 +80,43 @@ class Trajectory:
         )
 
     def __repr__(self):
-        return f"<{self.__class__.__name__} Dim: {self.dimension}, Length: {self.size}, State Names: [{_clip_list(self.names)}]>"
+        return f"<{self.__class__.__name__} Dim: {self.dimension}, Length: {self.size}, State Names: {_clip_list(self.names)}>"
+
+    def _prepare_other(self, other: "Trajectory"):
+        if len(self.times) != len(other.times) or not np.all(
+            np.isclose(self.times, other.times)
+        ):
+            return other.interp1d(self.times)
+        else:
+            return other
+
+    def __sub__(self, other: "Trajectory") -> "Trajectory":
+        otheri = self._prepare_other(other)
+        return Trajectory(
+            self.times,
+            self.states - otheri.states,
+            self.names,
+            threshold=self._threshold,
+        )
+
+    def __add__(self, other: "Trajectory") -> "Trajectory":
+        otheri = self._prepare_other(other)
+        return Trajectory(
+            self.times,
+            self.states + otheri.states,
+            self.names,
+            threshold=self._threshold,
+        )
+
+    def norm(self, axis=1) -> "Trajectory":
+        from numpy.linalg import norm
+
+        return Trajectory(
+            self.times,
+            np.atleast_2d(norm(self.states, axis=axis))[:, np.newaxis],
+            ["<norm>"],
+            threshold=self._threshold,
+        )
 
 
 class UniformTimeTrajectory(Trajectory):

@@ -6,6 +6,7 @@ import numpy as np
 from autokoopman.core.estimator import TrajectoryEstimator
 from autokoopman.core.trajectory import TrajectoriesData
 from autokoopman.core.format import _clip_list
+from sklearn.model_selection import KFold
 
 
 class Parameter:
@@ -167,13 +168,17 @@ class HyperparameterTuner(abc.ABC):
         return TrajectoriesData(preds)
 
     def __init__(
-        self, parameter_model: HyperparameterMap, training_data: TrajectoriesData
+        self,
+        parameter_model: HyperparameterMap,
+        training_data: TrajectoriesData,
+        n_splits=None,
     ):
         self._parameter_model = parameter_model
         self._training_data = training_data
         self.scores = []
         self.best_scores = []
         self.best_result = None
+        self.n_splits = n_splits
 
     def _reset_scores(self):
         self.scores = []
@@ -202,14 +207,34 @@ class HyperparameterTuner(abc.ABC):
         best_params = None
         best_score = None
         score = None
+
+        if self.n_splits is not None:
+            kf = KFold(n_splits=self.n_splits)
         yield score
         for _ in tqdm.tqdm(range(nattempts), total=nattempts):
             param = yield score  # self._parameter_model.parameter_space.random()
-            model = self._parameter_model.get_model(param)
-            model.fit(self._training_data)
 
-            prediction_data = self.generate_predictions(model, self._training_data)
-            score = scoring_func(self._training_data, prediction_data)
+            if self.n_splits is None:
+                model = self._parameter_model.get_model(param)
+                model.fit(self._training_data)
+                prediction_data = self.generate_predictions(model, self._training_data)
+                score = scoring_func(self._training_data, prediction_data)
+            else:
+                iscores = []
+                names = np.array(list(self._training_data.traj_names))[:, np.newaxis]
+                for train_index, test_index in kf.split(names):
+                    training = TrajectoriesData(
+                        {ti[0]: self._training_data[ti[0]] for ti in names[train_index]}
+                    )
+                    validation = TrajectoriesData(
+                        {ti[0]: self._training_data[ti[0]] for ti in names[test_index]}
+                    )
+                    model = self._parameter_model.get_model(param)
+                    model.fit(training)
+                    prediction_data = self.generate_predictions(model, validation)
+                    iscore = scoring_func(validation, prediction_data)
+                    iscores.append(iscore)
+                score = np.median(iscores)
 
             if len(self.scores) == 0 or score < np.min(self.scores):
                 best_model = model

@@ -38,8 +38,9 @@ class GridSearchTuner(atuner.HyperparameterTuner):
         parameter_model: HyperparameterMap,
         training_data: TrajectoriesData,
         n_samps=10,
+        **kwargs
     ):
-        super(GridSearchTuner, self).__init__(parameter_model, training_data)
+        super(GridSearchTuner, self).__init__(parameter_model, training_data, **kwargs)
         self.n_samps = n_samps
 
     def tune(

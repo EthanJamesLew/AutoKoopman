@@ -1,9 +1,10 @@
 import abc
 import random
-from typing import Sequence, Callable
+from typing import Sequence, Callable, TypedDict, Any
 import numpy as np
 
 from autokoopman.core.estimator import TrajectoryEstimator
+from autokoopman.core.trajectory import TrajectoriesData
 from autokoopman.core.format import _clip_list
 
 
@@ -120,9 +121,77 @@ class HyperparameterMap:
         raise NotImplementedError
 
 
+class TuneResults(TypedDict):
+    model: TrajectoryEstimator
+    param: Sequence[Any]
+    score: float
+
+
 class HyperparameterTuner:
     """
     with training data and a model, determine ideal hyperparameters
     """
 
-    ...
+    @staticmethod
+    def generate_predictions(
+        trained_model: TrajectoryEstimator, holdout_data: TrajectoriesData
+    ):
+        preds = {}
+        # get the predictions
+        for k, v in holdout_data._trajs.items():
+            sivp = trained_model.model.solve_ivp(
+                v.states[0], (np.min(v.times), np.max(v.times)), np.diff(v.times).min()
+            )
+            sivp_interp = sivp.interp1d(v.times)
+            preds[k] = sivp_interp
+        return TrajectoriesData(preds)
+
+    @staticmethod
+    def end_point_score(true_data: TrajectoriesData, prediction_data: TrajectoriesData):
+        errors = (prediction_data - true_data).norm()
+        end_errors = np.array([s.states[-1] for s in errors])
+        return np.sqrt(np.mean((end_errors) ** 2))
+
+    @staticmethod
+    def total_score(true_data: TrajectoriesData, prediction_data: TrajectoriesData):
+        errors = (prediction_data - true_data).norm()
+        end_errors = np.array(
+            [np.sqrt(np.mean((s.states.flatten()) ** 2)) for s in errors]
+        )
+        return np.sqrt(np.mean((end_errors) ** 2))
+
+    def __init__(
+        self, parameter_model: HyperparameterMap, training_data: TrajectoriesData
+    ):
+        self._parameter_model = parameter_model
+        self._training_data = training_data
+        self.scores = []
+        self.best_scores = []
+
+    def _reset_scores(self):
+        self.scores = []
+        self.best_scores = []
+
+    def tune(self, nattempts=100) -> TuneResults:
+        import tqdm
+
+        self._reset_scores()
+        best_model = None
+        best_params = None
+        best_score = None
+        for _ in tqdm.tqdm(range(nattempts), total=nattempts):
+            param = self._parameter_model.parameter_space.random()
+            model = self._parameter_model.get_model(param)
+            model.fit(self._training_data)
+
+            prediction_data = self.generate_predictions(model, self._training_data)
+            score = self.total_score(self._training_data, prediction_data)
+
+            if len(self.scores) == 0 or score < np.min(self.scores):
+                best_model = model
+                best_params = param
+                best_score = score
+            self.scores.append(score)
+            self.best_scores.append(np.min(self.scores))
+
+        return TuneResults(model=best_model, param=best_params, score=best_score)

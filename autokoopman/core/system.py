@@ -56,7 +56,10 @@ class ContinuousSystem(System):
             self.gradient,
             tspan,
             initial_state,
-            t_eval=np.arange(0, tspan[-1] + sampling_period, sampling_period),
+            # TODO: this is hacky
+            t_eval=np.arange(
+                tspan[0], tspan[-1] + sampling_period - 1e-10, sampling_period
+            ),
         )
         return atraj.UniformTimeTrajectory(
             sol.y.T, sampling_period, self.names, tspan[0]

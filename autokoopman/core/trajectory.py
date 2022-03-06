@@ -255,6 +255,23 @@ class TrajectoriesData:
     def __len__(self):
         return len(self._trajs)
 
+    def _prepare_other(self, other: "TrajectoriesData"):
+        assert set(other.traj_names) == set(
+            self.traj_names
+        ), "other data traj names must have same names"
+        return other
+
+    def __sub__(self, other: "TrajectoriesData"):
+        otheri = self._prepare_other(other)
+        return TrajectoriesData({k: v - otheri[k] for k, v in self._trajs.items()})
+
+    def __add__(self, other: "TrajectoriesData"):
+        otheri = self._prepare_other(other)
+        return TrajectoriesData({k: v + otheri[k] for k, v in self._trajs.items()})
+
+    def norm(self):
+        return TrajectoriesData({k: v.norm() for k, v in self._trajs.items()})
+
 
 class UniformTimeTrajectoriesData(TrajectoriesData):
     """a dataset of uniform time trajectories"""

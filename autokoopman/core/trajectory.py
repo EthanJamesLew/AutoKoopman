@@ -1,4 +1,4 @@
-from typing import Dict, Hashable, Sequence, Set, Tuple
+from typing import Dict, Hashable, Sequence, Set, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -50,23 +50,26 @@ class Trajectory:
         """determine if a trajectory is uniform time"""
         time_steps = np.diff(self._times)
         dtimes = np.diff(time_steps)
-        return np.all([ti < self._threshold for ti in np.abs(dtimes)])
+        return bool(np.all([ti < self._threshold for ti in np.abs(dtimes)]))
+
+    def interp1d(self, times) -> "Trajectory":
+        from scipy.interpolate import interp1d  # type: ignore
+
+        times = np.array(times)
+        f = interp1d(
+            np.array(self._times),
+            np.array(self._states),
+            fill_value="extrapolate",
+            axis=0,
+        )
+        states = f(times)
+        return Trajectory(times, states, self.names, threshold=self._threshold)
 
     def interp_uniform_time(self, sampling_period) -> "UniformTimeTrajectory":
-        from scipy.interpolate import interp1d
-
         ts = np.arange(
             np.min(self._times), np.max(self._times) + sampling_period, sampling_period
         )
-        f = interp1d(self._times, self._states, fill_value="extrapolate", axis=0)
-        states = f(ts)
-        return UniformTimeTrajectory(
-            states,
-            sampling_period,
-            self.names,
-            float(np.min(ts)),
-            threshold=self._threshold,
-        )
+        return self.interp1d(ts).to_uniform_time_traj()
 
     def to_uniform_time_traj(self) -> "UniformTimeTrajectory":
         assert self.is_uniform_time, "trajectory must be uniform time to apply"
@@ -77,7 +80,43 @@ class Trajectory:
         )
 
     def __repr__(self):
-        return f"<{self.__class__.__name__} Dim: {self.dimension}, Length: {self.size}, State Names: [{_clip_list(self.names)}]>"
+        return f"<{self.__class__.__name__} Dim: {self.dimension}, Length: {self.size}, State Names: {_clip_list(self.names)}>"
+
+    def _prepare_other(self, other: "Trajectory"):
+        if len(self.times) != len(other.times) or not np.all(
+            np.isclose(self.times, other.times)
+        ):
+            return other.interp1d(self.times)
+        else:
+            return other
+
+    def __sub__(self, other: "Trajectory") -> "Trajectory":
+        otheri = self._prepare_other(other)
+        return Trajectory(
+            self.times,
+            self.states - otheri.states,
+            self.names,
+            threshold=self._threshold,
+        )
+
+    def __add__(self, other: "Trajectory") -> "Trajectory":
+        otheri = self._prepare_other(other)
+        return Trajectory(
+            self.times,
+            self.states + otheri.states,
+            self.names,
+            threshold=self._threshold,
+        )
+
+    def norm(self, axis=1) -> "Trajectory":
+        from numpy.linalg import norm
+
+        return Trajectory(
+            self.times,
+            np.atleast_2d(norm(self.states, axis=axis))[:, np.newaxis],
+            ["<norm>"],
+            threshold=self._threshold,
+        )
 
 
 class UniformTimeTrajectory(Trajectory):
@@ -178,8 +217,8 @@ class TrajectoriesData:
             {k: v.interp_uniform_time(sampling_period) for k, v in self._trajs.items()}
         )
 
-    def __init__(self, trajs: Dict[Hashable, Trajectory]):
-        self._trajs: Dict[Hashable, Trajectory] = trajs
+    def __init__(self, trajs: Dict[Hashable, Union[UniformTimeTrajectory, Trajectory]]):
+        self._trajs: Dict[Hashable, Union[UniformTimeTrajectory, Trajectory]] = trajs
         self._names_list = [v.names for _, v in self._trajs.items()]
         assert self.equal_lists(self._names_list), "all state names must be the same"
         self._state_names = self._names_list[0]
@@ -216,13 +255,37 @@ class TrajectoriesData:
     def __len__(self):
         return len(self._trajs)
 
+    def _prepare_other(self, other: "TrajectoriesData"):
+        assert set(other.traj_names) == set(
+            self.traj_names
+        ), "other data traj names must have same names"
+        return other
+
+    def __sub__(self, other: "TrajectoriesData"):
+        otheri = self._prepare_other(other)
+        return TrajectoriesData({k: v - otheri[k] for k, v in self._trajs.items()})
+
+    def __add__(self, other: "TrajectoriesData"):
+        otheri = self._prepare_other(other)
+        return TrajectoriesData({k: v + otheri[k] for k, v in self._trajs.items()})
+
+    def norm(self):
+        return TrajectoriesData({k: v.norm() for k, v in self._trajs.items()})
+
 
 class UniformTimeTrajectoriesData(TrajectoriesData):
     """a dataset of uniform time trajectories"""
 
+    def __init__(self, trajs: Dict[Hashable, Union[UniformTimeTrajectory, Trajectory]]):
+        super(UniformTimeTrajectoriesData, self).__init__(trajs)
+
     @property
     def sampling_period(self) -> float:
-        return [v.sampling_period for _, v in self._trajs.items()][0]
+        return [
+            v.sampling_period
+            for _, v in self._trajs.items()
+            if isinstance(v, UniformTimeTrajectory)
+        ][0]
 
     @classmethod
     def from_pandas(cls, data_df: pd.DataFrame, threshold=None):

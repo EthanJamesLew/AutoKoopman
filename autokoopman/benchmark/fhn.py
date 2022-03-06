@@ -1,4 +1,4 @@
-import sympy as sp
+import sympy as sp  # type: ignore
 
 import autokoopman.core.system as asys
 

@@ -1,0 +1,62 @@
+\documentclass{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{natbib}
+\usepackage{bibentry}
+\usepackage[margin=1in]{geometry}
+\nobibliography*
+
+
+
+\begin{document}
+	
+\noindent \textbf{Syntax:}	
+\begin{equation*}
+	\begin{split}
+	\texttt{model} = \texttt{auto\_koopman(}&\texttt{data,type='rff',disc=True,opt='grid',fit='dmd',obs=100,} \\
+	& \texttt{len=(}10^{-5},10^5\texttt{),rank=(1,100),lay=3,neur=100,act='relu')}
+	\end{split}
+\end{equation*}
+	
+\noindent \textbf{Parameter:}
+
+\begin{itemize}
+	\item \texttt{data:} simulations/measurements consisting of state trajectories, inputs, and time information
+	\item \texttt{type:} type of observables
+		\begin{itemize}
+			\item \texttt{'rff':} random Fourier feature observables
+			\item \texttt{'nn':} neural network observables
+			\item \texttt{'poly':} polynomial observables
+		\end{itemize} 
+	\item \texttt{disc:} discrete-time Koopman model (True) or continuous-time Koopman model (False)
+	\item \texttt{opt:} optimization algorithm used to tune the parameters in order to determine an optimal Koopman model
+		\begin{itemize}
+			\item \texttt{'grid':} grid search
+			\item \texttt{'bay':} Bayesian optimization
+		\end{itemize}
+	\item \texttt{fit:} method used to perform the least-square fit
+		\begin{itemize}
+			\item \texttt{'dmd':} dynamic mode decomposition
+			\item \texttt{'sindy':} sindy optimizer
+		\end{itemize}
+	\item \texttt{obs:} number of observables (integer $>$ 0 or tuple containing lower and upper bound)
+	\item \texttt{len:} lengthscale parameter (double $>$ 0 or tuple containing lower and upper bound, for \texttt{type='rrf'} only)
+	\item \texttt{rank:} rank of the singular value decomposition used for dynamic mode decomposition (integer $>$ 0 or tuple containing lower and upper bound, for \texttt{fit='dmd'} only)
+	\item \texttt{lay:} number of neural network layers (integer $>$ 0 or tuple containing lower and upper bound, for \texttt{type='nn'} only)
+	\item \texttt{neur:} number of neurons in each layer (integer $>$ 0 or tuple containing lower and upper bound, for \texttt{type='nn'} only)
+	\item \texttt{act:} type of activation function for the neural network
+		\begin{itemize}
+			\item \texttt{'relu':} ReLU activation function
+			\item \texttt{'tanh':} hyperbolic tangent activation function
+			\item \texttt{'sig':} sigmoid activation function
+		\end{itemize}
+\end{itemize}	
+	
+\noindent \textbf{Returns:}	
+	
+\begin{itemize}
+	\item \texttt{model:} Koopman operator linearized model
+\end{itemize}	
+	
+\end{document}
+

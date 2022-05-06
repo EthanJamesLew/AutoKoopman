@@ -10,7 +10,7 @@ class MonteCarloTuner(atuner.HyperparameterTuner):
         nattempts=100,
         scoring_func: Callable[
             [TrajectoriesData, TrajectoriesData], float
-        ] = TrajectoryScoring.total_score,
+        ] = TrajectoryScoring.end_point_score,
     ) -> TuneResults:
         sampling = self.tune_sampling(nattempts, scoring_func)
         sampling.send(None)

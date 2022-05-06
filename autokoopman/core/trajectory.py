@@ -48,6 +48,7 @@ class Trajectory:
     @property
     def is_uniform_time(self) -> bool:
         """determine if a trajectory is uniform time"""
+        # FIXME: len greater than 3??
         time_steps = np.diff(self._times)
         dtimes = np.diff(time_steps)
         return bool(np.all([ti < self._threshold for ti in np.abs(dtimes)]))
@@ -69,7 +70,7 @@ class Trajectory:
         ts = np.arange(
             np.min(self._times), np.max(self._times) + sampling_period, sampling_period
         )
-        return self.interp1d(ts).to_uniform_time_traj()
+        return self.interp1d(ts)
 
     def to_uniform_time_traj(self) -> "UniformTimeTrajectory":
         assert self.is_uniform_time, "trajectory must be uniform time to apply"
@@ -113,7 +114,7 @@ class Trajectory:
 
         return Trajectory(
             self.times,
-            np.atleast_2d(norm(self.states, axis=axis))[:, np.newaxis],
+            norm(self.states, axis=axis)[:, np.newaxis],
             ["<norm>"],
             threshold=self._threshold,
         )
@@ -144,6 +145,11 @@ class UniformTimeTrajectory(Trajectory):
     @property
     def sampling_frequency(self) -> float:
         return 1.0 / self.sampling_period
+
+    @property
+    def is_uniform_time(self) -> bool:
+        """determine if a trajectory is uniform time"""
+        return True
 
 
 class TrajectoriesData:

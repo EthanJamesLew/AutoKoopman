@@ -12,8 +12,18 @@ while for W = 0.1, the unsafe set is defined by x4 ≥ 5. The time horizon for a
 For more details see: https://easychair.org/publications/open/nrdD
 
 """
+
+
 class LaubLoomis(asys.SymbolicContinuousSystem):
     def __init__(self):
         x1, x2, x3, x4, x5, x6, x7 = sp.symbols("x1 x2 x3 x4 x5 x6 x7")
-        xdot = [1.4 * x3−0.9 * x1, 2.5 * x5−1.5 * x2,0.6 * x7 − 0.8 * x2 * x3, 2 − 1.3 * x3 * x4,0.7 * x1 − x4 * x5,0.3 * x1 − 3.1 * x6,1.8 * x6 − 1.5 * x2 * x7]
-        super(LaubLoomis, self).__init__((x0, x1, x2, x3, x4, x5, x6, x7), xdot)
+        xdot = [
+            1.4 * x3 - 0.9 * x1,
+            2.5 * x5 - 1.5 * x2,
+            0.6 * x7 - 0.8 * x2 * x3,
+            2 - 1.3 * x3 * x4,
+            0.7 * x1 - x4 * x5,
+            0.3 * x1 - 3.1 * x6,
+            1.8 * x6 - 1.5 * x2 * x7,
+        ]
+        super(LaubLoomis, self).__init__((x1, x2, x3, x4, x5, x6, x7), xdot)

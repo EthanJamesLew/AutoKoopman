@@ -154,7 +154,10 @@ class TrajectoryScoring:
 
 class HyperparameterTuner(abc.ABC):
     """
-    with training data and a model, determine ideal hyperparameters
+    Tune a HyperparameterMap Object
+        The tuner implements a model learning pipeline that can take a mapping from hyperparameters to a model and
+        training data and learn an optimized model. For example, given a SINDy estimator, hyperparameter tuner can
+        implement gridsearch to find the best sparsity threshold and library type.
     """
 
     @staticmethod

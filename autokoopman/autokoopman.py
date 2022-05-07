@@ -1,12 +1,16 @@
 """
 Main AutoKoopman Function (Convenience Function)
 """
-from typing import Union, Sequence, Any
+from typing import Union, Sequence, Optional, Tuple
 
 import numpy as np
 
 import autokoopman.core.observables as kobs
-from autokoopman import TrajectoriesData, UniformTimeTrajectory
+from autokoopman.core.trajectory import (
+    TrajectoriesData,
+    UniformTimeTrajectoriesData,
+    UniformTimeTrajectory,
+)
 from autokoopman.core.tuner import (
     HyperparameterTuner,
     HyperparameterMap,
@@ -17,10 +21,14 @@ from autokoopman.core.tuner import (
 from autokoopman.estimator.koopman import KoopmanDiscEstimator
 from autokoopman.tuner.gridsearch import GridSearchTuner
 from autokoopman.tuner.montecarlo import MonteCarloTuner
+from autokoopman.core.observables import KoopmanObservable
+
+__all__ = ["auto_koopman"]
 
 
+# valid string identifiers for the autokoopman magic
 obs_types = {"rff", "quadratic", "id"}
-tuner_types = {"grid", "monte-carlo"}
+opt_types = {"grid", "monte-carlo"}
 
 
 def get_parameter_space(obs_type, threshold_range, rank):
@@ -74,33 +82,65 @@ def get_estimator(obs_type, sampling_period, dim, obs, hyperparams):
 
 def auto_koopman(
     training_data: Union[TrajectoriesData, Sequence[np.ndarray]],
-    sampling_period=0.05,
+    sampling_period: float = 0.05,
     opt: Union[str, HyperparameterTuner] = "monte-carlo",
-    max_opt_iter=100,
-    n_splits=None,
-    obs_type: Union[str, Any] = "rff",
-    n_obs=100,
-    rank=None,
-    grid_param_slices=10,
-    lengthscale=(1e-4, 1e1),
+    max_opt_iter: int = 100,
+    n_splits: Optional[int] = None,
+    obs_type: Union[str, KoopmanObservable] = "rff",
+    n_obs: int = 100,
+    rank: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
+    grid_param_slices: int = 10,
+    lengthscale: Tuple[float, float] = (1e-4, 1e1),
 ):
     """
     AutoKoopman Convenience Function
-
-    This is an interface to the dynamical systems learning functionality of the AutoKoopman library. The user can select
-    estimators classes at a high level. A tuner can be chosen to find the best hyperparameter values.
+        This is an interface to the dynamical systems learning functionality of the AutoKoopman library. The user can select
+        estimators classes at a high level. A tuner can be chosen to find the best hyperparameter values.
 
     :param training_data: training trajectories data from which to learn the system
     :param sampling_period: (for discrete time system) sampling period of training data
-    :param opt: hyperparameter optimizer
+    :param opt: hyperparameter optimizer {"grid", "monte-carlo"}
     :param max_opt_iter: maximum iterations for the tuner to use
-    :param n_splits: (for optimizers) if set, switches to k-folds bootstrap validation for the hyperparameter tuning. This
-    is useful for things like RFF tuning where the results have noise.
-    :param obs_type: (for koopman) koopman observables to use
+    :param n_splits: (for optimizers) if set, switches to k-folds bootstrap validation for the hyperparameter tuning. This is useful for things like RFF tuning where the results have noise.
+    :param obs_type: (for koopman) koopman observables to use {"rff", "quadratic", "id"}
     :param  n_obs: (for koopman) number of observables to use (if applicable)
     :param rank: (for koopman) rank range (start, stop) or (start, stop, step)
     :param grid_param_slices: (for grid tuner) resolution to slice continuous valued parameters into
     :param lengthscale: (for RFF observables) RFF kernel lengthscale
+
+    :returns: Tuned Model and Metadata
+
+    Example:
+        .. code-block:: python
+
+            from autokoopman.benchmark.fhn import FitzHughNagumo
+            from autokoopman import auto_koopman
+
+            # let's build an example dataset
+            data = fhn.solve_ivps(
+                initial_states=[[0.0, -4.0], [1.0, 3.4], [1.0, 1.0], [0.1, -0.1]],
+                tspan=[0.0, 1.0], sampling_period=0.01
+            )
+
+            # learn a system
+            results = auto_koopman(
+                data,
+                obs_type="rff",
+                opt="grid",
+                n_obs=200,
+                max_opt_iter=200,
+                grid_param_slices=10,
+                n_splits=3,
+                rank=(1, 200, 20)
+            )
+
+            # results = {'tuned_model': <StepDiscreteSystem Dimensions: 2 States: [X1, X2]>,
+            # 'model_class': 'koopman-rff',
+            # 'hyperparameters': ['gamma', 'rank'],
+            # 'hyperparameter_values': (0.004641588833612782, 21),
+            # 'tuner_score': 0.14723275426562,
+            # 'tuner': <autokoopman.tuner.gridsearch.GridSearchTuner at 0x7f0f92f95580>,
+            # 'estimator': <autokoopman.estimator.koopman.KoopmanDiscEstimator at 0x7f0f92ff0610>}
     """
 
     # sanitize the input
@@ -111,21 +151,22 @@ def auto_koopman(
         ), f"observable name {obs_type} is unknown (valid ones are {obs_types})"
     if isinstance(opt, str):
         assert (
-            opt in tuner_types
-        ), f"tuner name {opt} is unknown (valid ones are {tuner_types})"
+            opt in opt_types
+        ), f"tuner name {opt} is unknown (valid ones are {opt_types})"
 
     # convert the data to autokoopman trajectories
     if isinstance(training_data, TrajectoriesData):
-        pass
+        if not isinstance(training_data, UniformTimeTrajectoriesData):
+            training_data = training_data.interp_uniform_time(sampling_period)
     elif isinstance(training_data, dict):
-        training_data = TrajectoriesData(
+        training_data = UniformTimeTrajectoriesData(
             {
                 k: UniformTimeTrajectory(v, sampling_period=sampling_period)
                 for k, v in training_data.items()
             }
         )
     else:
-        training_data = TrajectoriesData(
+        training_data = UniformTimeTrajectoriesData(
             {
                 idx: UniformTimeTrajectory(di, sampling_period=sampling_period)
                 for idx, di in enumerate(training_data)

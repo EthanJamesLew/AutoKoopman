@@ -1,4 +1,4 @@
-from typing import Dict, Hashable, Sequence, Set, Tuple, Union
+from typing import Dict, Hashable, Sequence, Set, Tuple, Union, List
 
 import numpy as np
 import pandas as pd
@@ -20,7 +20,7 @@ class Trajectory:
         self._times = times
         self._states = states
         self._state_names = state_names
-        self._threshold = np.finfo(times.dtype).eps if threshold is None else threshold
+        self._threshold = 1e-12 if threshold is None else threshold
         assert self.dimension == len(
             self.names
         ), "dimension must match the length of state names!"
@@ -70,7 +70,7 @@ class Trajectory:
         ts = np.arange(
             np.min(self._times), np.max(self._times) + sampling_period, sampling_period
         )
-        return self.interp1d(ts)
+        return self.interp1d(ts).to_uniform_time_traj()
 
     def to_uniform_time_traj(self) -> "UniformTimeTrajectory":
         assert self.is_uniform_time, "trajectory must be uniform time to apply"
@@ -153,17 +153,31 @@ class UniformTimeTrajectory(Trajectory):
 
 
 class TrajectoriesData:
-    """a dataset of trajectories"""
+    """
+    A Dataset of Trajectories (Multiple Time Series Vectors)
+        This is a data access object (DAO) for datasets used to learn dynamical systems from observed trajectories. The
+        object supports
+
+        * **state / trajectory identifiers** trajectories can be accessed and manipulated by name
+        * **serialization** trajectory datasets can be read and saved from CSV files and Pandas DataFrames
+        * **interpolation** trajectories can be resampled in time (e.g. convert to uniform time for certain technique)
+    """
 
     traj_id_hname = "id"
     time_id_hname = "time"
 
     @staticmethod
-    def equal_lists(lists):
+    def equal_lists(lists: Sequence[List]):
+        """determine if all list are equal to one another"""
         return not lists or all(lists[0] == b for b in lists[1:])
 
     @classmethod
     def from_pandas(cls, data_df: pd.DataFrame, threshold=None):
+        """
+        Create TrajectoriesData DAO from Pandas DataFrame
+            To be a valid DataFrame the object must have a "time" field to record the sample time and an "id" field to distinguish
+            the different trajectories.
+        """
         traj_ids = set(data_df[cls.traj_id_hname])
         assert cls.traj_id_hname in set(data_df.columns) and cls.time_id_hname in set(
             data_df.columns
@@ -189,6 +203,11 @@ class TrajectoriesData:
 
     @classmethod
     def from_csv(cls, fname: str, threshold=None):
+        """
+        Create TrajectoriesData DAO from CSV File
+            To be a valid CSV the file must have a "time" field to record the sample time and an "id" field to distinguish
+            the different trajectories.
+        """
         """csv deserialization"""
         data_df = pd.read_csv(fname)
         return cls.from_pandas(data_df, threshold=threshold)

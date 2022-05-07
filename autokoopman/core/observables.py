@@ -8,16 +8,36 @@ from scipy.stats import cauchy, laplace
 
 
 class KoopmanObservable(abc.ABC):
-    """explicit mapping from state to Koopman observables"""
+    """
+    Koopman Observables Functions
+       These objects implement the mapping of the system state to the Koopman invariant space (explicitly).
+
+    References
+        Explanation of Koopman Observables
+           Brunton, S. L., & Kutz, J. N. (2022). Data-driven science and engineering: Machine learning, dynamical systems,
+           and control. Cambridge University Press. pp 260-261
+    """
 
     @abc.abstractmethod
     def obs_fcn(self, X: np.ndarray) -> np.ndarray:
+        """
+        Observables Function
+
+        :param X: system states
+        :returns: observables
+        """
         pass
 
     def __call__(self, X: np.ndarray) -> np.ndarray:
         return self.obs_fcn(X)
 
     def obs_grad(self, X: np.ndarray) -> np.ndarray:
+        """
+        Observables Gradient Function
+
+        :param X: system states
+        :returns: observables
+        """
         raise NotImplementedError
 
     def __or__(self, obs: "KoopmanObservable"):

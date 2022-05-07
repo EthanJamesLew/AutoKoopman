@@ -9,15 +9,15 @@
 
 
 \begin{document}
-	
-\noindent \textbf{Syntax:}	
+
+\noindent \textbf{Syntax:}
 \begin{equation*}
 	\begin{split}
 	\texttt{model} = \texttt{auto\_koopman(}&\texttt{data,type='rff',disc=True,opt='grid',fit='dmd',obs=100,} \\
 	& \texttt{len=(}10^{-5},10^5\texttt{),rank=(1,100),lay=3,neur=100,act='relu')}
 	\end{split}
 \end{equation*}
-	
+
 \noindent \textbf{Parameter:}
 
 \begin{itemize}
@@ -27,7 +27,7 @@
 			\item \texttt{'rff':} random Fourier feature observables
 			\item \texttt{'nn':} neural network observables
 			\item \texttt{'poly':} polynomial observables
-		\end{itemize} 
+		\end{itemize}
 	\item \texttt{disc:} discrete-time Koopman model (True) or continuous-time Koopman model (False)
 	\item \texttt{opt:} optimization algorithm used to tune the parameters in order to determine an optimal Koopman model
 		\begin{itemize}
@@ -50,13 +50,12 @@
 			\item \texttt{'tanh':} hyperbolic tangent activation function
 			\item \texttt{'sig':} sigmoid activation function
 		\end{itemize}
-\end{itemize}	
-	
-\noindent \textbf{Returns:}	
-	
+\end{itemize}
+
+\noindent \textbf{Returns:}
+
 \begin{itemize}
 	\item \texttt{model:} Koopman operator linearized model
-\end{itemize}	
-	
-\end{document}
+\end{itemize}
 
+\end{document}

@@ -1,0 +1,385 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>AutoKoopman &#8212; AutoKoopman 0.1b documentation</title>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="autokoopman" href="modules.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+
+
+    <!-- Google Analytics -->
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+
+    <div class="container-fluid" id="banner"></div>
+
+
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+
+
+<a class="navbar-brand" href="#">
+<p class="title">AutoKoopman</p>
+</a>
+
+
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 nav-item">
+ <a class="reference internal nav-link" href="modules.html">
+  autokoopman
+ </a>
+</li>
+
+
+</ul>
+      </div>
+
+    </div>
+
+    <div id="navbar-end">
+
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+    </nav>
+
+
+    <div class="container-xl">
+      <div class="row">
+
+
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+
+
+
+
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+
+
+              <div class="toc-item">
+
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#">
+   AutoKoopman
+  </a>
+  <ul class="visible nav section-nav flex-column">
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#outline">
+     Outline
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#overview">
+       Overview
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#user-story">
+       User Story
+      </a>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#library-features">
+       Library Features
+      </a>
+      <ul class="nav section-nav flex-column">
+       <li class="toc-h4 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#data-driven-system-linearization">
+         Data Driven System Linearization
+        </a>
+        <ul class="nav section-nav flex-column">
+         <li class="toc-h5 nav-item toc-entry">
+          <a class="reference internal nav-link" href="#kernel-methods">
+           Kernel Methods
+          </a>
+          <ul class="nav section-nav flex-column">
+           <li class="toc-h6 nav-item toc-entry">
+            <a class="reference internal nav-link" href="#random-fourier-features">
+             Random Fourier Features
+            </a>
+           </li>
+          </ul>
+         </li>
+         <li class="toc-h5 nav-item toc-entry">
+          <a class="reference internal nav-link" href="#deep-learning-methods">
+           Deep Learning Methods
+          </a>
+          <ul class="nav section-nav flex-column">
+           <li class="toc-h6 nav-item toc-entry">
+            <a class="reference internal nav-link" href="#autoencoder">
+             Autoencoder
+            </a>
+           </li>
+           <li class="toc-h6 nav-item toc-entry">
+            <a class="reference internal nav-link" href="#library-learning">
+             Library Learning
+            </a>
+           </li>
+          </ul>
+         </li>
+        </ul>
+       </li>
+      </ul>
+     </li>
+     <li class="toc-h3 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#examples-case-studies">
+       Examples / Case Studies
+      </a>
+      <ul class="nav section-nav flex-column">
+       <li class="toc-h4 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#benchmark-models">
+         Benchmark Models
+        </a>
+        <ul class="nav section-nav flex-column">
+         <li class="toc-h5 nav-item toc-entry">
+          <a class="reference internal nav-link" href="#steam">
+           Steam
+          </a>
+         </li>
+         <li class="toc-h5 nav-item toc-entry">
+          <a class="reference internal nav-link" href="#coupled-van-der-pol">
+           Coupled Van der Pol
+          </a>
+         </li>
+         <li class="toc-h5 nav-item toc-entry">
+          <a class="reference internal nav-link" href="#roessler">
+           Roessler
+          </a>
+         </li>
+         <li class="toc-h5 nav-item toc-entry">
+          <a class="reference internal nav-link" href="#biological">
+           Biological
+          </a>
+         </li>
+        </ul>
+       </li>
+       <li class="toc-h4 nav-item toc-entry">
+        <a class="reference internal nav-link" href="#f-16-fighting-falcon-gcas">
+         F-16 Fighting Falcon GCAS
+        </a>
+       </li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-contents">
+   Module Contents
+  </a>
+ </li>
+ <li class="toc-h1 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#indices-and-tables">
+   Indices and tables
+  </a>
+ </li>
+</ul>
+
+</nav>
+              </div>
+
+              <div class="toc-item">
+
+              </div>
+
+
+          </div>
+
+
+
+
+
+
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+
+              <div>
+
+  <section id="autokoopman">
+<h1>AutoKoopman<a class="headerlink" href="#autokoopman" title="Permalink to this headline">#</a></h1>
+<a class="reference external image-reference" href="https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml/badge.svg"><img alt="Conda CI Workflow" src="https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml/badge.svg" /></a>
+<section id="outline">
+<h2>Outline<a class="headerlink" href="#outline" title="Permalink to this headline">#</a></h2>
+<section id="overview">
+<h3>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">#</a></h3>
+<p>AutoKoopman is a python library for the use of Koopman operator methods for system analysis and control. The library presents a simple
+interface to learn Koopman linearized systems with reasonable defaults. Also, it presents a variety of linearization methods under a
+common class interfaces.</p>
+</section>
+<section id="user-story">
+<h3>User Story<a class="headerlink" href="#user-story" title="Permalink to this headline">#</a></h3>
+<p>A systems engineer / researcher who is in inexperienced in Koopman operator theory but wishes to leverage the benefit of a linearized system. The user may
+have measurements of their system with no prior model.</p>
+</section>
+<section id="library-features">
+<h3>Library Features<a class="headerlink" href="#library-features" title="Permalink to this headline">#</a></h3>
+<section id="data-driven-system-linearization">
+<h4>Data Driven System Linearization<a class="headerlink" href="#data-driven-system-linearization" title="Permalink to this headline">#</a></h4>
+<section id="kernel-methods">
+<h5>Kernel Methods<a class="headerlink" href="#kernel-methods" title="Permalink to this headline">#</a></h5>
+<section id="random-fourier-features">
+<h6>Random Fourier Features<a class="headerlink" href="#random-fourier-features" title="Permalink to this headline">#</a></h6>
+</section>
+</section>
+<section id="deep-learning-methods">
+<h5>Deep Learning Methods<a class="headerlink" href="#deep-learning-methods" title="Permalink to this headline">#</a></h5>
+<section id="autoencoder">
+<h6>Autoencoder<a class="headerlink" href="#autoencoder" title="Permalink to this headline">#</a></h6>
+</section>
+<section id="library-learning">
+<h6>Library Learning<a class="headerlink" href="#library-learning" title="Permalink to this headline">#</a></h6>
+</section>
+</section>
+</section>
+</section>
+<section id="examples-case-studies">
+<h3>Examples / Case Studies<a class="headerlink" href="#examples-case-studies" title="Permalink to this headline">#</a></h3>
+<section id="benchmark-models">
+<h4>Benchmark Models<a class="headerlink" href="#benchmark-models" title="Permalink to this headline">#</a></h4>
+<section id="steam">
+<h5>Steam<a class="headerlink" href="#steam" title="Permalink to this headline">#</a></h5>
+</section>
+<section id="coupled-van-der-pol">
+<h5>Coupled Van der Pol<a class="headerlink" href="#coupled-van-der-pol" title="Permalink to this headline">#</a></h5>
+</section>
+<section id="roessler">
+<h5>Roessler<a class="headerlink" href="#roessler" title="Permalink to this headline">#</a></h5>
+</section>
+<section id="biological">
+<h5>Biological<a class="headerlink" href="#biological" title="Permalink to this headline">#</a></h5>
+</section>
+</section>
+<section id="f-16-fighting-falcon-gcas">
+<h4>F-16 Fighting Falcon GCAS<a class="headerlink" href="#f-16-fighting-falcon-gcas" title="Permalink to this headline">#</a></h4>
+</section>
+</section>
+</section>
+</section>
+<section id="module-contents">
+<h1>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">#</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">autokoopman</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.html">autokoopman package</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">#</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+              </div>
+
+
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='right-next' id="next-link" href="modules.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">autokoopman</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+
+          </main>
+
+
+      </div>
+    </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2022, Ethan Lew.<br>
+</p>
+    </div>
+
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
+</p>
+    </div>
+
+  </div>
+</footer>
+  </body>
+</html>

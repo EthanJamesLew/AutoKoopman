@@ -1,0 +1,444 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>autokoopman.estimator package &#8212; AutoKoopman 0.1b documentation</title>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="autokoopman.tuner package" href="autokoopman.tuner.html" />
+    <link rel="prev" title="autokoopman.core package" href="autokoopman.core.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+
+
+    <!-- Google Analytics -->
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+
+    <div class="container-fluid" id="banner"></div>
+
+
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+
+
+<a class="navbar-brand" href="index.html">
+<p class="title">AutoKoopman</p>
+</a>
+
+
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="modules.html">
+  autokoopman
+ </a>
+</li>
+
+
+</ul>
+      </div>
+
+    </div>
+
+    <div id="navbar-end">
+
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+    </nav>
+
+
+    <div class="container-xl">
+      <div class="row">
+
+
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="autokoopman.html">
+   autokoopman package
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="autokoopman.benchmark.html">
+     autokoopman.benchmark package
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="autokoopman.core.html">
+     autokoopman.core package
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     autokoopman.estimator package
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="autokoopman.tuner.html">
+     autokoopman.tuner package
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+
+
+
+
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+
+
+              <div class="toc-item">
+
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#submodules">
+   Submodules
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-autokoopman.estimator.dmd">
+   autokoopman.estimator.dmd module
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-autokoopman.estimator.koopman">
+   autokoopman.estimator.koopman module
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-autokoopman.estimator.sindy">
+   autokoopman.estimator.sindy module
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-autokoopman.estimator">
+   Module contents
+  </a>
+ </li>
+</ul>
+
+</nav>
+              </div>
+
+              <div class="toc-item">
+
+              </div>
+
+
+          </div>
+
+
+
+
+
+
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+
+              <div>
+
+  <section id="autokoopman-estimator-package">
+<h1>autokoopman.estimator package<a class="headerlink" href="#autokoopman-estimator-package" title="Permalink to this headline">#</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">#</a></h2>
+</section>
+<section id="module-autokoopman.estimator.dmd">
+<span id="autokoopman-estimator-dmd-module"></span><h2>autokoopman.estimator.dmd module<a class="headerlink" href="#module-autokoopman.estimator.dmd" title="Permalink to this headline">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.estimator.dmd.DMDEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.dmd.</span></span><span class="sig-name descname"><span class="pre">DMDEstimator</span></span><a class="headerlink" href="#autokoopman.estimator.dmd.DMDEstimator" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="autokoopman.core.html#autokoopman.core.estimator.NextStepEstimator" title="autokoopman.core.estimator.NextStepEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">autokoopman.core.estimator.NextStepEstimator</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.estimator.dmd.DMDEstimator.fit_next_step">
+<span class="sig-name descname"><span class="pre">fit_next_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#autokoopman.estimator.dmd.DMDEstimator.fit_next_step" title="Permalink to this definition">#</a></dt>
+<dd><p>an alternative fit method that uses a trajectories data structure</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.estimator.dmd.DMDEstimator.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="autokoopman.core.html#autokoopman.core.system.System" title="autokoopman.core.system.System"><span class="pre">autokoopman.core.system.System</span></a></em><a class="headerlink" href="#autokoopman.estimator.dmd.DMDEstimator.model" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.estimator.dmd.MultiDMD">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.dmd.</span></span><span class="sig-name descname"><span class="pre">MultiDMD</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">svd_rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tlsq_rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rescale_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward_backward</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorted_eigs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.dmd.MultiDMD" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydmd.dmd.DMD</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.estimator.dmd.MultiDMD.fit_multi">
+<span class="sig-name descname"><span class="pre">fit_multi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.dmd.MultiDMD.fit_multi" title="Permalink to this definition">#</a></dt>
+<dd><p>Compute the Dynamic Modes Decomposition to the input data.
+:param X: the input snapshots.
+:type X: numpy.ndarray or iterable</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-autokoopman.estimator.koopman">
+<span id="autokoopman-estimator-koopman-module"></span><h2>autokoopman.estimator.koopman module<a class="headerlink" href="#module-autokoopman.estimator.koopman" title="Permalink to this headline">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.Estimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.koopman.</span></span><span class="sig-name descname"><span class="pre">Estimator</span></span><a class="headerlink" href="#autokoopman.estimator.koopman.Estimator" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>TODO: FIXME: maybe replace with scikit estimator</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.Estimator.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#autokoopman.estimator.koopman.Estimator.fit" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.Estimator.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#autokoopman.estimator.koopman.Estimator.predict" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.KoopmanDiscEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.koopman.</span></span><span class="sig-name descname"><span class="pre">KoopmanDiscEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.koopman.KoopmanDiscEstimator" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="autokoopman.core.html#autokoopman.core.estimator.NextStepEstimator" title="autokoopman.core.estimator.NextStepEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">autokoopman.core.estimator.NextStepEstimator</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.KoopmanDiscEstimator.fit_next_step">
+<span class="sig-name descname"><span class="pre">fit_next_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#autokoopman.estimator.koopman.KoopmanDiscEstimator.fit_next_step" title="Permalink to this definition">#</a></dt>
+<dd><p>an alternative fit method that uses a trajectories data structure</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.KoopmanDiscEstimator.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="autokoopman.core.html#autokoopman.core.system.System" title="autokoopman.core.system.System"><span class="pre">autokoopman.core.system.System</span></a></em><a class="headerlink" href="#autokoopman.estimator.koopman.KoopmanDiscEstimator.model" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.KoopmanDiscSystemEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.koopman.</span></span><span class="sig-name descname"><span class="pre">KoopmanDiscSystemEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observable_fcn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.observables.KoopmanObservable" title="autokoopman.core.observables.KoopmanObservable"><span class="pre">autokoopman.core.observables.KoopmanObservable</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.koopman.KoopmanDiscSystemEstimator" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.estimator.koopman.KoopmanSystemEstimator" title="autokoopman.estimator.koopman.KoopmanSystemEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">autokoopman.estimator.koopman.KoopmanSystemEstimator</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.KoopmanDiscSystemEstimator.fit_disc">
+<span class="sig-name descname"><span class="pre">fit_disc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#autokoopman.estimator.koopman.KoopmanDiscSystemEstimator.fit_disc" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.KoopmanDiscSystemEstimator.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.koopman.KoopmanDiscSystemEstimator.predict" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.KoopmanSystemEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.koopman.</span></span><span class="sig-name descname"><span class="pre">KoopmanSystemEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">observable_fcn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.observables.KoopmanObservable" title="autokoopman.core.observables.KoopmanObservable"><span class="pre">autokoopman.core.observables.KoopmanObservable</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.koopman.KoopmanSystemEstimator" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.estimator.koopman.Estimator" title="autokoopman.estimator.koopman.Estimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">autokoopman.estimator.koopman.Estimator</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.KoopmanSystemEstimator.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="headerlink" href="#autokoopman.estimator.koopman.KoopmanSystemEstimator.predict" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.dmd">
+<span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.koopman.</span></span><span class="sig-name descname"><span class="pre">dmd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.koopman.dmd" title="Permalink to this definition">#</a></dt>
+<dd><p>simple dynamic mode decomposition (dmd) implementation</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.evolve_modes">
+<span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.koopman.</span></span><span class="sig-name descname"><span class="pre">evolve_modes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ic</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.koopman.evolve_modes" title="Permalink to this definition">#</a></dt>
+<dd><p>time evolve modes of the DMD</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.get_linear_transform">
+<span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.koopman.</span></span><span class="sig-name descname"><span class="pre">get_linear_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xcp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">continuous</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.koopman.get_linear_transform" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.learned_dmd_sys">
+<span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.koopman.</span></span><span class="sig-name descname"><span class="pre">learned_dmd_sys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xcp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.koopman.learned_dmd_sys" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.learned_sys">
+<span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.koopman.</span></span><span class="sig-name descname"><span class="pre">learned_sys</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xcp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.koopman.learned_sys" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="autokoopman.estimator.koopman.requires_trained">
+<span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.koopman.</span></span><span class="sig-name descname"><span class="pre">requires_trained</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.koopman.requires_trained" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="module-autokoopman.estimator.sindy">
+<span id="autokoopman-estimator-sindy-module"></span><h2>autokoopman.estimator.sindy module<a class="headerlink" href="#module-autokoopman.estimator.sindy" title="Permalink to this headline">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.estimator.sindy.FourierSindy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.sindy.</span></span><span class="sig-name descname"><span class="pre">FourierSindy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.sindy.FourierSindy" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterMap" title="autokoopman.core.tuner.HyperparameterMap"><code class="xref py py-class docutils literal notranslate"><span class="pre">autokoopman.core.tuner.HyperparameterMap</span></code></a></p>
+<p>SINDy with hyperparameters for Fourier library</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.estimator.sindy.FourierSindy.get_model">
+<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hyperparams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.estimator.TrajectoryEstimator" title="autokoopman.core.estimator.TrajectoryEstimator"><span class="pre">autokoopman.core.estimator.TrajectoryEstimator</span></a></span></span><a class="headerlink" href="#autokoopman.estimator.sindy.FourierSindy.get_model" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.estimator.sindy.PolynomialSindy">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.sindy.</span></span><span class="sig-name descname"><span class="pre">PolynomialSindy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.sindy.PolynomialSindy" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterMap" title="autokoopman.core.tuner.HyperparameterMap"><code class="xref py py-class docutils literal notranslate"><span class="pre">autokoopman.core.tuner.HyperparameterMap</span></code></a></p>
+<p>SINDy with hyperparameters for polynomial library</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.estimator.sindy.PolynomialSindy.get_model">
+<span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hyperparams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.estimator.TrajectoryEstimator" title="autokoopman.core.estimator.TrajectoryEstimator"><span class="pre">autokoopman.core.estimator.TrajectoryEstimator</span></a></span></span><a class="headerlink" href="#autokoopman.estimator.sindy.PolynomialSindy.get_model" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.estimator.sindy.SindyEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.estimator.sindy.</span></span><span class="sig-name descname"><span class="pre">SindyEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sindy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">pysindy.pysindy.SINDy</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.estimator.sindy.SindyEstimator" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="autokoopman.core.html#autokoopman.core.estimator.TrajectoryEstimator" title="autokoopman.core.estimator.TrajectoryEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">autokoopman.core.estimator.TrajectoryEstimator</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.estimator.sindy.SindyEstimator.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">autokoopman.core.trajectory.TrajectoriesData</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#autokoopman.estimator.sindy.SindyEstimator.fit" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.estimator.sindy.SindyEstimator.model">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="autokoopman.core.html#autokoopman.core.system.ContinuousSystem" title="autokoopman.core.system.ContinuousSystem"><span class="pre">autokoopman.core.system.ContinuousSystem</span></a></em><a class="headerlink" href="#autokoopman.estimator.sindy.SindyEstimator.model" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.estimator.sindy.SindyEstimator.predict">
+<span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory" title="autokoopman.core.trajectory.Trajectory"><span class="pre">autokoopman.core.trajectory.Trajectory</span></a></span></span><a class="headerlink" href="#autokoopman.estimator.sindy.SindyEstimator.predict" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-autokoopman.estimator">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-autokoopman.estimator" title="Permalink to this headline">#</a></h2>
+</section>
+</section>
+
+
+              </div>
+
+
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="autokoopman.core.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">autokoopman.core package</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="autokoopman.tuner.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">autokoopman.tuner package</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+
+          </main>
+
+
+      </div>
+    </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2022, Ethan Lew.<br>
+</p>
+    </div>
+
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
+</p>
+    </div>
+
+  </div>
+</footer>
+  </body>
+</html>

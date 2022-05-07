@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>autokoopman package &#8212; AutoKoopman 0.1b documentation</title>
+
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="autokoopman.benchmark package" href="autokoopman.benchmark.html" />
+    <link rel="prev" title="autokoopman" href="modules.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+
+
+    <!-- Google Analytics -->
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+
+    <div class="container-fluid" id="banner"></div>
+
+
+    <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
+
+  <div id="navbar-start">
+
+
+<a class="navbar-brand" href="index.html">
+<p class="title">AutoKoopman</p>
+</a>
+
+
+  </div>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+
+  <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
+    <div id="navbar-center" class="mr-auto">
+
+      <div class="navbar-center-item">
+        <ul id="navbar-main-elements" class="navbar-nav">
+    <li class="toctree-l1 current active nav-item">
+ <a class="reference internal nav-link" href="modules.html">
+  autokoopman
+ </a>
+</li>
+
+
+</ul>
+      </div>
+
+    </div>
+
+    <div id="navbar-end">
+
+      <div class="navbar-end-item">
+        <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
+      </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+    </nav>
+
+
+    <div class="container-xl">
+      <div class="row">
+
+
+            <!-- Only show if we have sidebars configured, else just a small margin  -->
+            <div class="col-12 col-md-3 bd-sidebar">
+              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <div class="bd-toc-item active">
+    <ul class="current nav bd-sidenav">
+ <li class="toctree-l1 current active has-children">
+  <a class="current reference internal" href="#">
+   autokoopman package
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="autokoopman.benchmark.html">
+     autokoopman.benchmark package
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="autokoopman.core.html">
+     autokoopman.core package
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="autokoopman.estimator.html">
+     autokoopman.estimator package
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="autokoopman.tuner.html">
+     autokoopman.tuner package
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+  </div>
+</nav>
+              </div>
+              <div class="sidebar-end-items">
+              </div>
+            </div>
+
+
+
+
+          <div class="d-none d-xl-block col-xl-2 bd-toc">
+
+
+              <div class="toc-item">
+
+<div class="tocsection onthispage mt-5 pt-1 pb-3">
+    <i class="fas fa-list"></i> On this page
+</div>
+
+<nav id="bd-toc-nav">
+    <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#subpackages">
+   Subpackages
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#submodules">
+   Submodules
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-autokoopman.autokoopman">
+   autokoopman.autokoopman module
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-autokoopman">
+   Module contents
+  </a>
+ </li>
+</ul>
+
+</nav>
+              </div>
+
+              <div class="toc-item">
+
+              </div>
+
+
+          </div>
+
+
+
+
+
+
+          <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
+
+              <div>
+
+  <section id="autokoopman-package">
+<h1>autokoopman package<a class="headerlink" href="#autokoopman-package" title="Permalink to this headline">#</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="autokoopman.benchmark.html">autokoopman.benchmark package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.benchmark.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.benchmark.html#module-autokoopman.benchmark.fhn">autokoopman.benchmark.fhn module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.benchmark.html#module-autokoopman.benchmark.lalo20">autokoopman.benchmark.lalo20 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.benchmark.html#module-autokoopman.benchmark.prde20">autokoopman.benchmark.prde20 module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.benchmark.html#module-autokoopman.benchmark">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="autokoopman.core.html">autokoopman.core package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.core.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.core.html#module-autokoopman.core.estimator">autokoopman.core.estimator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.core.html#module-autokoopman.core.format">autokoopman.core.format module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.core.html#module-autokoopman.core.observables">autokoopman.core.observables module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.core.html#module-autokoopman.core.system">autokoopman.core.system module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.core.html#module-autokoopman.core.trajectory">autokoopman.core.trajectory module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.core.html#module-autokoopman.core.tuner">autokoopman.core.tuner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.core.html#module-autokoopman.core.visualizer">autokoopman.core.visualizer module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.core.html#module-autokoopman.core">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="autokoopman.estimator.html">autokoopman.estimator package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.estimator.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.estimator.html#module-autokoopman.estimator.dmd">autokoopman.estimator.dmd module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.estimator.html#module-autokoopman.estimator.koopman">autokoopman.estimator.koopman module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.estimator.html#module-autokoopman.estimator.sindy">autokoopman.estimator.sindy module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.estimator.html#module-autokoopman.estimator">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="autokoopman.tuner.html">autokoopman.tuner package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.tuner.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.tuner.html#module-autokoopman.tuner.gridsearch">autokoopman.tuner.gridsearch module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.tuner.html#module-autokoopman.tuner.montecarlo">autokoopman.tuner.montecarlo module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.tuner.html#module-autokoopman.tuner">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">#</a></h2>
+</section>
+<section id="module-autokoopman.autokoopman">
+<span id="autokoopman-autokoopman-module"></span><h2>autokoopman.autokoopman module<a class="headerlink" href="#module-autokoopman.autokoopman" title="Permalink to this headline">#</a></h2>
+<p>Main AutoKoopman Function (Convenience Function)</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="autokoopman.autokoopman.auto_koopman">
+<span class="sig-prename descclassname"><span class="pre">autokoopman.autokoopman.</span></span><span class="sig-name descname"><span class="pre">auto_koopman</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">training_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">autokoopman.core.trajectory.TrajectoriesData</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterTuner" title="autokoopman.core.tuner.HyperparameterTuner"><span class="pre">autokoopman.core.tuner.HyperparameterTuner</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'monte-carlo'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_opt_iter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_splits</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="autokoopman.core.html#autokoopman.core.observables.KoopmanObservable" title="autokoopman.core.observables.KoopmanObservable"><span class="pre">autokoopman.core.observables.KoopmanObservable</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'rff'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rank</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_param_slices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lengthscale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(0.0001,</span> <span class="pre">10.0)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.autokoopman.auto_koopman" title="Permalink to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>AutoKoopman Convenience Function</dt><dd><p>This is an interface to the dynamical systems learning functionality of the AutoKoopman library. The user can select
+estimators classes at a high level. A tuner can be chosen to find the best hyperparameter values.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>training_data</strong> – training trajectories data from which to learn the system</p></li>
+<li><p><strong>sampling_period</strong> – (for discrete time system) sampling period of training data</p></li>
+<li><p><strong>opt</strong> – hyperparameter optimizer {“grid”, “monte-carlo”}</p></li>
+<li><p><strong>max_opt_iter</strong> – maximum iterations for the tuner to use</p></li>
+<li><p><strong>n_splits</strong> – (for optimizers) if set, switches to k-folds bootstrap validation for the hyperparameter tuning. This is useful for things like RFF tuning where the results have noise.</p></li>
+<li><p><strong>obs_type</strong> – (for koopman) koopman observables to use {“rff”, “quadratic”, “id”}</p></li>
+<li><p><strong>n_obs</strong> – (for koopman) number of observables to use (if applicable)</p></li>
+<li><p><strong>rank</strong> – (for koopman) rank range (start, stop) or (start, stop, step)</p></li>
+<li><p><strong>grid_param_slices</strong> – (for grid tuner) resolution to slice continuous valued parameters into</p></li>
+<li><p><strong>lengthscale</strong> – (for RFF observables) RFF kernel lengthscale</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tuned Model and Metadata</p>
+</dd>
+</dl>
+<dl>
+<dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">autokoopman.benchmark.fhn</span> <span class="kn">import</span> <span class="n">FitzHughNagumo</span>
+<span class="kn">from</span> <span class="nn">autokoopman</span> <span class="kn">import</span> <span class="n">auto_koopman</span>
+
+<span class="c1"># let&#39;s build an example dataset</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">fhn</span><span class="o">.</span><span class="n">solve_ivps</span><span class="p">(</span>
+    <span class="n">initial_states</span><span class="o">=</span><span class="p">[[</span><span class="mf">0.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">4.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.4</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">]],</span>
+    <span class="n">tspan</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">sampling_period</span><span class="o">=</span><span class="mf">0.01</span>
+<span class="p">)</span>
+
+<span class="c1"># learn a system</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">auto_koopman</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span>
+    <span class="n">obs_type</span><span class="o">=</span><span class="s2">&quot;rff&quot;</span><span class="p">,</span>
+    <span class="n">opt</span><span class="o">=</span><span class="s2">&quot;grid&quot;</span><span class="p">,</span>
+    <span class="n">n_obs</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">max_opt_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">grid_param_slices</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">n_splits</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">rank</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># results = {&#39;tuned_model&#39;: &lt;StepDiscreteSystem Dimensions: 2 States: [X1, X2]&gt;,</span>
+<span class="c1"># &#39;model_class&#39;: &#39;koopman-rff&#39;,</span>
+<span class="c1"># &#39;hyperparameters&#39;: [&#39;gamma&#39;, &#39;rank&#39;],</span>
+<span class="c1"># &#39;hyperparameter_values&#39;: (0.004641588833612782, 21),</span>
+<span class="c1"># &#39;tuner_score&#39;: 0.14723275426562,</span>
+<span class="c1"># &#39;tuner&#39;: &lt;autokoopman.tuner.gridsearch.GridSearchTuner at 0x7f0f92f95580&gt;,</span>
+<span class="c1"># &#39;estimator&#39;: &lt;autokoopman.estimator.koopman.KoopmanDiscEstimator at 0x7f0f92ff0610&gt;}</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-autokoopman">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-autokoopman" title="Permalink to this headline">#</a></h2>
+</section>
+</section>
+
+
+              </div>
+
+
+              <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="modules.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title">autokoopman</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="autokoopman.benchmark.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">autokoopman.benchmark package</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+
+          </main>
+
+
+      </div>
+    </div>
+
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+<footer class="footer mt-5 mt-md-0">
+  <div class="container">
+
+    <div class="footer-item">
+      <p class="copyright">
+    &copy; Copyright 2022, Ethan Lew.<br>
+</p>
+    </div>
+
+    <div class="footer-item">
+      <p class="sphinx-version">
+Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
+</p>
+    </div>
+
+  </div>
+</footer>
+  </body>
+</html>

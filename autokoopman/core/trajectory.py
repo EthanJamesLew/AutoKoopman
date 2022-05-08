@@ -1,4 +1,4 @@
-from typing import Dict, Hashable, Sequence, Set, Tuple, Union, List
+from typing import Dict, Hashable, Sequence, Set, Tuple, Union, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -13,13 +13,20 @@ class Trajectory:
         self,
         times: np.ndarray,
         states: np.ndarray,
-        state_names: Sequence[str],
+        state_names: Optional[Sequence[str]] = None,
         threshold=None,
     ):
         assert times.ndim == 1, "times must be a 1d array"
         self._times = times
         self._states = states
-        self._state_names = state_names
+        if state_names is None:
+            assert (
+                len(np.array(self._states).shape) == 2
+            ), f"states must be able to be converted to 2D numpy array"
+            l = np.array(self._states).shape[1]
+            self._states = [f"x{idx}" for idx in range(l)]
+        else:
+            self._state_names = state_names
         self._threshold = 1e-12 if threshold is None else threshold
         assert self.dimension == len(
             self.names
@@ -127,7 +134,7 @@ class UniformTimeTrajectory(Trajectory):
         self,
         states: np.ndarray,
         sampling_period: float,
-        state_names: Sequence[str],
+        state_names: Optional[Sequence[str]] = None,
         start_time=0.0,
         threshold=None,
     ):

@@ -27,6 +27,32 @@ class LaubLoomis(asys.SymbolicContinuousSystem):
 
         The system is asymptotically stable and the equilibrium is the origin.
 
+    Example:
+        .. code-block:: python
+
+            import autokoopman.benchmark.lalo20 as lalo
+
+            sys = lalo.LaubLoomis()
+            traj = sys.solve_ivp(
+                initial_state=[1.2, 1.05, 1.5, 2.4, 1.0, 0.1, 0.45],
+                tspan=(0.0, 20.0),
+                sampling_period=0.1
+            )
+            traj.states
+            # array([[1.2       , 1.05      , 1.5       , ..., 1.        , 0.1       ,
+            #    0.45      ],
+            #   [1.29071503, 1.11992937, 1.39927254, ..., 0.87447922, 0.10557573,
+            #    0.39928611],
+            #   [1.3600053 , 1.15715223, 1.29895902, ..., 0.79376949, 0.11169569,
+            #    0.35464381],
+            #   ...,
+            #   [0.89473053, 0.36803281, 0.58535322, ..., 0.22894195, 0.08595487,
+            #    0.28538999],
+            #   [0.89608814, 0.37001616, 0.58517889, ..., 0.22991276, 0.08609767,
+            #    0.28511588],
+            #   [0.89729548, 0.37195084, 0.58490685, ..., 0.23082109, 0.0862578 ,
+            #    0.28478635]])
+
     References
         Geretti, L., Sandretto, J. A. D., Althoff, M., Benet, L., Chapoutot, A., Chen, X., ... & Schilling, C. (2020).
         ARCH-COMP20 category report: Continuous and hybrid systems with nonlinear dynamics. EPiC Series in Computing, 74, 49-75. pp 59

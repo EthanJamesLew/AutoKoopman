@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="autokoopman",
-    version="0.1",
+    version="0.1b",
     # TODO: change this
     author="Ethan Lew",
     author_email="ethanlew16@gmail.com",
@@ -20,11 +20,13 @@ setuptools.setup(
     ],
     package_dir={"": ".", "autokoopman": "autokoopman"},
     install_requires=[
-        "numpy>=1.20.0",
-        "matplotlib>=3.4.3",
-        "scipy>=1.7.1",
-        "tqdm>=4.62.2",
+        "numpy>=1.19.0",
+        "matplotlib>=3.3.4",
+        "scipy>=1.5.4",
+        "sympy >= 1.9",
+        "pandas >= 1.1.5",
+        "scikit-learn >= 1.0.2" "tqdm>=4.62.2",
     ],
     packages=setuptools.find_packages(where="."),
-    python_requires=">=3.9",
+    python_requires=">=3.8",
 )

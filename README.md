@@ -14,6 +14,18 @@ have measurements of their system with no prior model.
 * System Prediction - the user can simulate a model learned from their measurements. They use popular techniques like DMD and SINDy out of the box, and implement their own methods to plug into the provided analysis infrastructure (e.g. hyperparameter optimization, visualization).
 * System Linearization - the user can get a linear representation of their system in its original states or koopman observables. They can use this linear form to perform tasks like controller synthesis and system reachability.
 
+## Installation
+
+The module requires python 3.8 or higher. With pip installed, run
+```shell
+pip install .
+```
+at the repo root. Run
+```shell
+python -c "import autokoopman"
+```
+to ensure that the module can be imported.
+
 ## Examples
 
 ### Complete Example

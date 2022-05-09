@@ -1,5 +1,5 @@
 import abc
-from typing import Callable, Sequence, Tuple
+from typing import Callable, Sequence, Tuple, Optional, Union
 
 import numpy as np
 import scipy.integrate as scint  # type: ignore
@@ -15,20 +15,35 @@ class System(abc.ABC):
         self,
         initial_state: np.ndarray,
         tspan: Tuple[float, float],
+        teval: Optional[np.ndarray] = None,
         sampling_period: float = 0.1,
-    ) -> atraj.UniformTimeTrajectory:
+    ) -> Union[atraj.Trajectory, atraj.UniformTimeTrajectory]:
+        """
+        Solve the initial value (IV) problem
+            Given a system with a state space, specify how the system evolves with time given the initial conditions
+            of the problem. The solution of a particular IV returns a trajectory over time teval if specified, or
+            uniformly sampled over a time span given a sampling period.
+
+        :param initial_state: IV state of system
+        :param tspan: (if no teval is set) timespan to evolve system from iv (starting at tspan[0])
+        :param teval: (optional) values of time sample the IVP trajectory
+        :param sampling_period: (if no teval is set) sampling period of solution
+
+        :returns: TimeTrajectory if teval is set, or UniformTimeTrajectory if not
+        """
         raise NotImplementedError
 
     def solve_ivps(
         self,
         initial_states: np.ndarray,
         tspan: Tuple[float, float],
+        teval: Optional[np.ndarray] = None,
         sampling_period: float = 0.1,
-    ) -> atraj.UniformTimeTrajectoriesData:
+    ) -> Union[atraj.UniformTimeTrajectoriesData, atraj.TrajectoriesData]:
         ret = {}
         for idx, state in enumerate(initial_states):
-            ret[idx] = self.solve_ivp(state, tspan, sampling_period)
-        return atraj.UniformTimeTrajectoriesData(ret)  # type: ignore
+            ret[idx] = self.solve_ivp(state, tspan, teval, sampling_period)
+        return atraj.UniformTimeTrajectoriesData(ret) if teval is None else atraj.TrajectoriesData(ret)  # type: ignore
 
     @property
     @abc.abstractmethod
@@ -44,37 +59,67 @@ class System(abc.ABC):
 
 
 class ContinuousSystem(System):
-    """a continuous time system with defined gradient"""
+    """
+    Continuous Time System
+        In this case, a CT system is a system whose evolution function is defined by a gradient.
+    """
 
     def solve_ivp(
         self,
         initial_state: np.ndarray,
         tspan: Tuple[float, float],
+        teval: Optional[np.ndarray] = None,
         sampling_period: float = 0.1,
-    ) -> atraj.UniformTimeTrajectory:
-        sol = scint.solve_ivp(
-            self.gradient,
-            tspan,
-            initial_state,
-            # TODO: this is hacky
-            t_eval=np.arange(
-                tspan[0], tspan[-1] + sampling_period - 1e-10, sampling_period
-            ),
-        )
-        return atraj.UniformTimeTrajectory(
-            sol.y.T, sampling_period, self.names, tspan[0]
-        )
+    ) -> Union[atraj.Trajectory, atraj.UniformTimeTrajectory]:
+        """
+        Solve the initial value (IV) problem for Continuous Time Systems
+            Given a system with a state space, specify how the system evolves with time given the initial conditions
+            of the problem. The solution of a particular IV returns a trajectory over time teval if specified, or
+            uniformly sampled over a time span given a sampling period.
+
+            A differential equation of the form :math:`\dot X_t = \operatorname{grad}(t, X_t)`.
+
+        :param initial_state: IV state of system
+        :param tspan: (if no teval is set) timespan to evolve system from iv (starting at tspan[0])
+        :param teval: (optional) values of time sample the IVP trajectory
+        :param sampling_period: (if no teval is set) sampling period of solution
+
+        :returns: TimeTrajectory if teval is set, or UniformTimeTrajectory if not
+        """
+        if teval is None:
+            sol = scint.solve_ivp(
+                self.gradient,
+                tspan,
+                initial_state,
+                # TODO: this is hacky
+                t_eval=np.arange(
+                    tspan[0], tspan[-1] + sampling_period - 1e-10, sampling_period
+                ),
+            )
+            return atraj.UniformTimeTrajectory(
+                sol.y.T, sampling_period, self.names, tspan[0]
+            )
+        else:
+            sol = scint.solve_ivp(
+                self.gradient,
+                (min(teval), max(teval)),
+                initial_state,
+                # TODO: this is hacky
+                t_eval=teval,
+            )
+            return atraj.Trajectory(sol.t, sol.y.T, self.names)
 
     def solve_ivps(
         self,
         initial_states: np.ndarray,
         tspan: Tuple[float, float],
+        teval: Optional[np.ndarray] = None,
         sampling_period: float = 0.1,
-    ) -> atraj.UniformTimeTrajectoriesData:
+    ) -> Union[atraj.UniformTimeTrajectoriesData, atraj.TrajectoriesData]:
         ret = {}
         for idx, state in enumerate(initial_states):
-            ret[idx] = self.solve_ivp(state, tspan, sampling_period)
-        return atraj.UniformTimeTrajectoriesData(ret)  # type: ignore
+            ret[idx] = self.solve_ivp(state, tspan, teval, sampling_period)
+        return atraj.UniformTimeTrajectoriesData(ret) if teval is None else atraj.TrajectoriesData(ret)  # type: ignore
 
     @abc.abstractmethod
     def gradient(self, time: float, state: np.ndarray) -> np.ndarray:
@@ -82,20 +127,52 @@ class ContinuousSystem(System):
 
 
 class DiscreteSystem(System):
+    """
+    Discrete Time System
+        In this case, a CT system is a system whose evolution function is defined by a next step function. For IVP, the
+        discrete time can be related to continuous time via a sampling period. This trajectory can be interpolated to
+        evaluate time points nonuniformly.
+    """
+
     def solve_ivp(
         self,
         initial_state: np.ndarray,
         tspan: Tuple[float, float],
+        teval: Optional[np.ndarray] = None,
         sampling_period: float = 0.1,
-    ) -> atraj.UniformTimeTrajectory:
-        times = np.arange(tspan[0], tspan[1] + sampling_period, sampling_period)
-        states = np.zeros((len(times), len(self.names)))
-        states[0] = np.array(initial_state).flatten()
-        for idx, time in enumerate(times[1:]):
-            states[idx + 1] = self.step(float(time), states[idx]).flatten()
-        return atraj.UniformTimeTrajectory(
-            states, sampling_period, self.names, tspan[0]
-        )
+    ) -> Union[atraj.Trajectory, atraj.UniformTimeTrajectory]:
+        """
+        Solve the initial value (IV) problem for Discrete Time Systems
+            Given a system with a state space, specify how the system evolves with time given the initial conditions
+            of the problem. The solution of a particular IV returns a trajectory over time teval if specified, or
+            uniformly sampled over a time span given a sampling period.
+
+            A difference equation of the form :math:`X_{t+1} = \operatorname{step}(t, X_t)`.
+
+        :param initial_state: IV state of system
+        :param tspan: (if no teval is set) timespan to evolve system from iv (starting at tspan[0])
+        :param teval: (optional) values of time sample the IVP trajectory
+        :param sampling_period: (if no teval is set) sampling period of solution
+
+        :returns: TimeTrajectory if teval is set, or UniformTimeTrajectory if not
+        """
+        if teval is None:
+            times = np.arange(tspan[0], tspan[1] + sampling_period, sampling_period)
+            states = np.zeros((len(times), len(self.names)))
+            states[0] = np.array(initial_state).flatten()
+            for idx, time in enumerate(times[1:]):
+                states[idx + 1] = self.step(float(time), states[idx]).flatten()
+            return atraj.UniformTimeTrajectory(
+                states, sampling_period, self.names, tspan[0]
+            )
+        else:
+            times = np.arange(min(teval), max(teval) + sampling_period, sampling_period)
+            states = np.zeros((len(times), len(self.names)))
+            states[0] = np.array(initial_state).flatten()
+            for idx, time in enumerate(times[1:]):
+                states[idx + 1] = self.step(float(time), states[idx]).flatten()
+            traj = atraj.Trajectory(times, states, self.names)
+            return traj.interp1d(teval)
 
     @abc.abstractmethod
     def step(self, time: float, state: np.ndarray) -> np.ndarray:

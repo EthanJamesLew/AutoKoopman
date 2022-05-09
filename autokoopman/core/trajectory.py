@@ -147,6 +147,16 @@ class UniformTimeTrajectory(Trajectory):
 
     @property
     def sampling_period(self) -> float:
+        """
+        Sampling Period
+            A sampling period allows the trajectories to relate to discrete and continuous time signals. Given a
+            discrete time signal :math:`x_d`, it relates to an analog signal :math:`x_a` by a sampling time
+            :math:`T_s`,
+
+            .. math::
+
+                x_a(n T_s) = x_d(n)
+        """
         return self._sampling_period
 
     @property
@@ -166,6 +176,7 @@ class TrajectoriesData:
         object supports
 
         * **state / trajectory identifiers** trajectories can be accessed and manipulated by name
+        * **iteration** the trajectories can be iterated through
         * **serialization** trajectory datasets can be read and saved from CSV files and Pandas DataFrames
         * **interpolation** trajectories can be resampled in time (e.g. convert to uniform time for certain technique)
     """
@@ -175,32 +186,62 @@ class TrajectoriesData:
 
     @staticmethod
     def equal_lists(lists: Sequence[List]):
-        """determine if all list are equal to one another"""
+        """
+        List Equality
+            In a sequence of lists, determine if all list are equal to one another.
+        """
         return not lists or all(lists[0] == b for b in lists[1:])
 
     @classmethod
-    def from_pandas(cls, data_df: pd.DataFrame, threshold=None):
+    def from_pandas(
+        cls, data_df: pd.DataFrame, threshold=None, traj_id="id", time_id="time"
+    ) -> "TrajectoriesData":
         """
         Create TrajectoriesData DAO from Pandas DataFrame
             To be a valid DataFrame the object must have a "time" field to record the sample time and an "id" field to distinguish
             the different trajectories.
+
+        :param data_df: Pandas Dataframe to convert to trajectories.
+        :param threshold: trajectories threshold value.
+        :param traj_id: column name for trajectory identifier.
+        :param time_id: column name for time identifier.
+
+        :returns: TrajectoriesData
+
+        Examples
+            .. code-block:: python
+
+                import autokoopman.core.trajectory as atraj
+                import pandas as pd
+
+                # create example dataframe
+                t = np.linspace(0, 1.0, 10)
+                my_df = pd.DataFrame(
+                    columns=["time", "state", "id"],
+                    data=np.array([
+                        t,
+                        np.sin(t),
+                        np.ones(shape=t.shape)
+                    ]).T
+                )
+
+                # create TrajectoriesData from the DataFrame
+                trajs = atraj.TrajectoriesData.from_pandas(my_df)
         """
-        traj_ids = set(data_df[cls.traj_id_hname])
-        assert cls.traj_id_hname in set(data_df.columns) and cls.time_id_hname in set(
-            data_df.columns
-        ), (f"csv must have {cls.traj_id_hname} " f"and {cls.time_id_hname} fields")
+        traj_ids = set(data_df[traj_id])
+        assert traj_id in set(data_df.columns) and time_id in set(data_df.columns), (
+            f"csv must have {traj_id} " f"and {time_id} fields"
+        )
         assert len(data_df.columns) > 2, "csv has to have more than two columns"
         tidx, sidx = (
-            list(data_df.columns).index(cls.time_id_hname),
-            list(data_df.columns).index(cls.traj_id_hname),
+            list(data_df.columns).index(time_id),
+            list(data_df.columns).index(traj_id),
         )
         state_names = list(data_df.columns)[tidx + 1 : sidx]
         trajs = {
             uvi: Trajectory(
-                data_df[data_df[cls.traj_id_hname] == uvi][
-                    cls.time_id_hname
-                ].to_numpy(),
-                data_df[data_df[cls.traj_id_hname] == uvi][state_names].to_numpy(),
+                data_df[data_df[traj_id] == uvi][time_id].to_numpy(),
+                data_df[data_df[traj_id] == uvi][state_names].to_numpy(),
                 state_names,
                 threshold=threshold,
             )
@@ -209,17 +250,48 @@ class TrajectoriesData:
         return cls(trajs)
 
     @classmethod
-    def from_csv(cls, fname: str, threshold=None):
+    def from_csv(cls, fname: str, threshold=None, traj_id="id", time_id="time"):
         """
         Create TrajectoriesData DAO from CSV File
             To be a valid CSV the file must have a "time" field to record the sample time and an "id" field to distinguish
             the different trajectories.
-        """
-        """csv deserialization"""
-        data_df = pd.read_csv(fname)
-        return cls.from_pandas(data_df, threshold=threshold)
 
-    def to_pandas(self):
+        :param fname: CSV filename (path included).
+        :param threshold: trajectories threshold value.
+        :param traj_id: column name for trajectory identifier.
+        :param time_id: column name for time identifier.
+
+        :returns: TrajectoriesData
+
+        Examples
+            .. code-block:: python
+
+                import autokoopman.core.trajectory as atraj
+
+                trajs = atraj.TrajectoriesData.from_csv("./path/my_csv.csv")
+        """
+        data_df = pd.read_csv(fname)
+        return cls.from_pandas(
+            data_df, threshold=threshold, traj_id=traj_id, time_id=time_id
+        )
+
+    def to_pandas(self) -> pd.DataFrame:
+        """
+        Convert to Pandas DataFrame
+
+        Examples
+            .. code-block:: python
+
+                import autokoopman.benchmark.prde20 as prde
+
+                sys = prde.ProdDestr()
+                trajs = sys.solve_ivps(
+                    initial_states=[[9.98, 0.01, 0.01]],
+                    tspan=(0.0, 20.0),
+                    sampling_period=0.01
+                )
+                trajs.to_pandas()
+        """
         # form the dataframe
         serial_data = np.vstack(
             [
@@ -239,7 +311,22 @@ class TrajectoriesData:
         return pd.DataFrame(columns=columns, data=serial_data)
 
     def to_csv(self, fname: str):
-        """csv serialization"""
+        """
+        Convert to CSV File (serialization)
+
+        Examples
+            .. code-block:: python
+
+                import autokoopman.benchmark.prde20 as prde
+
+                sys = prde.ProdDestr()
+                trajs = sys.solve_ivps(
+                    initial_states=[[9.98, 0.01, 0.01]],
+                    tspan=(0.0, 20.0),
+                    sampling_period=0.01
+                )
+                trajs.to_csv()
+        """
         df = self.to_pandas()
         # write to csv
         df.to_csv(fname, index=False)
@@ -313,6 +400,16 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
 
     @property
     def sampling_period(self) -> float:
+        """
+        Sampling Period
+            A sampling period allows the trajectories to relate to discrete and continuous time signals. Given a
+            discrete time signal :math:`x_d`, it relates to an analog signal :math:`x_a` by a sampling time
+            :math:`T_s`,
+
+            .. math::
+
+                x_a(n T_s) = x_d(n)
+        """
         return [
             v.sampling_period
             for _, v in self._trajs.items()
@@ -320,15 +417,73 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
         ][0]
 
     @classmethod
-    def from_pandas(cls, data_df: pd.DataFrame, threshold=None):
-        """csv deserialization"""
-        traj_data = super().from_pandas(data_df, threshold=threshold)
+    def from_pandas(
+        cls, data_df: pd.DataFrame, threshold=None, time_id="time", traj_id="id"
+    ):
+        """
+        Create UniformTimeTrajectoriesData DAO from Pandas DataFrame
+            To be a valid DataFrame the object must have a "time" field to record the sample time and an "id" field to distinguish
+            the different trajectories.
+
+        :param data_df: Pandas Dataframe to convert to trajectories.
+        :param threshold: trajectories threshold value.
+        :param traj_id: column name for trajectory identifier.
+        :param time_id: column name for time identifier.
+
+        :returns: TrajectoriesData
+
+        Examples
+            .. code-block:: python
+
+                import autokoopman.core.trajectory as atraj
+                import pandas as pd
+
+                # create example dataframe
+                t = np.linspace(0, 1.0, 10)
+                my_df = pd.DataFrame(
+                    columns=["time", "state", "id"],
+                    data=np.array([
+                        t,
+                        np.sin(t),
+                        np.ones(shape=t.shape)
+                    ]).T
+                )
+
+                # create UniformTimeTrajectoriesData from the DataFrame
+                trajs = atraj.UniformTimeTrajectoriesData.from_pandas(my_df)
+        """
+        traj_data = super().from_pandas(
+            data_df, threshold=threshold, time_id=time_id, traj_id=traj_id
+        )
         for k, v in traj_data._trajs.items():
             assert v.is_uniform_time, f"{k} is not uniform time"
         return cls({k: v.to_uniform_time_traj() for k, v in traj_data._trajs.items()})
 
     @property
     def next_step_matrices(self) -> Tuple[np.ndarray, np.ndarray]:
+        r"""
+        Next Step Snapshot Matrices
+            Return the two "snapshot matrices" :math:`\mathbf X, \mathbf X'` of observations :math:`\{x_1, x_2, ..., x_n \}`,
+
+            .. math::
+
+                \mathbf X = \begin{bmatrix} x_1 && x_2 && ... && x_{n-1}  \end{bmatrix}, \quad \mathbf X = \begin{bmatrix} x_2 && x_3 && ... && x_{n}  \end{bmatrix}
+
+            Note this is useful for DMD techniques where the relationship
+
+            .. math::
+
+                \mathbf X' \approx A \mathbf X
+
+            is used. Importantly, note that the observations are column vectors, which is counter to convention commonly
+            used in vector processing.
+
+        :returns: tuple of (:math:`\mathbf X, \mathbf X'`).
+
+        References
+            Brunton, S. L., & Kutz, J. N. (2022). Data-driven science and engineering: Machine learning,
+            dynamical systems, and control. Cambridge University Press. pp 236-7
+        """
         X = np.vstack([x.states[:-1, :] for _, x in self._trajs.items()]).T
 
         Xp = np.vstack([x.states[1:, :] for _, x in self._trajs.items()]).T

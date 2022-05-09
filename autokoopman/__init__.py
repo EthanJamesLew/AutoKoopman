@@ -8,6 +8,7 @@ __maintainer__ = "Ethan Lew"
 __email__ = "ethanlew16@gmail.com"
 __status__ = "Prototype"
 
+from autokoopman.autokoopman import auto_koopman
 
 from autokoopman.core.system import (
     ContinuousSystem,

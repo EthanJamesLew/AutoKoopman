@@ -48,7 +48,7 @@ class GridSearchTuner(atuner.HyperparameterTuner):
         nattempts=100,
         scoring_func: Callable[
             [TrajectoriesData, TrajectoriesData], float
-        ] = TrajectoryScoring.total_score,
+        ] = TrajectoryScoring.end_point_score,
     ) -> TuneResults:
         parameters = self.make_grid(self._parameter_model.parameter_space, self.n_samps)
         sampling = self.tune_sampling(

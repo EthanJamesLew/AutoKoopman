@@ -4,7 +4,11 @@ from typing import Sequence, Callable, TypedDict, Any
 import numpy as np
 
 from autokoopman.core.estimator import TrajectoryEstimator
-from autokoopman.core.trajectory import TrajectoriesData
+from autokoopman.core.trajectory import (
+    TrajectoriesData,
+    UniformTimeTrajectory,
+    UniformTimeTrajectoriesData,
+)
 from autokoopman.core.format import _clip_list
 from sklearn.model_selection import KFold
 
@@ -150,7 +154,10 @@ class TrajectoryScoring:
 
 class HyperparameterTuner(abc.ABC):
     """
-    with training data and a model, determine ideal hyperparameters
+    Tune a HyperparameterMap Object
+        The tuner implements a model learning pipeline that can take a mapping from hyperparameters to a model and
+        training data and learn an optimized model. For example, given a SINDy estimator, hyperparameter tuner can
+        implement gridsearch to find the best sparsity threshold and library type.
     """
 
     @staticmethod
@@ -160,10 +167,10 @@ class HyperparameterTuner(abc.ABC):
         preds = {}
         # get the predictions
         for k, v in holdout_data._trajs.items():
-            sivp = trained_model.model.solve_ivp(
-                v.states[0], (np.min(v.times), np.max(v.times)), np.diff(v.times).min()
+            sivp_interp = trained_model.model.solve_ivp(
+                v.states[0], (np.min(v.times), np.max(v.times)), teval=v.times
             )
-            sivp_interp = sivp.interp1d(v.times)
+            # sivp_interp = sivp_interp.interp1d(v.times)
             preds[k] = sivp_interp
         return TrajectoriesData(preds)
 
@@ -224,12 +231,26 @@ class HyperparameterTuner(abc.ABC):
                 iscores = []
                 names = np.array(list(self._training_data.traj_names))[:, np.newaxis]
                 for train_index, test_index in kf.split(names):
-                    training = TrajectoriesData(
+                    # if all trajectories are uniform time, make the data uniform time
+                    if all(
+                        [
+                            isinstance(tinst, UniformTimeTrajectory)
+                            for tinst in self._training_data
+                        ]
+                    ):
+                        TrajsType = UniformTimeTrajectoriesData
+                    else:
+                        TrajsType = TrajectoriesData
+
+                    # create test train split
+                    training = TrajsType(
                         {ti[0]: self._training_data[ti[0]] for ti in names[train_index]}
                     )
-                    validation = TrajectoriesData(
+                    validation = TrajsType(
                         {ti[0]: self._training_data[ti[0]] for ti in names[test_index]}
                     )
+
+                    # do the fit and scoring (select the best median)
                     model = self._parameter_model.get_model(param)
                     model.fit(training)
                     prediction_data = self.generate_predictions(model, validation)
@@ -249,5 +270,5 @@ class HyperparameterTuner(abc.ABC):
                 self.best_result = TuneResults(
                     model=best_model, param=best_params, score=best_score
                 )
-            self.scores.append(score)
+            self.scores.append(score if not np.isnan(score) else 1e12)
             self.best_scores.append(np.min(self.scores))

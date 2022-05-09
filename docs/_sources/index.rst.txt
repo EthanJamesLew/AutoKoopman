@@ -6,7 +6,7 @@
 .. mdinclude:: ../../../README.md
 
 Module Contents
-==========
+===================
 
 .. toctree::
    :maxdepth: 2

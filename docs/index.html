@@ -7,12 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>AutoKoopman &#8212; AutoKoopman 0.1b documentation</title>
-
+    
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
-
+    
   <link rel="stylesheet"
     href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
   <link rel="preload" as="font" type="font/woff2" crossorigin
@@ -21,7 +21,7 @@
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-
+    
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
@@ -34,36 +34,36 @@
     <link rel="next" title="autokoopman" href="modules.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
-
+    
 
     <!-- Google Analytics -->
-
+    
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-
+    
     <div class="container-fluid" id="banner"></div>
 
-
+    
     <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
 
   <div id="navbar-start">
-
-
+    
+    
 <a class="navbar-brand" href="#">
 <p class="title">AutoKoopman</p>
 </a>
 
-
+    
   </div>
 
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
-
+  
   <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
     <div id="navbar-center" class="mr-auto">
-
+      
       <div class="navbar-center-item">
         <ul id="navbar-main-elements" class="navbar-nav">
     <li class="toctree-l1 nav-item">
@@ -72,29 +72,29 @@
  </a>
 </li>
 
-
+    
 </ul>
       </div>
-
+      
     </div>
 
     <div id="navbar-end">
-
+      
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
       </ul>
       </div>
-
+      
     </div>
   </div>
 </div>
     </nav>
-
+    
 
     <div class="container-xl">
       <div class="row">
-
-
+          
+            
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar">
               <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -102,22 +102,22 @@
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
   <div class="bd-toc-item active">
-
+    
   </div>
 </nav>
               </div>
               <div class="sidebar-end-items">
               </div>
             </div>
+            
+          
 
-
-
-
+          
           <div class="d-none d-xl-block col-xl-2 bd-toc">
-
-
+            
+              
               <div class="toc-item">
-
+                
 <div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
@@ -130,103 +130,31 @@
   </a>
   <ul class="visible nav section-nav flex-column">
    <li class="toc-h2 nav-item toc-entry">
-    <a class="reference internal nav-link" href="#outline">
-     Outline
+    <a class="reference internal nav-link" href="#overview">
+     Overview
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#use-cases">
+     Use Cases
+    </a>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#examples">
+     Examples
     </a>
     <ul class="nav section-nav flex-column">
      <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#overview">
-       Overview
+      <a class="reference internal nav-link" href="#complete-example">
+       Complete Example
       </a>
-     </li>
-     <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#user-story">
-       User Story
-      </a>
-     </li>
-     <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#library-features">
-       Library Features
-      </a>
-      <ul class="nav section-nav flex-column">
-       <li class="toc-h4 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#data-driven-system-linearization">
-         Data Driven System Linearization
-        </a>
-        <ul class="nav section-nav flex-column">
-         <li class="toc-h5 nav-item toc-entry">
-          <a class="reference internal nav-link" href="#kernel-methods">
-           Kernel Methods
-          </a>
-          <ul class="nav section-nav flex-column">
-           <li class="toc-h6 nav-item toc-entry">
-            <a class="reference internal nav-link" href="#random-fourier-features">
-             Random Fourier Features
-            </a>
-           </li>
-          </ul>
-         </li>
-         <li class="toc-h5 nav-item toc-entry">
-          <a class="reference internal nav-link" href="#deep-learning-methods">
-           Deep Learning Methods
-          </a>
-          <ul class="nav section-nav flex-column">
-           <li class="toc-h6 nav-item toc-entry">
-            <a class="reference internal nav-link" href="#autoencoder">
-             Autoencoder
-            </a>
-           </li>
-           <li class="toc-h6 nav-item toc-entry">
-            <a class="reference internal nav-link" href="#library-learning">
-             Library Learning
-            </a>
-           </li>
-          </ul>
-         </li>
-        </ul>
-       </li>
-      </ul>
-     </li>
-     <li class="toc-h3 nav-item toc-entry">
-      <a class="reference internal nav-link" href="#examples-case-studies">
-       Examples / Case Studies
-      </a>
-      <ul class="nav section-nav flex-column">
-       <li class="toc-h4 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#benchmark-models">
-         Benchmark Models
-        </a>
-        <ul class="nav section-nav flex-column">
-         <li class="toc-h5 nav-item toc-entry">
-          <a class="reference internal nav-link" href="#steam">
-           Steam
-          </a>
-         </li>
-         <li class="toc-h5 nav-item toc-entry">
-          <a class="reference internal nav-link" href="#coupled-van-der-pol">
-           Coupled Van der Pol
-          </a>
-         </li>
-         <li class="toc-h5 nav-item toc-entry">
-          <a class="reference internal nav-link" href="#roessler">
-           Roessler
-          </a>
-         </li>
-         <li class="toc-h5 nav-item toc-entry">
-          <a class="reference internal nav-link" href="#biological">
-           Biological
-          </a>
-         </li>
-        </ul>
-       </li>
-       <li class="toc-h4 nav-item toc-entry">
-        <a class="reference internal nav-link" href="#f-16-fighting-falcon-gcas">
-         F-16 Fighting Falcon GCAS
-        </a>
-       </li>
-      </ul>
      </li>
     </ul>
+   </li>
+   <li class="toc-h2 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#documentation">
+     Documentation
+    </a>
    </li>
   </ul>
  </li>
@@ -244,81 +172,104 @@
 
 </nav>
               </div>
-
+              
               <div class="toc-item">
-
+                
               </div>
-
-
+              
+            
           </div>
+          
 
-
-
-
-
-
+          
+          
+            
+          
           <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
-
+              
               <div>
-
+                
   <section id="autokoopman">
 <h1>AutoKoopman<a class="headerlink" href="#autokoopman" title="Permalink to this headline">#</a></h1>
 <a class="reference external image-reference" href="https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml/badge.svg"><img alt="Conda CI Workflow" src="https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml/badge.svg" /></a>
-<section id="outline">
-<h2>Outline<a class="headerlink" href="#outline" title="Permalink to this headline">#</a></h2>
 <section id="overview">
-<h3>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">#</a></h3>
-<p>AutoKoopman is a python library for the use of Koopman operator methods for system analysis and control. The library presents a simple
-interface to learn Koopman linearized systems with reasonable defaults. Also, it presents a variety of linearization methods under a
-common class interfaces.</p>
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">#</a></h2>
+<p>AutoKoopman is a python library for the use of Koopman operator methods for data-driven dynamical systems analysis and control. The library
+has convenient functions to learn systems using a few lines of code. It has a variety of linearization methods under
+shared class interfaces. These methods are pluggable into hyperparameter optimizers which can automate the process of model
+optimization.</p>
 </section>
-<section id="user-story">
-<h3>User Story<a class="headerlink" href="#user-story" title="Permalink to this headline">#</a></h3>
-<p>A systems engineer / researcher who is in inexperienced in Koopman operator theory but wishes to leverage the benefit of a linearized system. The user may
+<section id="use-cases">
+<h2>Use Cases<a class="headerlink" href="#use-cases" title="Permalink to this headline">#</a></h2>
+<p>A systems engineer / researcher who wishes to leverage data-driven dynamical systems techniques. The user may
 have measurements of their system with no prior model.</p>
+<ul class="simple">
+<li><p>System Prediction - the user can simulate a model learned from their measurements. They use popular techniques like DMD and SINDy out of the box, and implement their own methods to plug into the provided analysis infrastructure (e.g. hyperparameter optimization, visualization).</p></li>
+<li><p>System Linearization - the user can get a linear representation of their system in its original states or koopman observables. They can use this linear form to perform tasks like controller synthesis and system reachability.</p></li>
+</ul>
 </section>
-<section id="library-features">
-<h3>Library Features<a class="headerlink" href="#library-features" title="Permalink to this headline">#</a></h3>
-<section id="data-driven-system-linearization">
-<h4>Data Driven System Linearization<a class="headerlink" href="#data-driven-system-linearization" title="Permalink to this headline">#</a></h4>
-<section id="kernel-methods">
-<h5>Kernel Methods<a class="headerlink" href="#kernel-methods" title="Permalink to this headline">#</a></h5>
-<section id="random-fourier-features">
-<h6>Random Fourier Features<a class="headerlink" href="#random-fourier-features" title="Permalink to this headline">#</a></h6>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">#</a></h2>
+<section id="complete-example">
+<h3>Complete Example<a class="headerlink" href="#complete-example" title="Permalink to this headline">#</a></h3>
+<p>AutoKoopman has a convenience function <code class="docutils literal notranslate"><span class="pre">auto_koopman</span></code> that can learn dynamical systems from data in one call, given
+training data of trajectories (list of arrays),</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># this is the convenience function</span>
+<span class="kn">from</span> <span class="nn">autokoopman</span> <span class="kn">import</span> <span class="n">auto_koopman</span>
+
+<span class="c1"># for a complete example, let&#39;s create an example dataset using an included benchmark system</span>
+<span class="kn">import</span> <span class="nn">autokoopman.benchmark.fhn</span> <span class="k">as</span> <span class="nn">fhn</span>
+<span class="n">fhn</span> <span class="o">=</span> <span class="n">fhn</span><span class="o">.</span><span class="n">FitzHughNagumo</span><span class="p">()</span>
+<span class="n">training_data</span> <span class="o">=</span> <span class="n">fhn</span><span class="o">.</span><span class="n">solve_ivps</span><span class="p">(</span>
+    <span class="n">initial_states</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span>
+    <span class="n">tspan</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
+    <span class="n">sampling_period</span><span class="o">=</span><span class="mf">0.1</span>
+<span class="p">)</span>
+
+<span class="c1"># learn model from data</span>
+<span class="n">experiment_results</span> <span class="o">=</span> <span class="n">auto_koopman</span><span class="p">(</span>
+    <span class="n">training_data</span><span class="p">,</span>          <span class="c1"># list of trajectories</span>
+    <span class="n">sampling_period</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>    <span class="c1"># sampling period of trajectory snapshots</span>
+    <span class="n">obs_type</span><span class="o">=</span><span class="s2">&quot;rff&quot;</span><span class="p">,</span>         <span class="c1"># use Random Fourier Features Observables</span>
+    <span class="n">opt</span><span class="o">=</span><span class="s2">&quot;grid&quot;</span><span class="p">,</span>             <span class="c1"># grid search to find best hyperparameters</span>
+    <span class="n">n_obs</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>              <span class="c1"># maximum number of observables to try</span>
+    <span class="n">max_opt_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>       <span class="c1"># maximum number of optimization iterations</span>
+    <span class="n">grid_param_slices</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>   <span class="c1"># for grid search, number of slices for each parameter</span>
+    <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>             <span class="c1"># k-folds validation for tuning, helps stabilize the scoring</span>
+    <span class="n">rank</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>       <span class="c1"># rank range (start, stop, step) DMD hyperparameter</span>
+<span class="p">)</span>
+
+<span class="c1"># get the model from the experiment results</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">experiment_results</span><span class="p">[</span><span class="s1">&#39;tuned_model&#39;</span><span class="p">]</span>
+
+<span class="c1"># simulate using the learned model</span>
+<span class="n">iv</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+<span class="n">trajectory</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span>
+    <span class="n">initial_state</span><span class="o">=</span><span class="n">iv</span><span class="p">,</span>
+    <span class="n">tspan</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>
+    <span class="n">sampling_period</span><span class="o">=</span><span class="mf">0.1</span>
+<span class="p">)</span>
+
+<span class="c1"># simulate the ground truth for comparison</span>
+<span class="n">true_trajectory</span> <span class="o">=</span> <span class="n">fhn</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span>
+    <span class="n">initial_state</span><span class="o">=</span><span class="n">iv</span><span class="p">,</span>
+    <span class="n">tspan</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>
+    <span class="n">sampling_period</span><span class="o">=</span><span class="mf">0.1</span>
+<span class="p">)</span>
+
+<span class="c1"># plot the results</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">trajectory</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">true_trajectory</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 </section>
-<section id="deep-learning-methods">
-<h5>Deep Learning Methods<a class="headerlink" href="#deep-learning-methods" title="Permalink to this headline">#</a></h5>
-<section id="autoencoder">
-<h6>Autoencoder<a class="headerlink" href="#autoencoder" title="Permalink to this headline">#</a></h6>
-</section>
-<section id="library-learning">
-<h6>Library Learning<a class="headerlink" href="#library-learning" title="Permalink to this headline">#</a></h6>
-</section>
-</section>
-</section>
-</section>
-<section id="examples-case-studies">
-<h3>Examples / Case Studies<a class="headerlink" href="#examples-case-studies" title="Permalink to this headline">#</a></h3>
-<section id="benchmark-models">
-<h4>Benchmark Models<a class="headerlink" href="#benchmark-models" title="Permalink to this headline">#</a></h4>
-<section id="steam">
-<h5>Steam<a class="headerlink" href="#steam" title="Permalink to this headline">#</a></h5>
-</section>
-<section id="coupled-van-der-pol">
-<h5>Coupled Van der Pol<a class="headerlink" href="#coupled-van-der-pol" title="Permalink to this headline">#</a></h5>
-</section>
-<section id="roessler">
-<h5>Roessler<a class="headerlink" href="#roessler" title="Permalink to this headline">#</a></h5>
-</section>
-<section id="biological">
-<h5>Biological<a class="headerlink" href="#biological" title="Permalink to this headline">#</a></h5>
-</section>
-</section>
-<section id="f-16-fighting-falcon-gcas">
-<h4>F-16 Fighting Falcon GCAS<a class="headerlink" href="#f-16-fighting-falcon-gcas" title="Permalink to this headline">#</a></h4>
-</section>
-</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">#</a></h2>
+<p><a class="reference external" href="https://ethanjameslew.github.io/AutoKoopman/">AutoKoopman Documentation</a></p>
 </section>
 </section>
 <section id="module-contents">
@@ -343,8 +294,8 @@ have measurements of their system with no prior model.</p>
 
 
               </div>
-
-
+              
+              
               <!-- Previous / next buttons -->
 <div class='prev-next-area'>
     <a class='right-next' id="next-link" href="modules.html" title="next page">
@@ -355,30 +306,30 @@ have measurements of their system with no prior model.</p>
     <i class="fas fa-angle-right"></i>
     </a>
 </div>
-
+              
           </main>
-
+          
 
       </div>
     </div>
-
+  
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
   <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
 <footer class="footer mt-5 mt-md-0">
   <div class="container">
-
+    
     <div class="footer-item">
       <p class="copyright">
     &copy; Copyright 2022, Ethan Lew.<br>
 </p>
     </div>
-
+    
     <div class="footer-item">
       <p class="sphinx-version">
 Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
-
+    
   </div>
 </footer>
   </body>

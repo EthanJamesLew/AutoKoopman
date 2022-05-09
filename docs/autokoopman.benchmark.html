@@ -7,12 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>autokoopman.benchmark package &#8212; AutoKoopman 0.1b documentation</title>
-
+    
   <!-- Loaded before other Sphinx assets -->
   <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 <link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
 
-
+    
   <link rel="stylesheet"
     href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
   <link rel="preload" as="font" type="font/woff2" crossorigin
@@ -21,7 +21,7 @@
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-
+    
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
 
@@ -29,42 +29,43 @@
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="autokoopman.core package" href="autokoopman.core.html" />
     <link rel="prev" title="autokoopman package" href="autokoopman.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="None">
-
+    
 
     <!-- Google Analytics -->
-
+    
   </head>
   <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
-
+    
     <div class="container-fluid" id="banner"></div>
 
-
+    
     <nav class="navbar navbar-light navbar-expand-lg bg-light fixed-top bd-navbar" id="navbar-main"><div class="container-xl">
 
   <div id="navbar-start">
-
-
+    
+    
 <a class="navbar-brand" href="index.html">
 <p class="title">AutoKoopman</p>
 </a>
 
-
+    
   </div>
 
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapsible" aria-controls="navbar-collapsible" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
 
-
+  
   <div id="navbar-collapsible" class="col-lg-9 collapse navbar-collapse">
     <div id="navbar-center" class="mr-auto">
-
+      
       <div class="navbar-center-item">
         <ul id="navbar-main-elements" class="navbar-nav">
     <li class="toctree-l1 current active nav-item">
@@ -73,29 +74,29 @@
  </a>
 </li>
 
-
+    
 </ul>
       </div>
-
+      
     </div>
 
     <div id="navbar-end">
-
+      
       <div class="navbar-end-item">
         <ul id="navbar-icon-links" class="navbar-nav" aria-label="Icon Links">
       </ul>
       </div>
-
+      
     </div>
   </div>
 </div>
     </nav>
-
+    
 
     <div class="container-xl">
       <div class="row">
-
-
+          
+            
             <!-- Only show if we have sidebars configured, else just a small margin  -->
             <div class="col-12 col-md-3 bd-sidebar">
               <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
@@ -144,15 +145,15 @@
               <div class="sidebar-end-items">
               </div>
             </div>
+            
+          
 
-
-
-
+          
           <div class="d-none d-xl-block col-xl-2 bd-toc">
-
-
+            
+              
               <div class="toc-item">
-
+                
 <div class="tocsection onthispage mt-5 pt-1 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
@@ -188,23 +189,23 @@
 
 </nav>
               </div>
-
+              
               <div class="toc-item">
-
+                
               </div>
-
-
+              
+            
           </div>
+          
 
-
-
-
-
-
+          
+          
+            
+          
           <main class="col-12 col-md-9 col-xl-7 py-md-5 pl-md-5 pr-md-4 bd-content" role="main">
-
+              
               <div>
-
+                
   <section id="autokoopman-benchmark-package">
 <h1>autokoopman.benchmark package<a class="headerlink" href="#autokoopman-benchmark-package" title="Permalink to this headline">#</a></h1>
 <section id="submodules">
@@ -214,8 +215,53 @@
 <span id="autokoopman-benchmark-fhn-module"></span><h2>autokoopman.benchmark.fhn module<a class="headerlink" href="#module-autokoopman.benchmark.fhn" title="Permalink to this headline">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="autokoopman.benchmark.fhn.FitzHughNagumo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.benchmark.fhn.</span></span><span class="sig-name descname"><span class="pre">FitzHughNagumo</span></span><a class="headerlink" href="#autokoopman.benchmark.fhn.FitzHughNagumo" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.benchmark.fhn.</span></span><span class="sig-name descname"><span class="pre">FitzHughNagumo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i_ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.benchmark.fhn.FitzHughNagumo" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="autokoopman.core.html#autokoopman.core.system.SymbolicContinuousSystem" title="autokoopman.core.system.SymbolicContinuousSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">autokoopman.core.system.SymbolicContinuousSystem</span></code></a></p>
+<dl>
+<dt>FitzHugh-Nagumo System (FHN)</dt><dd><p>The FHN Model is an example of a relaxation oscillator.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\left\{\begin{array}{l}
+\dot{x}_{1}=x_0 - \frac{x_0^3}{3} - x_1 + R I_{ext} \\
+\dot{x}_{2}=\frac{x_0 + a - b x_1}{\tau} \\
+\end{array}\right.\end{split}\]</div>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i_ext</strong> – external stimulus</p></li>
+<li><p><strong>r</strong> – resistance</p></li>
+<li><p><strong>a</strong> – model parameter <span class="math notranslate nohighlight">\(a\)</span></p></li>
+<li><p><strong>b</strong> – model parameter <span class="math notranslate nohighlight">\(b\)</span></p></li>
+<li><p><strong>tau</strong> – model parameter <span class="math notranslate nohighlight">\(\tau\)</span></p></li>
+</ul>
+</dd>
+</dl>
+<p>Setting <span class="math notranslate nohighlight">\(a=b=0\)</span> creates the Van der Pol Oscillator.</p>
+<dl>
+<dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">autokoopman.benchmark.fhn</span> <span class="k">as</span> <span class="nn">fhn</span>
+
+<span class="n">sys</span> <span class="o">=</span> <span class="n">fhn</span><span class="o">.</span><span class="n">FitzHughNagumo</span><span class="p">()</span>
+<span class="n">traj</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span>
+    <span class="n">initial_state</span><span class="o">=</span><span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">],</span>
+    <span class="n">tspan</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">),</span>
+    <span class="n">sampling_period</span><span class="o">=</span><span class="mf">0.01</span>
+<span class="p">)</span>
+<span class="n">traj</span><span class="o">.</span><span class="n">states</span>
+<span class="c1"># array([[ 2.        ,  1.5       ],</span>
+<span class="c1">#        [ 1.97862133,  1.50612782],</span>
+<span class="c1">#        [ 1.95779684,  1.51217922],</span>
+<span class="c1">#        ...,</span>
+<span class="c1">#        [-1.32849614, -0.81944446],</span>
+<span class="c1">#        [-1.32576847, -0.82204749],</span>
+<span class="c1">#        [-1.32303553, -0.82463882]])</span>
+</pre></div>
+</div>
+</dd>
+<dt>References</dt><dd><p>FitzHugh, R. (1961). Impulses and physiological states in theoretical models of nerve membrane.
+Biophysical journal, 1(6), 445-466.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -225,6 +271,53 @@
 <dt class="sig sig-object py" id="autokoopman.benchmark.lalo20.LaubLoomis">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.benchmark.lalo20.</span></span><span class="sig-name descname"><span class="pre">LaubLoomis</span></span><a class="headerlink" href="#autokoopman.benchmark.lalo20.LaubLoomis" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="autokoopman.core.html#autokoopman.core.system.SymbolicContinuousSystem" title="autokoopman.core.system.SymbolicContinuousSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">autokoopman.core.system.SymbolicContinuousSystem</span></code></a></p>
+<dl>
+<dt>Laub-Loomis Benchmark (LALO20)</dt><dd><p>They are boxes centered at <span class="math notranslate nohighlight">\(x_1(0) = 1.2\)</span>, <span class="math notranslate nohighlight">\(x_2(0) = 1.05\)</span>, <span class="math notranslate nohighlight">\(x_3(0) = 1.5\)</span>, <span class="math notranslate nohighlight">\(x_4(0) = 2.4\)</span>, <span class="math notranslate nohighlight">\(x_5(0) = 1\)</span>, <span class="math notranslate nohighlight">\(x_6(0) = 0.1\)</span>, <span class="math notranslate nohighlight">\(x_7(0) = 0.45\)</span>.
+The range of the box in the <span class="math notranslate nohighlight">\(i\)</span>-th dimension is defined by the interval <span class="math notranslate nohighlight">\([x_i(0) − W, x_i(0) + W ]\)</span>.</p>
+<p>We consider <span class="math notranslate nohighlight">\(W = 0.01\)</span>, <span class="math notranslate nohighlight">\(W = 0.05\)</span>, and <span class="math notranslate nohighlight">\(W =0.1\)</span>. For <span class="math notranslate nohighlight">\(W =0.01\)</span> and <span class="math notranslate nohighlight">\(W =0.05\)</span> we consider the unsafe region defined by <span class="math notranslate nohighlight">\(x4 \ge 4.5\)</span>,
+while for <span class="math notranslate nohighlight">\(W = 0.1\)</span>, the unsafe set is defined by <span class="math notranslate nohighlight">\(x4 \ge 5\)</span>. The time horizon for all cases is <span class="math notranslate nohighlight">\([0, 20]\)</span>.</p>
+<p>The dynamics are defined as</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\left\{\begin{array}{l}
+\dot{x}_{1}=1.4 x_{3}-0.9 x_{1} \\
+\dot{x}_{2}=2.5 x_{5}-1.5 x_{2} \\
+\dot{x}_{3}=0.6 x_{7}-0.8 x_{2} x_{3} \\
+\dot{x}_{4}=2-1.3 x_{3} x_{4} \\
+\dot{x}_{5}=0.7 x_{1}-x_{4} x_{5} \\
+\dot{x}_{6}=0.3 x_{1}-3.1 x_{6} \\
+\dot{x}_{7}=1.8 x_{6}-1.5 x_{2} x_{7}
+\end{array}\right.\end{split}\]</div>
+<p>The system is asymptotically stable and the equilibrium is the origin.</p>
+</dd>
+<dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">autokoopman.benchmark.lalo20</span> <span class="k">as</span> <span class="nn">lalo</span>
+
+<span class="n">sys</span> <span class="o">=</span> <span class="n">lalo</span><span class="o">.</span><span class="n">LaubLoomis</span><span class="p">()</span>
+<span class="n">traj</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span>
+    <span class="n">initial_state</span><span class="o">=</span><span class="p">[</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">2.4</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">],</span>
+    <span class="n">tspan</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">),</span>
+    <span class="n">sampling_period</span><span class="o">=</span><span class="mf">0.1</span>
+<span class="p">)</span>
+<span class="n">traj</span><span class="o">.</span><span class="n">states</span>
+<span class="c1"># array([[1.2       , 1.05      , 1.5       , ..., 1.        , 0.1       ,</span>
+<span class="c1">#    0.45      ],</span>
+<span class="c1">#   [1.29071503, 1.11992937, 1.39927254, ..., 0.87447922, 0.10557573,</span>
+<span class="c1">#    0.39928611],</span>
+<span class="c1">#   [1.3600053 , 1.15715223, 1.29895902, ..., 0.79376949, 0.11169569,</span>
+<span class="c1">#    0.35464381],</span>
+<span class="c1">#   ...,</span>
+<span class="c1">#   [0.89473053, 0.36803281, 0.58535322, ..., 0.22894195, 0.08595487,</span>
+<span class="c1">#    0.28538999],</span>
+<span class="c1">#   [0.89608814, 0.37001616, 0.58517889, ..., 0.22991276, 0.08609767,</span>
+<span class="c1">#    0.28511588],</span>
+<span class="c1">#   [0.89729548, 0.37195084, 0.58490685, ..., 0.23082109, 0.0862578 ,</span>
+<span class="c1">#    0.28478635]])</span>
+</pre></div>
+</div>
+</dd>
+<dt>References</dt><dd><p>Geretti, L., Sandretto, J. A. D., Althoff, M., Benet, L., Chapoutot, A., Chen, X., … &amp; Schilling, C. (2020).
+ARCH-COMP20 category report: Continuous and hybrid systems with nonlinear dynamics. EPiC Series in Computing, 74, 49-75. pp 59</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -232,8 +325,47 @@
 <span id="autokoopman-benchmark-prde20-module"></span><h2>autokoopman.benchmark.prde20 module<a class="headerlink" href="#module-autokoopman.benchmark.prde20" title="Permalink to this headline">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="autokoopman.benchmark.prde20.ProdDestr">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.benchmark.prde20.</span></span><span class="sig-name descname"><span class="pre">ProdDestr</span></span><a class="headerlink" href="#autokoopman.benchmark.prde20.ProdDestr" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.benchmark.prde20.</span></span><span class="sig-name descname"><span class="pre">ProdDestr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.benchmark.prde20.ProdDestr" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="autokoopman.core.html#autokoopman.core.system.SymbolicContinuousSystem" title="autokoopman.core.system.SymbolicContinuousSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">autokoopman.core.system.SymbolicContinuousSystem</span></code></a></p>
+<dl>
+<dt>Production Destruction System (PRDE20)</dt><dd><p>In this model, <span class="math notranslate nohighlight">\(x_0\)</span> is the nutrients, <span class="math notranslate nohighlight">\(x_1\)</span> the phytoplankton and <span class="math notranslate nohighlight">\(x_2\)</span> the detritus.
+The constraints are <span class="math notranslate nohighlight">\(x_0(t), x_1(t), x_2(t)\)</span> are positive and <span class="math notranslate nohighlight">\(x_0(t) + x_1(t) + x_2(t) = 10\)</span> for all t.</p>
+<p>The initial condition <span class="math notranslate nohighlight">\(x_0(0) = 9.98\)</span>, <span class="math notranslate nohighlight">\(x_1(0) = 0.01\)</span> and <span class="math notranslate nohighlight">\(x_2(0) = 0.01\)</span></p>
+<p><span class="math notranslate nohighlight">\(I: x_0(0) \in [9.5, 10.0]\)</span>, i.e., uncertainty on the initial condition;</p>
+<p>From Michaelis-Menten Theory, the evolution function is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{bmatrix} \dot x_0 \\ \dot x_1 \\ \dot x_2 \end{bmatrix} = \begin{bmatrix} \frac{-x_0 x_1}{1 + x_0} \\ \frac{x_0 x_1}{1 + x_0} - 0.3 x_1 \\ 0.3 x_1 \end{bmatrix}\end{split}\]</div>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>alpha</strong> – model parameter</p>
+</dd>
+</dl>
+<dl>
+<dt>Example:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">autokoopman.benchmark.prde20</span> <span class="k">as</span> <span class="nn">prde</span>
+
+<span class="n">sys</span> <span class="o">=</span> <span class="n">prde</span><span class="o">.</span><span class="n">ProdDestr</span><span class="p">()</span>
+<span class="n">traj</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span>
+    <span class="n">initial_state</span><span class="o">=</span><span class="p">[</span><span class="mf">9.98</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">],</span>
+    <span class="n">tspan</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">),</span>
+    <span class="n">sampling_period</span><span class="o">=</span><span class="mf">0.01</span>
+<span class="p">)</span>
+<span class="n">traj</span><span class="o">.</span><span class="n">states</span>
+<span class="c1"># array([[9.98000000e+00, 1.00000000e-02, 1.00000000e-02],</span>
+<span class="c1">#        [9.97990883e+00, 1.00610783e-02, 1.00300915e-02],</span>
+<span class="c1">#        [9.97981710e+00, 1.01225295e-02, 1.00603668e-02],</span>
+<span class="c1">#        ...,</span>
+<span class="c1">#        [3.34608394e-08, 4.41976926e-01, 9.55802304e+00],</span>
+<span class="c1">#        [3.33135031e-08, 4.40652987e-01, 9.55934698e+00],</span>
+<span class="c1">#        [3.31672496e-08, 4.39333011e-01, 9.56066696e+00]])</span>
+</pre></div>
+</div>
+</dd>
+<dt>References</dt><dd><p>Geretti, L., Sandretto, J. A. D., Althoff, M., Benet, L., Chapoutot, A., Chen, X., … &amp; Schilling, C. (2020).
+ARCH-COMP20 category report: Continuous and hybrid systems with nonlinear dynamics. EPiC Series in Computing, 74, 49-75. pp 53</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -244,8 +376,8 @@
 
 
               </div>
-
-
+              
+              
               <!-- Previous / next buttons -->
 <div class='prev-next-area'>
     <a class='left-prev' id="prev-link" href="autokoopman.html" title="previous page">
@@ -263,30 +395,30 @@
     <i class="fas fa-angle-right"></i>
     </a>
 </div>
-
+              
           </main>
-
+          
 
       </div>
     </div>
-
+  
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
   <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
 <footer class="footer mt-5 mt-md-0">
   <div class="container">
-
+    
     <div class="footer-item">
       <p class="copyright">
     &copy; Copyright 2022, Ethan Lew.<br>
 </p>
     </div>
-
+    
     <div class="footer-item">
       <p class="sphinx-version">
 Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.5.0.<br>
 </p>
     </div>
-
+    
   </div>
 </footer>
   </body>

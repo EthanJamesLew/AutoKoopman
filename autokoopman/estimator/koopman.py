@@ -142,6 +142,6 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
     @property
     def model(self) -> ksys.System:
         def step_func(t, x):
-            return np.real(self._est.predict(np.atleast_2d(x))[:2])
+            return np.real(self._est.predict(np.atleast_2d(x))[:len(x)])
 
         return ksys.StepDiscreteSystem(step_func, self.names)

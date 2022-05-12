@@ -10,6 +10,12 @@ from autokoopman.core.format import _clip_list
 
 
 class System(abc.ABC):
+    """
+    Dynamical System Base Class
+        This is a base class for a dynamical system, which features:
+            - A fixed dimensional state space (dimension) with names (names)
+            - Initial Value Problem (IVP) the system can be simulated from initial conditions
+    """
     @abc.abstractmethod
     def solve_ivp(
         self,
@@ -56,6 +62,17 @@ class System(abc.ABC):
 
     def __repr__(self):
         return f"<{self.__class__.__name__} Dimensions: {self.dimension} States: {_clip_list(self.names)}>"
+
+
+class LinearSystem(System):
+    """
+    Linear Dynamical System
+        There is a linear operator associated with the system.
+    """
+    @property
+    @abc.abstractmethod
+    def linear_operator(self):
+        pass
 
 
 class ContinuousSystem(System):
@@ -201,6 +218,24 @@ class SymbolicContinuousSystem(ContinuousSystem):
     def names(self) -> Sequence[str]:
         return [str(s) for s in self._state_vars]
 
+    @property
+    def latex(self):
+        """
+        System LaTeX
+            Print the symbolic system as LaTeX (SymPy utility).
+        """
+        import sympy.printing as printing
+        elem_lt = r'\\'.join([printing.latex(expr) for expr in self._exprs])
+        return rf"\dot{{\mathbf x}} = \begin{{pmatrix}} {elem_lt} \end{{pmatrix}}"
+
+    def display_math(self):
+        """
+        Jupyter Notebook Math Display
+            Display the LaTeX math in a Jupyter notebook.
+        """
+        from IPython.display import display, Math, Markdown
+        return display(Math(self.latex))
+
 
 class GradientContinuousSystem(ContinuousSystem):
     def __init__(self, gradient_func: Callable[[float, np.ndarray], np.ndarray], names):
@@ -228,9 +263,9 @@ class StepDiscreteSystem(DiscreteSystem):
         return self._names
 
 
-class LinearContinuousSystem(ContinuousSystem):
+class LinearContinuousSystem(ContinuousSystem, LinearSystem):
     ...
 
 
-class KoopmanContinuousSystem(LinearContinuousSystem):
+class LinearDiscreteSystem(ContinuousSystem, LinearSystem):
     ...

@@ -3,10 +3,10 @@ import sympy as sp  # type: ignore
 import autokoopman.core.system as asys
 
 
-class Spring(asys.SymbolicContinuousSystem):
+class Bio2(asys.SymbolicContinuousSystem):
     r"""
     Spring pendulum
-        A nine-dimensional continuous model which is adapted from a biological system given in [1]. 
+        A nine-dimensional continuous model which is adapted from a biological system given in [1].
 
         Initial set:
             x1 in [0.99,1.01]
@@ -26,14 +26,14 @@ class Spring(asys.SymbolicContinuousSystem):
     def __init__(self):
         x1, x2, x3, x4, x5, x6, x7, x8, x9 = sp.symbols("x1 x2 x3 x4 x5 x6 x7 x8 x9   ")
         xdot = [
-              3*x3 - x1*x6,
-              x4 - x2*x6,
-              x1*x6 - 3*x3,
-              x2*x6 - x4,
-              3*x3 + 5*x1 - x5,
-              5*x5 + 3*x3 + x4 - x6*(x1 + x2 + 2*x8 + 1),
-              5*x4 + x2 - 0.5*x7,
-              5*x7 - 2*x6*x8 + x9 - 0.2*x8,
-              2*x6*x8 - x9
+            3 * x3 - x1 * x6,
+            x4 - x2 * x6,
+            x1 * x6 - 3 * x3,
+            x2 * x6 - x4,
+            3 * x3 + 5 * x1 - x5,
+            5 * x5 + 3 * x3 + x4 - x6 * (x1 + x2 + 2 * x8 + 1),
+            5 * x4 + x2 - 0.5 * x7,
+            5 * x7 - 2 * x6 * x8 + x9 - 0.2 * x8,
+            2 * x6 * x8 - x9,
         ]
-        super(Spring, self).__init__((x1, x2, x3, x4, x5, x6, x7, x8, x9), xdot)
+        super(Bio2, self).__init__((x1, x2, x3, x4, x5, x6, x7, x8, x9), xdot)

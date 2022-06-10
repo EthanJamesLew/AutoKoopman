@@ -126,9 +126,31 @@ class KoopmanDiscSystemEstimator(KoopmanSystemEstimator):
         )
         mucy, Phicy = dmd(Yc, Ycp, r=self.rank)
         self._A = Phicy @ np.diag(mucy) @ np.linalg.pinv(Phicy)
+        self._eigenvalues = mucy
+        self._eigenmodes = Phicy
 
     def predict(self, x):
         return np.real(self._A @ np.atleast_2d(self.g(x))).flatten()
+
+
+class KoopmanDiscreteSystem(ksys.StepDiscreteSystem, ksys.LinearSystem):
+    def __init__(self, step_func, names, operator, eigenvalues, eigenmodes):
+        super(KoopmanDiscreteSystem, self).__init__(step_func, names)
+        self._linear_operator = operator
+        self._eigenvalues = eigenvalues
+        self._eigenmodes = eigenmodes
+
+    @property
+    def linear_operator(self):
+        return self._linear_operator
+
+    @property
+    def eigenvalues(self):
+        return self._eigenvalues
+
+    @property
+    def eigenmodes(self):
+        return self._eigenmodes
 
 
 class KoopmanDiscEstimator(kest.NextStepEstimator):
@@ -142,6 +164,6 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
     @property
     def model(self) -> ksys.System:
         def step_func(t, x):
-            return np.real(self._est.predict(np.atleast_2d(x))[:len(x)])
+            return np.real(self._est.predict(np.atleast_2d(x))[:self.dim])
 
-        return ksys.StepDiscreteSystem(step_func, self.names)
+        return KoopmanDiscreteSystem(step_func, self.names, self._est._A, self._est._eigenvalues, self._est._eigenmodes)

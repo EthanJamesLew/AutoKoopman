@@ -4,6 +4,7 @@ Main AutoKoopman Function (Convenience Function)
 from typing import Union, Sequence, Optional, Tuple
 
 import numpy as np
+import sympy as sp
 
 import autokoopman.core.observables as kobs
 from autokoopman.core.trajectory import (
@@ -11,6 +12,7 @@ from autokoopman.core.trajectory import (
     UniformTimeTrajectoriesData,
     UniformTimeTrajectory,
 )
+from autokoopman.core.system import SymbolicContinuousSystem
 from autokoopman.core.tuner import (
     HyperparameterTuner,
     HyperparameterMap,
@@ -23,7 +25,7 @@ from autokoopman.tuner.gridsearch import GridSearchTuner
 from autokoopman.tuner.montecarlo import MonteCarloTuner
 from autokoopman.core.observables import KoopmanObservable
 
-__all__ = ["auto_koopman"]
+__all__ = ["auto_koopman", "symbolic_ode_system"]
 
 
 # valid string identifiers for the autokoopman magic
@@ -78,6 +80,27 @@ def get_estimator(obs_type, sampling_period, dim, obs, hyperparams):
         return KoopmanDiscEstimator(
             observables, sampling_period, dim, rank=hyperparams[0]
         )
+
+
+def symbolic_ode_system(state_vars: Sequence[sp.Symbol], xdot: Sequence[sp.Expr],
+                        time_var: Optional[sp.Symbol] = None) -> SymbolicContinuousSystem:
+    """
+    Symbolic ODE System from SymPy Math
+        Given state variables :math:`\mathbf x = [x_1, x_2, ..., x_n]` and a time variable :math:`t` define a system
+        by ODEs of :math:`\dot x`.
+
+    :param state_vars: state space vector named by SymPy variables.
+    :param xdot: xdot function named by SymPy expressions.
+    :param time_var: if the system is non-autonomous, name the time variable.
+
+    :returns: user generated symbolic continuous system.
+    """
+
+    class _UserSymbolicSystem(SymbolicContinuousSystem):
+        def __init__(self):
+            super().__init__(state_vars, xdot, time_var=time_var)
+
+    return _UserSymbolicSystem()
 
 
 def auto_koopman(

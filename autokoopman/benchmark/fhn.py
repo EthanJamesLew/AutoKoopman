@@ -49,5 +49,5 @@ class FitzHughNagumo(asys.SymbolicContinuousSystem):
 
     def __init__(self, i_ext=0.0, r=1.0, a=0.3, b=0.3, tau=3.0):
         x0, x1 = sp.symbols("x0 x1")
-        xdot = [x0 - x0**3 / 3.0 - x1 + r * i_ext, (x0 + a - b * x1) / tau]
+        xdot = [x0 - x0**3 / 3 - x1 + r * i_ext, (x0 + a - b * x1) / tau]
         super(FitzHughNagumo, self).__init__((x0, x1), xdot)

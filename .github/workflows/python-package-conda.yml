@@ -32,3 +32,9 @@ jobs:
       run: |
         conda install pytest
         pytest
+    - name: Test Notebooks with nbmake
+      run: |
+        python -m pip install .
+        conda install pytest
+        python -m pip install nbmake
+        pytest --nbmake ./notebooks

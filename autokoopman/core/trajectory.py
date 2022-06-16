@@ -10,21 +10,26 @@ class Trajectory:
     """a trajectory is a time series of vectors"""
 
     def __init__(
-            self,
-            times: np.ndarray,
-            states: np.ndarray,
-            inputs: Optional[np.ndarray],
-            state_names: Optional[Sequence[str]] = None,
-            input_names: Optional[Sequence[str]] = None,
-            threshold=None,
+        self,
+        times: np.ndarray,
+        states: np.ndarray,
+        inputs: Optional[np.ndarray],
+        state_names: Optional[Sequence[str]] = None,
+        input_names: Optional[Sequence[str]] = None,
+        threshold=None,
     ):
-        def _make_names(names: Optional[Sequence[str]], ref_in: np.ndarray, ref_char: str, category: str):
+        def _make_names(
+            names: Optional[Sequence[str]],
+            ref_in: np.ndarray,
+            ref_char: str,
+            category: str,
+        ):
             if names is None:
                 if ref_in is None:
                     return None
                 else:
                     assert (
-                            len(np.array(ref_in).shape) == 2
+                        len(np.array(ref_in).shape) == 2
                     ), f"{category} must be able to be converted to 2D numpy array"
                     l = np.array(ref_in).shape[1]
                     return [f"{ref_char}{idx}" for idx in range(l)]
@@ -38,12 +43,23 @@ class Trajectory:
         self._state_names = _make_names(state_names, self._states, "x", "states")
         self._input_names = _make_names(input_names, self._inputs, "u", "inputs")
         self._threshold = 1e-12 if threshold is None else threshold
+
+        # more checks...
         assert self.dimension == len(
             self.names
         ), "dimension must match the length of state names!"
-        assert self.input_dimension == len(
-            self.input_names
-        ) if self.input_names is not None else None, "input dimension must match the length of input names!"
+        assert (
+            self.input_dimension == len(self.input_names)
+            if self.input_names is not None
+            else True
+        ), "input dimension must match the length of input names!"
+        assert len(self.times) == len(
+            self.states
+        ), "length of times must match length of states"
+        if input_names is not None:
+            assert len(self.times) == len(
+                self.inputs
+            ), "length of inputs must match length of times"
 
     @property
     def times(self) -> np.ndarray:
@@ -100,7 +116,9 @@ class Trajectory:
                 axis=0,
             )
             states = f(times)
-            return Trajectory(times, states, None, self.names, threshold=self._threshold)
+            return Trajectory(
+                times, states, None, self.names, threshold=self._threshold
+            )
         else:
             times = np.array(times)
             f = interp1d(
@@ -123,7 +141,7 @@ class Trajectory:
                 inputs,
                 state_names=self.names,
                 input_names=self.input_names,
-                threshold=self._threshold
+                threshold=self._threshold,
             )
 
     def interp_uniform_time(self, sampling_period) -> "UniformTimeTrajectory":
@@ -137,7 +155,13 @@ class Trajectory:
         sp = np.diff(self._times)[0]
         start = self._times[0]
         return UniformTimeTrajectory(
-            self.states, self.inputs, sp, state_names=self.names, input_names=self.input_names, start_time=start, threshold=self._threshold
+            self.states,
+            self.inputs,
+            sp,
+            state_names=self.names,
+            input_names=self.input_names,
+            start_time=start,
+            threshold=self._threshold,
         )
 
     def __repr__(self):
@@ -145,7 +169,7 @@ class Trajectory:
 
     def _prepare_other(self, other: "Trajectory"):
         if len(self.times) != len(other.times) or not np.all(
-                np.isclose(self.times, other.times)
+            np.isclose(self.times, other.times)
         ):
             return other.interp1d(self.times)
         else:
@@ -191,20 +215,22 @@ class UniformTimeTrajectory(Trajectory):
     """uniform time is a trajectory advanced by a sampling period"""
 
     def __init__(
-            self,
-            states: np.ndarray,
-            inputs: Optional[np.ndarray],
-            sampling_period: float,
-            state_names: Optional[Sequence[str]] = None,
-            input_names: Optional[Sequence[str]] = None,
-            start_time=0.0,
-            threshold=None,
+        self,
+        states: np.ndarray,
+        inputs: Optional[np.ndarray],
+        sampling_period: float,
+        state_names: Optional[Sequence[str]] = None,
+        input_names: Optional[Sequence[str]] = None,
+        start_time=0.0,
+        threshold=None,
     ):
         nsteps = len(states)
         times = np.arange(
             start_time, start_time + nsteps * sampling_period, sampling_period
         )[:nsteps]
-        super().__init__(times, states, inputs, state_names, input_names, threshold=threshold)
+        super().__init__(
+            times, states, inputs, state_names, input_names, threshold=threshold
+        )
         self._sampling_period = sampling_period
 
     @property
@@ -256,7 +282,7 @@ class TrajectoriesData:
 
     @classmethod
     def from_pandas(
-            cls, data_df: pd.DataFrame, threshold=None, traj_id="id", time_id="time"
+        cls, data_df: pd.DataFrame, threshold=None, traj_id="id", time_id="time"
     ) -> "TrajectoriesData":
         """
         Create TrajectoriesData DAO from Pandas DataFrame
@@ -299,7 +325,7 @@ class TrajectoriesData:
             list(data_df.columns).index(time_id),
             list(data_df.columns).index(traj_id),
         )
-        state_names = list(data_df.columns)[tidx + 1: sidx]
+        state_names = list(data_df.columns)[tidx + 1 : sidx]
         trajs = {
             uvi: Trajectory(
                 data_df[data_df[traj_id] == uvi][time_id].to_numpy(),
@@ -364,7 +390,7 @@ class TrajectoriesData:
                         traji.times[:, np.newaxis],
                         traji.states,
                         np.array([namei] * len(traji.times), dtype=type(namei))[
-                        :, np.newaxis
+                            :, np.newaxis
                         ],
                     ]
                 )
@@ -405,7 +431,9 @@ class TrajectoriesData:
         self._names_list = [v.names for _, v in self._trajs.items()]
         self._input_names_list = [v.input_names for _, v in self._trajs.items()]
         assert self.equal_lists(self._names_list), "all state names must be the same"
-        assert self.equal_lists(self._input_names_list), "all input names must be the same"
+        assert self.equal_lists(
+            self._input_names_list
+        ), "all input names must be the same"
         self._state_names = self._names_list[0]
         self._input_names = self._input_names_list[0]
 
@@ -490,7 +518,7 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
 
     @classmethod
     def from_pandas(
-            cls, data_df: pd.DataFrame, threshold=None, time_id="time", traj_id="id"
+        cls, data_df: pd.DataFrame, threshold=None, time_id="time", traj_id="id"
     ):
         """
         Create UniformTimeTrajectoriesData DAO from Pandas DataFrame

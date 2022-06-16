@@ -97,7 +97,11 @@ class ContinuousSystem(System):
                 ),
             )
             return atraj.UniformTimeTrajectory(
-                sol.y.T, sampling_period, self.names, tspan[0]
+                sol.y.T,
+                None,
+                sampling_period,
+                state_names=self.names,
+                start_time=tspan[0],
             )
         else:
             sol = scint.solve_ivp(
@@ -107,7 +111,7 @@ class ContinuousSystem(System):
                 # TODO: this is hacky
                 t_eval=teval,
             )
-            return atraj.Trajectory(sol.t, sol.y.T, self.names)
+            return atraj.Trajectory(sol.t, sol.y.T, None, self.names)
 
     def solve_ivps(
         self,
@@ -163,7 +167,11 @@ class DiscreteSystem(System):
             for idx, time in enumerate(times[1:]):
                 states[idx + 1] = self.step(float(time), states[idx]).flatten()
             return atraj.UniformTimeTrajectory(
-                states, sampling_period, self.names, tspan[0]
+                states,
+                None,
+                sampling_period,
+                state_names=self.names,
+                start_time=tspan[0],
             )
         else:
             times = np.arange(min(teval), max(teval) + sampling_period, sampling_period)
@@ -171,7 +179,7 @@ class DiscreteSystem(System):
             states[0] = np.array(initial_state).flatten()
             for idx, time in enumerate(times[1:]):
                 states[idx + 1] = self.step(float(time), states[idx]).flatten()
-            traj = atraj.Trajectory(times, states, self.names)
+            traj = atraj.Trajectory(times, states, None, self.names)
             return traj.interp1d(teval)
 
     @abc.abstractmethod

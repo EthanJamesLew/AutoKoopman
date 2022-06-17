@@ -588,4 +588,9 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
 
         Xp = np.vstack([x.states[1:, :] for _, x in self._trajs.items()]).T
 
-        return X, Xp
+        if self.input_names is not None:
+            U = np.vstack([u.inputs[:-1, :] for _, u in self._trajs.items()]).T
+        else:
+            U = None
+
+        return X, Xp, U

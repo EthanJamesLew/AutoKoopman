@@ -46,7 +46,7 @@ class System(abc.ABC):
         for idx, state in enumerate(initial_states):
             ret[idx] = self.solve_ivp(
                 state,
-                tspan,
+                tspan=tspan,
                 teval=teval,
                 inputs=inputs,
                 sampling_period=sampling_period,
@@ -129,6 +129,7 @@ class ContinuousSystem(System):
         else:
             if len(teval) == 0:
                 raise ValueError("teval must have at least one value")
+            inputs = np.array(inputs)
             sol = [initial_state]
             if len(teval) > 1:
                 for tcurrent, tnext, inpi in zip(teval[:-1], teval[1:], inputs[:-1]):
@@ -140,9 +141,9 @@ class ContinuousSystem(System):
                         t_eval=(tcurrent, tnext),
                     )
                     sol.append(sol_next.y.T[-1])
-            return atraj.Trajectory(
-                np.array(teval), np.array(sol), np.atleast_2d(inputs), self.names
-            )
+            if len(inputs.shape) == 1:
+                inputs = inputs[:, np.newaxis]
+            return atraj.Trajectory(np.array(teval), np.array(sol), inputs, self.names)
 
     def solve_ivps(
         self,
@@ -155,7 +156,11 @@ class ContinuousSystem(System):
         ret = {}
         for idx, state in enumerate(initial_states):
             ret[idx] = self.solve_ivp(
-                state, tspan, teval, sampling_period=sampling_period
+                state,
+                tspan=tspan,
+                teval=teval,
+                inputs=inputs,
+                sampling_period=sampling_period,
             )
         return atraj.UniformTimeTrajectoriesData(ret) if teval is None else atraj.TrajectoriesData(ret)  # type: ignore
 
@@ -232,6 +237,8 @@ class DiscreteSystem(System):
         else:
             if len(teval) == 0:
                 raise ValueError("teval must have at least one value")
+            if inputs.ndim == 1:
+                inputs = inputs[:, np.newaxis]
             teval = np.array(teval)
             times = np.arange(min(teval), max(teval) + sampling_period, sampling_period)
             states = np.zeros((len(times), len(self.names)))
@@ -243,8 +250,9 @@ class DiscreteSystem(System):
                 states[idx + 1] = self.step(
                     float(time), states[idx], np.atleast_1d(inputs[tidx])
                 ).flatten()
-            traj = atraj.Trajectory(times, states, None, self.names)
-            return traj.interp1d(teval)
+            traj = atraj.Trajectory(times, states, None, state_names=self.names)
+            ctraj = traj.interp1d(teval)
+            return atraj.Trajectory(teval, ctraj.states, inputs, self.names)
 
     @abc.abstractmethod
     def step(

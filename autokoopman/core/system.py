@@ -14,8 +14,9 @@ class System(abc.ABC):
     def solve_ivp(
         self,
         initial_state: np.ndarray,
-        tspan: Tuple[float, float],
+        tspan: Optional[Tuple[float, float]] = None,
         teval: Optional[np.ndarray] = None,
+        inputs: Optional[np.ndarray] = None,
         sampling_period: float = 0.1,
     ) -> Union[atraj.Trajectory, atraj.UniformTimeTrajectory]:
         """
@@ -36,13 +37,20 @@ class System(abc.ABC):
     def solve_ivps(
         self,
         initial_states: np.ndarray,
-        tspan: Tuple[float, float],
+        tspan: Optional[Tuple[float, float]] = None,
         teval: Optional[np.ndarray] = None,
+        inputs: Optional[np.ndarray] = None,
         sampling_period: float = 0.1,
     ) -> Union[atraj.UniformTimeTrajectoriesData, atraj.TrajectoriesData]:
         ret = {}
         for idx, state in enumerate(initial_states):
-            ret[idx] = self.solve_ivp(state, tspan, teval, sampling_period)
+            ret[idx] = self.solve_ivp(
+                state,
+                tspan,
+                teval=teval,
+                inputs=inputs,
+                sampling_period=sampling_period,
+            )
         return atraj.UniformTimeTrajectoriesData(ret) if teval is None else atraj.TrajectoriesData(ret)  # type: ignore
 
     @property
@@ -67,8 +75,9 @@ class ContinuousSystem(System):
     def solve_ivp(
         self,
         initial_state: np.ndarray,
-        tspan: Tuple[float, float],
+        tspan: Optional[Tuple[float, float]] = None,
         teval: Optional[np.ndarray] = None,
+        inputs: Optional[np.ndarray] = None,
         sampling_period: float = 0.1,
     ) -> Union[atraj.Trajectory, atraj.UniformTimeTrajectory]:
         """
@@ -116,13 +125,16 @@ class ContinuousSystem(System):
     def solve_ivps(
         self,
         initial_states: np.ndarray,
-        tspan: Tuple[float, float],
+        tspan: Optional[Tuple[float, float]] = None,
         teval: Optional[np.ndarray] = None,
+        inputs: Optional[np.ndarray] = None,
         sampling_period: float = 0.1,
     ) -> Union[atraj.UniformTimeTrajectoriesData, atraj.TrajectoriesData]:
         ret = {}
         for idx, state in enumerate(initial_states):
-            ret[idx] = self.solve_ivp(state, tspan, teval, sampling_period)
+            ret[idx] = self.solve_ivp(
+                state, tspan, teval, sampling_period=sampling_period
+            )
         return atraj.UniformTimeTrajectoriesData(ret) if teval is None else atraj.TrajectoriesData(ret)  # type: ignore
 
     @abc.abstractmethod
@@ -136,13 +148,16 @@ class DiscreteSystem(System):
         In this case, a CT system is a system whose evolution function is defined by a next step function. For IVP, the
         discrete time can be related to continuous time via a sampling period. This trajectory can be interpolated to
         evaluate time points nonuniformly.
+
+        TODO: should this have a sampling period instance member?
     """
 
     def solve_ivp(
         self,
         initial_state: np.ndarray,
-        tspan: Tuple[float, float],
+        tspan: Optional[Tuple[float, float]] = None,
         teval: Optional[np.ndarray] = None,
+        inputs: Optional[np.ndarray] = None,
         sampling_period: float = 0.1,
     ) -> Union[atraj.Trajectory, atraj.UniformTimeTrajectory]:
         """

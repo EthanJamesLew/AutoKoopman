@@ -20,17 +20,7 @@ def test_continuous():
 
 
 def test_continuous_inputs():
-    import autokoopman.core.system as asys
-    import sympy as sp
-
-    class PendulumWithInput(asys.SymbolicContinuousSystem):
-        def __init__(self, g=9.81, l=1.0):
-            theta, thetadot = sp.symbols("theta thetadot")
-            tau = sp.symbols("tau")
-            xdot = [thetadot, -g / l * sp.sin(theta) + tau]
-            super(PendulumWithInput, self).__init__(
-                (theta, thetadot), xdot, input_variables=(tau,)
-            )
+    from autokoopman.benchmark.pendulum import PendulumWithInput
 
     iv = np.array([0.1, 0.0])
     teval = np.linspace(0.0, 5.0, 50)
@@ -41,8 +31,20 @@ def test_continuous_inputs():
 
 
 def test_discrete():
-    pass
+    from autokoopman.core.system import StepDiscreteSystem
+
+    step = lambda t, s, i: np.array([s[0] - 0.1 * s[1], s[1] + 0.01 * s[0]])
+    my_sys = StepDiscreteSystem(step, ["x0", "x1"])
+    my_sys.solve_ivp(np.array([0.1, 0.1]), tspan=(0.0, 1.0), sampling_period=0.05)
 
 
 def test_discrete_inputs():
-    pass
+    from autokoopman.core.system import StepDiscreteSystem
+
+    step = lambda t, s, i: np.array([s[0] - 0.1 * s[1], s[1] + 0.01 * s[0] + i[0]])
+    my_sys = StepDiscreteSystem(step, ["x0", "x1"])
+    teval = np.linspace(0.0, 2.0, 20)
+    inputs = teval
+    my_sys.solve_ivp(
+        np.array([0.1, 0.1]), teval=teval, inputs=inputs, sampling_period=0.05
+    )

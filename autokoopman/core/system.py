@@ -199,25 +199,50 @@ class DiscreteSystem(System):
 
         :returns: TimeTrajectory if teval is set, or UniformTimeTrajectory if not
         """
-        if teval is None:
-            times = np.arange(tspan[0], tspan[1] + sampling_period, sampling_period)
-            states = np.zeros((len(times), len(self.names)))
-            states[0] = np.array(initial_state).flatten()
-            for idx, time in enumerate(times[1:]):
-                states[idx + 1] = self.step(float(time), states[idx]).flatten()
-            return atraj.UniformTimeTrajectory(
-                states,
-                None,
-                sampling_period,
-                state_names=self.names,
-                start_time=tspan[0],
-            )
+        if teval is None and tspan is None:
+            raise RuntimeError(f"teval or tspan must be set")
+        if inputs is None:
+            if teval is None:
+                times = np.arange(tspan[0], tspan[1] + sampling_period, sampling_period)
+                states = np.zeros((len(times), len(self.names)))
+                states[0] = np.array(initial_state).flatten()
+                for idx, time in enumerate(times[1:]):
+                    states[idx + 1] = self.step(
+                        float(time), states[idx], None
+                    ).flatten()
+                return atraj.UniformTimeTrajectory(
+                    states,
+                    None,
+                    sampling_period,
+                    state_names=self.names,
+                    start_time=tspan[0],
+                )
+            else:
+                times = np.arange(
+                    min(teval), max(teval) + sampling_period, sampling_period
+                )
+                states = np.zeros((len(times), len(self.names)))
+                states[0] = np.array(initial_state).flatten()
+                for idx, time in enumerate(times[1:]):
+                    states[idx + 1] = self.step(
+                        float(time), states[idx], None
+                    ).flatten()
+                traj = atraj.Trajectory(times, states, None, self.names)
+                return traj.interp1d(teval)
         else:
+            if len(teval) == 0:
+                raise ValueError("teval must have at least one value")
+            teval = np.array(teval)
             times = np.arange(min(teval), max(teval) + sampling_period, sampling_period)
             states = np.zeros((len(times), len(self.names)))
             states[0] = np.array(initial_state).flatten()
             for idx, time in enumerate(times[1:]):
-                states[idx + 1] = self.step(float(time), states[idx]).flatten()
+                diff = time - teval
+                diff[diff < 0.0] = float("inf")
+                tidx = diff.argmin()
+                states[idx + 1] = self.step(
+                    float(time), states[idx], np.atleast_1d(inputs[tidx])
+                ).flatten()
             traj = atraj.Trajectory(times, states, None, self.names)
             return traj.interp1d(teval)
 

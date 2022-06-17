@@ -20,7 +20,24 @@ def test_continuous():
 
 
 def test_continuous_inputs():
-    pass
+    import autokoopman.core.system as asys
+    import sympy as sp
+
+    class PendulumWithInput(asys.SymbolicContinuousSystem):
+        def __init__(self, g=9.81, l=1.0):
+            theta, thetadot = sp.symbols("theta thetadot")
+            tau = sp.symbols("tau")
+            xdot = [thetadot, -g / l * sp.sin(theta) + tau]
+            super(PendulumWithInput, self).__init__(
+                (theta, thetadot), xdot, input_variables=(tau,)
+            )
+
+    iv = np.array([0.1, 0.0])
+    teval = np.linspace(0.0, 5.0, 50)
+    inputs = np.zeros(teval.shape)
+    inputs[25] = 1.0
+    pend = PendulumWithInput()
+    sol = pend.solve_ivp(iv, teval=teval, inputs=inputs)
 
 
 def test_discrete():

@@ -95,32 +95,54 @@ class ContinuousSystem(System):
 
         :returns: TimeTrajectory if teval is set, or UniformTimeTrajectory if not
         """
-        if teval is None:
-            sol = scint.solve_ivp(
-                self.gradient,
-                tspan,
-                initial_state,
-                # TODO: this is hacky
-                t_eval=np.arange(
-                    tspan[0], tspan[-1] + sampling_period - 1e-10, sampling_period
-                ),
-            )
-            return atraj.UniformTimeTrajectory(
-                sol.y.T,
-                None,
-                sampling_period,
-                state_names=self.names,
-                start_time=tspan[0],
-            )
+        if teval is None and tspan is None:
+            raise RuntimeError(f"teval or tspan must be set")
+        if inputs is None:
+            if teval is None:
+                sol = scint.solve_ivp(
+                    self.gradient,
+                    tspan,
+                    initial_state,
+                    args=(None,),
+                    # TODO: this is hacky
+                    t_eval=np.arange(
+                        tspan[0], tspan[-1] + sampling_period - 1e-10, sampling_period
+                    ),
+                )
+                return atraj.UniformTimeTrajectory(
+                    sol.y.T,
+                    None,
+                    sampling_period,
+                    state_names=self.names,
+                    start_time=tspan[0],
+                )
+            else:
+                sol = scint.solve_ivp(
+                    self.gradient,
+                    (min(teval), max(teval)),
+                    initial_state,
+                    args=(None,),
+                    # TODO: this is hacky
+                    t_eval=teval,
+                )
+                return atraj.Trajectory(sol.t, sol.y.T, None, self.names)
         else:
-            sol = scint.solve_ivp(
-                self.gradient,
-                (min(teval), max(teval)),
-                initial_state,
-                # TODO: this is hacky
-                t_eval=teval,
+            if len(teval) == 0:
+                raise ValueError("teval must have at least one value")
+            sol = [initial_state]
+            if len(teval) > 1:
+                for tcurrent, tnext, inpi in zip(teval[:-1], teval[1:], inputs[:-1]):
+                    sol_next = scint.solve_ivp(
+                        self.gradient,
+                        (tcurrent, tnext),
+                        sol[-1],
+                        args=(np.atleast_1d(inpi),),
+                        t_eval=(tcurrent, tnext),
+                    )
+                    sol.append(sol_next.y.T[-1])
+            return atraj.Trajectory(
+                np.array(teval), np.array(sol), np.atleast_2d(inputs), self.names
             )
-            return atraj.Trajectory(sol.t, sol.y.T, None, self.names)
 
     def solve_ivps(
         self,
@@ -138,7 +160,9 @@ class ContinuousSystem(System):
         return atraj.UniformTimeTrajectoriesData(ret) if teval is None else atraj.TrajectoriesData(ret)  # type: ignore
 
     @abc.abstractmethod
-    def gradient(self, time: float, state: np.ndarray) -> np.ndarray:
+    def gradient(
+        self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
+    ) -> np.ndarray:
         raise NotImplementedError
 
 
@@ -198,7 +222,9 @@ class DiscreteSystem(System):
             return traj.interp1d(teval)
 
     @abc.abstractmethod
-    def step(self, time: float, state: np.ndarray) -> np.ndarray:
+    def step(
+        self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
+    ) -> np.ndarray:
         raise NotImplementedError
 
 
@@ -207,18 +233,28 @@ class SymbolicContinuousSystem(ContinuousSystem):
         self,
         variables: Sequence[sp.Symbol],
         gradient_exprs: Sequence[sp.Expr],
+        input_variables: Optional[Sequence[sp.Symbol]] = None,
         time_var=None,
     ):
         if time_var is None:
             time_var = sp.symbols("_t0")
-        self._variables = [time_var, *variables]
+        if input_variables is None:
+            self._variables = [time_var, *variables]
+        else:
+            self._variables = [time_var, *variables, *input_variables]
         self._state_vars = variables
+        self._input_vars = input_variables
         self._exprs = gradient_exprs
         self._mat = sp.Matrix(self._exprs)
         self._fmat = sp.lambdify((self._variables,), self._mat)
 
-    def gradient(self, time: float, state: np.ndarray) -> np.ndarray:
-        return np.array(self._fmat(np.array([time, *state]))).flatten()
+    def gradient(
+        self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
+    ) -> np.ndarray:
+        if sinput is None:
+            return np.array(self._fmat(np.array([time, *state]))).flatten()
+        else:
+            return np.array(self._fmat(np.array([time, *state, *sinput]))).flatten()
 
     @property
     def names(self) -> Sequence[str]:
@@ -226,12 +262,18 @@ class SymbolicContinuousSystem(ContinuousSystem):
 
 
 class GradientContinuousSystem(ContinuousSystem):
-    def __init__(self, gradient_func: Callable[[float, np.ndarray], np.ndarray], names):
+    def __init__(
+        self,
+        gradient_func: Callable[[float, np.ndarray, Optional[np.ndarray]], np.ndarray],
+        names,
+    ):
         self._names = names
         self._gradient_func = gradient_func
 
-    def gradient(self, time: float, state: np.ndarray) -> np.ndarray:
-        return self._gradient_func(time, state)
+    def gradient(
+        self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
+    ) -> np.ndarray:
+        return self._gradient_func(time, state, sinput)
 
     @property
     def names(self):
@@ -239,12 +281,18 @@ class GradientContinuousSystem(ContinuousSystem):
 
 
 class StepDiscreteSystem(DiscreteSystem):
-    def __init__(self, step_func: Callable[[float, np.ndarray], np.ndarray], names):
+    def __init__(
+        self,
+        step_func: Callable[[float, np.ndarray, Optional[np.ndarray]], np.ndarray],
+        names,
+    ):
         self._names = names
         self._step_func = step_func
 
-    def step(self, time: float, state: np.ndarray) -> np.ndarray:
-        return self._step_func(time, state)
+    def step(
+        self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
+    ) -> np.ndarray:
+        return self._step_func(time, state, sinput)
 
     @property
     def names(self):

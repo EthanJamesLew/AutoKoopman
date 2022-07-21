@@ -8,9 +8,8 @@
 
     <title>autokoopman.tuner package &#8212; AutoKoopman 0.1b documentation</title>
     
-  <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
-<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+  <link href="_static/css/theme.css" rel="stylesheet">
+  <link href="_static/css/index.ff1ffe594081f20da1ef19478df9384b.css" rel="stylesheet">
 
     
   <link rel="stylesheet"
@@ -20,10 +19,14 @@
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     
-  <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+      
+
+    
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/blank.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.be7d3bbb2ef33a8344ce.js">
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
@@ -39,7 +42,7 @@
     <!-- Google Analytics -->
     
   </head>
-  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
     <div class="container-fluid" id="banner"></div>
 
@@ -96,8 +99,7 @@
           
             
             <!-- Only show if we have sidebars configured, else just a small margin  -->
-            <div class="col-12 col-md-3 bd-sidebar">
-              <div class="sidebar-start-items"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+            <div class="col-12 col-md-3 bd-sidebar"><form class="bd-search d-flex align-items-center" action="search.html" method="get">
   <i class="icon fas fa-search"></i>
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
@@ -139,9 +141,6 @@
 
   </div>
 </nav>
-              </div>
-              <div class="sidebar-end-items">
-              </div>
             </div>
             
           
@@ -152,7 +151,7 @@
               
               <div class="toc-item">
                 
-<div class="tocsection onthispage mt-5 pt-1 pb-3">
+<div class="tocsection onthispage pt-5 pb-3">
     <i class="fas fa-list"></i> On this page
 </div>
 
@@ -200,45 +199,45 @@
               <div>
                 
   <section id="autokoopman-tuner-package">
-<h1>autokoopman.tuner package<a class="headerlink" href="#autokoopman-tuner-package" title="Permalink to this headline">#</a></h1>
+<h1>autokoopman.tuner package<a class="headerlink" href="#autokoopman-tuner-package" title="Permalink to this headline">¶</a></h1>
 <section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">#</a></h2>
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </section>
 <section id="module-autokoopman.tuner.gridsearch">
-<span id="autokoopman-tuner-gridsearch-module"></span><h2>autokoopman.tuner.gridsearch module<a class="headerlink" href="#module-autokoopman.tuner.gridsearch" title="Permalink to this headline">#</a></h2>
+<span id="autokoopman-tuner-gridsearch-module"></span><h2>autokoopman.tuner.gridsearch module<a class="headerlink" href="#module-autokoopman.tuner.gridsearch" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="autokoopman.tuner.gridsearch.GridSearchTuner">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.tuner.gridsearch.</span></span><span class="sig-name descname"><span class="pre">GridSearchTuner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterMap" title="autokoopman.core.tuner.HyperparameterMap"><span class="pre">autokoopman.core.tuner.HyperparameterMap</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">autokoopman.core.trajectory.TrajectoriesData</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.tuner.gridsearch.GridSearchTuner" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.tuner.gridsearch.</span></span><span class="sig-name descname"><span class="pre">GridSearchTuner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterMap" title="autokoopman.core.tuner.HyperparameterMap"><span class="pre">autokoopman.core.tuner.HyperparameterMap</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">autokoopman.core.trajectory.TrajectoriesData</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.tuner.gridsearch.GridSearchTuner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterTuner" title="autokoopman.core.tuner.HyperparameterTuner"><code class="xref py py-class docutils literal notranslate"><span class="pre">autokoopman.core.tuner.HyperparameterTuner</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="autokoopman.tuner.gridsearch.GridSearchTuner.make_grid">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.ParameterSpace" title="autokoopman.core.tuner.ParameterSpace"><span class="pre">autokoopman.core.tuner.ParameterSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samps</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.tuner.gridsearch.GridSearchTuner.make_grid" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_grid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.ParameterSpace" title="autokoopman.core.tuner.ParameterSpace"><span class="pre">autokoopman.core.tuner.ParameterSpace</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samps</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.tuner.gridsearch.GridSearchTuner.make_grid" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="autokoopman.tuner.gridsearch.GridSearchTuner.tune">
-<span class="sig-name descname"><span class="pre">tune</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">nattempts=100,</span> <span class="pre">scoring_func:</span> <span class="pre">typing.Callable[[autokoopman.core.trajectory.TrajectoriesData,</span> <span class="pre">autokoopman.core.trajectory.TrajectoriesData],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">TrajectoryScoring.end_point_score&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.TuneResults" title="autokoopman.core.tuner.TuneResults"><span class="pre">autokoopman.core.tuner.TuneResults</span></a></span></span><a class="headerlink" href="#autokoopman.tuner.gridsearch.GridSearchTuner.tune" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">tune</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">nattempts=100,</span> <span class="pre">scoring_func:</span> <span class="pre">typing.Callable[[autokoopman.core.trajectory.TrajectoriesData,</span> <span class="pre">autokoopman.core.trajectory.TrajectoriesData],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">TrajectoryScoring.end_point_score&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.TuneResults" title="autokoopman.core.tuner.TuneResults"><span class="pre">autokoopman.core.tuner.TuneResults</span></a></span></span><a class="headerlink" href="#autokoopman.tuner.gridsearch.GridSearchTuner.tune" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="module-autokoopman.tuner.montecarlo">
-<span id="autokoopman-tuner-montecarlo-module"></span><h2>autokoopman.tuner.montecarlo module<a class="headerlink" href="#module-autokoopman.tuner.montecarlo" title="Permalink to this headline">#</a></h2>
+<span id="autokoopman-tuner-montecarlo-module"></span><h2>autokoopman.tuner.montecarlo module<a class="headerlink" href="#module-autokoopman.tuner.montecarlo" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="autokoopman.tuner.montecarlo.MonteCarloTuner">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.tuner.montecarlo.</span></span><span class="sig-name descname"><span class="pre">MonteCarloTuner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterMap" title="autokoopman.core.tuner.HyperparameterMap"><span class="pre">autokoopman.core.tuner.HyperparameterMap</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">autokoopman.core.trajectory.TrajectoriesData</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_splits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.tuner.montecarlo.MonteCarloTuner" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.tuner.montecarlo.</span></span><span class="sig-name descname"><span class="pre">MonteCarloTuner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterMap" title="autokoopman.core.tuner.HyperparameterMap"><span class="pre">autokoopman.core.tuner.HyperparameterMap</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">autokoopman.core.trajectory.TrajectoriesData</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_splits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.tuner.montecarlo.MonteCarloTuner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterTuner" title="autokoopman.core.tuner.HyperparameterTuner"><code class="xref py py-class docutils literal notranslate"><span class="pre">autokoopman.core.tuner.HyperparameterTuner</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="autokoopman.tuner.montecarlo.MonteCarloTuner.tune">
-<span class="sig-name descname"><span class="pre">tune</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">nattempts=100,</span> <span class="pre">scoring_func:</span> <span class="pre">typing.Callable[[autokoopman.core.trajectory.TrajectoriesData,</span> <span class="pre">autokoopman.core.trajectory.TrajectoriesData],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">TrajectoryScoring.end_point_score&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.TuneResults" title="autokoopman.core.tuner.TuneResults"><span class="pre">autokoopman.core.tuner.TuneResults</span></a></span></span><a class="headerlink" href="#autokoopman.tuner.montecarlo.MonteCarloTuner.tune" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">tune</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">nattempts=100,</span> <span class="pre">scoring_func:</span> <span class="pre">typing.Callable[[autokoopman.core.trajectory.TrajectoriesData,</span> <span class="pre">autokoopman.core.trajectory.TrajectoriesData],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">TrajectoryScoring.end_point_score&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="autokoopman.core.html#autokoopman.core.tuner.TuneResults" title="autokoopman.core.tuner.TuneResults"><span class="pre">autokoopman.core.tuner.TuneResults</span></a></span></span><a class="headerlink" href="#autokoopman.tuner.montecarlo.MonteCarloTuner.tune" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 </section>
 <section id="module-autokoopman.tuner">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-autokoopman.tuner" title="Permalink to this headline">#</a></h2>
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-autokoopman.tuner" title="Permalink to this headline">¶</a></h2>
 </section>
 </section>
 
@@ -247,7 +246,7 @@
               
               
               <!-- Previous / next buttons -->
-<div class='prev-next-area'>
+<div class='prev-next-area'> 
     <a class='left-prev' id="prev-link" href="autokoopman.estimator.html" title="previous page">
         <i class="fas fa-angle-left"></i>
         <div class="prev-next-info">
@@ -263,8 +262,7 @@
       </div>
     </div>
   
-  <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+  <script src="_static/js/index.be7d3bbb2ef33a8344ce.js"></script>
 <footer class="footer mt-5 mt-md-0">
   <div class="container">
     

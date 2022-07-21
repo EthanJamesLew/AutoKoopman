@@ -56,7 +56,7 @@ class Trajectory:
         assert len(self.times) == len(
             self.states
         ), "length of times must match length of states"
-        if input_names is not None:
+        if input_names is not None and self.inputs is not None:
             assert len(self.times) == len(
                 self.inputs
             ), "length of inputs must match length of times"

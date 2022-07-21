@@ -20,7 +20,7 @@ class Trajectory:
     ):
         def _make_names(
             names: Optional[Sequence[str]],
-            ref_in: np.ndarray,
+            ref_in: Optional[np.ndarray],
             ref_char: str,
             category: str,
         ):
@@ -74,7 +74,7 @@ class Trajectory:
         return self.states.shape[1]
 
     @property
-    def input_dimension(self) -> int:
+    def input_dimension(self) -> Optional[int]:
         if self.inputs is None:
             return None
         else:
@@ -85,7 +85,7 @@ class Trajectory:
         return self._states
 
     @property
-    def inputs(self) -> np.ndarray:
+    def inputs(self) -> Optional[np.ndarray]:
         return self._inputs
 
     @property
@@ -560,7 +560,7 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
         return cls({k: v.to_uniform_time_traj() for k, v in traj_data._trajs.items()})
 
     @property
-    def next_step_matrices(self) -> Tuple[np.ndarray, np.ndarray]:
+    def next_step_matrices(self) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray]]:
         r"""
         Next Step Snapshot Matrices
             Return the two "snapshot matrices" :math:`\mathbf X, \mathbf X'` of observations :math:`\{x_1, x_2, ..., x_n \}`,

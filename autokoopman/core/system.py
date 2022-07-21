@@ -127,23 +127,30 @@ class ContinuousSystem(System):
                 )
                 return atraj.Trajectory(sol.t, sol.y.T, None, self.names)
         else:
-            if len(teval) == 0:
-                raise ValueError("teval must have at least one value")
-            inputs = np.array(inputs)
-            sol = [initial_state]
-            if len(teval) > 1:
-                for tcurrent, tnext, inpi in zip(teval[:-1], teval[1:], inputs[:-1]):
-                    sol_next = scint.solve_ivp(
-                        self.gradient,
-                        (tcurrent, tnext),
-                        sol[-1],
-                        args=(np.atleast_1d(inpi),),
-                        t_eval=(tcurrent, tnext),
-                    )
-                    sol.append(sol_next.y.T[-1])
-            if len(inputs.shape) == 1:
-                inputs = inputs[:, np.newaxis]
-            return atraj.Trajectory(np.array(teval), np.array(sol), inputs, self.names)
+            if teval is not None:
+                if len(teval) == 0:
+                    raise ValueError("teval must have at least one value")
+                inputs = np.array(inputs)
+                sol = [initial_state]
+                if len(teval) > 1:
+                    for tcurrent, tnext, inpi in zip(
+                        teval[:-1], teval[1:], inputs[:-1]
+                    ):
+                        sol_next = scint.solve_ivp(
+                            self.gradient,
+                            (tcurrent, tnext),
+                            sol[-1],
+                            args=(np.atleast_1d(inpi),),
+                            t_eval=(tcurrent, tnext),
+                        )
+                        sol.append(sol_next.y.T[-1])
+                if len(inputs.shape) == 1:
+                    inputs = inputs[:, np.newaxis]
+                return atraj.Trajectory(
+                    np.array(teval), np.array(sol), inputs, self.names
+                )
+            else:
+                raise RuntimeError("teval must be set if inputs is set")
 
     def solve_ivps(
         self,
@@ -235,24 +242,29 @@ class DiscreteSystem(System):
                 traj = atraj.Trajectory(times, states, None, self.names)
                 return traj.interp1d(teval)
         else:
-            if len(teval) == 0:
-                raise ValueError("teval must have at least one value")
-            if inputs.ndim == 1:
-                inputs = inputs[:, np.newaxis]
-            teval = np.array(teval)
-            times = np.arange(min(teval), max(teval) + sampling_period, sampling_period)
-            states = np.zeros((len(times), len(self.names)))
-            states[0] = np.array(initial_state).flatten()
-            for idx, time in enumerate(times[1:]):
-                diff = time - teval
-                diff[diff < 0.0] = float("inf")
-                tidx = diff.argmin()
-                states[idx + 1] = self.step(
-                    float(time), states[idx], np.atleast_1d(inputs[tidx])
-                ).flatten()
-            traj = atraj.Trajectory(times, states, None, state_names=self.names)
-            ctraj = traj.interp1d(teval)
-            return atraj.Trajectory(teval, ctraj.states, inputs, self.names)
+            if teval is not None:
+                if len(teval) == 0:
+                    raise ValueError("teval must have at least one value")
+                if inputs.ndim == 1:
+                    inputs = inputs[:, np.newaxis]
+                teval = np.array(teval)
+                times = np.arange(
+                    min(teval), max(teval) + sampling_period, sampling_period
+                )
+                states = np.zeros((len(times), len(self.names)))
+                states[0] = np.array(initial_state).flatten()
+                for idx, time in enumerate(times[1:]):
+                    diff = time - teval
+                    diff[diff < 0.0] = float("inf")
+                    tidx = diff.argmin()
+                    states[idx + 1] = self.step(
+                        float(time), states[idx], np.atleast_1d(inputs[tidx])
+                    ).flatten()
+                traj = atraj.Trajectory(times, states, None, state_names=self.names)
+                ctraj = traj.interp1d(teval)
+                return atraj.Trajectory(teval, ctraj.states, inputs, self.names)
+            else:
+                raise RuntimeError("teval must be set if inputs is set")
 
     @abc.abstractmethod
     def step(

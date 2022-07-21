@@ -29,8 +29,14 @@ def test_koopman():
     new_inputs[-len(inputs) // 2 :] = -10.0
     new_inputs[: len(inputs) // 2] = 0.0
     preds = disc.model.solve_ivps(
-        training_ivs, teval=teval, inputs=new_inputs, sampling_period=1 / 20.0
+        training_ivs,
+        teval=teval,
+        inputs=[new_inputs for _ in range(len(training_ivs))],
+        sampling_period=1 / 20.0,
     )
     new_sols = pend.solve_ivps(
-        training_ivs, teval=teval, inputs=new_inputs, sampling_period=1 / 20.0
+        training_ivs,
+        teval=teval,
+        inputs=[new_inputs for _ in range(len(training_ivs))],
+        sampling_period=1 / 20.0,
     )

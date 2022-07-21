@@ -1,8 +1,10 @@
 import autokoopman.estimator.sindy as asindy
 import autokoopman.benchmark.fhn as afhn
 import numpy as np
+import pytest
 
 
+@pytest.mark.skip(reason="pySINDy broke on some machines")
 def test_sindy():
     fhn = afhn.FitzHughNagumo()
 

@@ -5,6 +5,15 @@ from typing import Optional
 
 
 def dmdc(X, Xp, U, r):
+    """Dynamic Mode Decomposition with Control (DMDC)
+
+    DMD but extended to include control.
+
+    References
+        Proctor, J. L., Brunton, S. L., & Kutz, J. N. (2016). Dynamic mode decomposition with control. SIAM Journal on Applied Dynamical Systems, 15(1), 142-161.
+
+        See https://arxiv.org/pdf/1409.6358.pdf for more details
+    """
     if U is not None:
         Y = np.hstack((X, U)).T
     else:
@@ -22,6 +31,25 @@ def dmdc(X, Xp, U, r):
 
 
 class KoopmanDiscEstimator(kest.NextStepEstimator):
+    """Koopman Discrete Estimator
+
+    This methods implements a regularized form of Koopman with Inputs (KIC). It assumes that the input
+    if piecewise constant, zeroing out some of the state + input transform.
+
+    TODO: add other ways to implement KIC
+    TODO: sampling period isn't used
+
+    @param observables: function that returns the observables of the system state
+    @param sampling_period: sampling period of the uniform time, discrete system
+    @param dim: dimension of the system state
+    @param rank: rank of the DMDc
+
+    References
+        Proctor, J. L., Brunton, S. L., & Kutz, J. N. (2018). Generalizing Koopman theory to allow for inputs and control. SIAM Journal on Applied Dynamical Systems, 17(1), 909-930.
+
+        See https://epubs.siam.org/doi/pdf/10.1137/16M1062296 for more details
+    """
+
     def __init__(self, observables, sampling_period, dim, rank):
         self.dim = dim
         self.obs = observables
@@ -30,6 +58,10 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
     def fit_next_step(
         self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
     ) -> None:
+        """fits the discrete system model
+
+        calls DMDC after building out the observables
+        """
         G = np.array([self.obs(xi).flatten() for xi in X.T])
         Gp = np.array([self.obs(xi).flatten() for xi in Y.T])
         self._A, self._B = dmdc(G, Gp, U.T if U is not None else U, self.rank)
@@ -37,6 +69,10 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
 
     @property
     def model(self) -> ksys.System:
+        """
+        packs the learned linear transform into a discrete linear system
+        """
+
         def step_func(t, x, i):
             obs = (self.obs(x).flatten())[np.newaxis, :]
             if self._has_input:

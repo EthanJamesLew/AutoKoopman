@@ -82,6 +82,7 @@ def get_estimator(obs_type, sampling_period, dim, obs, hyperparams):
 
 def auto_koopman(
     training_data: Union[TrajectoriesData, Sequence[np.ndarray]],
+    inputs_training_data: Optional[Sequence[np.ndarray]] = None,
     sampling_period: float = 0.05,
     opt: Union[str, HyperparameterTuner] = "monte-carlo",
     max_opt_iter: int = 100,
@@ -158,20 +159,29 @@ def auto_koopman(
     if isinstance(training_data, TrajectoriesData):
         if not isinstance(training_data, UniformTimeTrajectoriesData):
             training_data = training_data.interp_uniform_time(sampling_period)
-    elif isinstance(training_data, dict):
-        training_data = UniformTimeTrajectoriesData(
-            {
-                k: UniformTimeTrajectory(v, sampling_period=sampling_period)
-                for k, v in training_data.items()
-            }
-        )
     else:
-        training_data = UniformTimeTrajectoriesData(
-            {
-                idx: UniformTimeTrajectory(di, sampling_period=sampling_period)
-                for idx, di in enumerate(training_data)
-            }
+        # figure out how to add inputs
+        training_iter = (
+            training_data.items() if isinstance(training_data, dict) else training_data
         )
+        if inputs_training_data is not None:
+            training_iter = [(n, x, inputs_training_data[n]) for n, x in training_iter]
+        else:
+            training_iter = [(n, x, None) for n, x in training_iter]
+        if isinstance(training_data, dict):
+            training_data = UniformTimeTrajectoriesData(
+                {
+                    k: UniformTimeTrajectory(v, u, sampling_period=sampling_period)
+                    for k, v, u in training_iter
+                }
+            )
+        else:
+            training_data = UniformTimeTrajectoriesData(
+                {
+                    idx: UniformTimeTrajectory(di, u, sampling_period=sampling_period)
+                    for idx, di, u in training_iter
+                }
+            )
 
     # system dimension
     dim = len(training_data.state_names)

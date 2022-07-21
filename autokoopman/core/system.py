@@ -48,7 +48,7 @@ class System(abc.ABC):
                 state,
                 tspan=tspan,
                 teval=teval,
-                inputs=inputs,
+                inputs=inputs[idx] if inputs is not None else None,
                 sampling_period=sampling_period,
             )
         return atraj.UniformTimeTrajectoriesData(ret) if teval is None else atraj.TrajectoriesData(ret)  # type: ignore
@@ -166,7 +166,7 @@ class ContinuousSystem(System):
                 state,
                 tspan=tspan,
                 teval=teval,
-                inputs=inputs,
+                inputs=inputs[idx] if inputs is not None else None,
                 sampling_period=sampling_period,
             )
         return atraj.UniformTimeTrajectoriesData(ret) if teval is None else atraj.TrajectoriesData(ret)  # type: ignore

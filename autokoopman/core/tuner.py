@@ -168,7 +168,10 @@ class HyperparameterTuner(abc.ABC):
         # get the predictions
         for k, v in holdout_data._trajs.items():
             sivp_interp = trained_model.model.solve_ivp(
-                v.states[0], (np.min(v.times), np.max(v.times)), teval=v.times
+                v.states[0],
+                (np.min(v.times), np.max(v.times)),
+                inputs=v.inputs,
+                teval=v.times,
             )
             # sivp_interp = sivp_interp.interp1d(v.times)
             preds[k] = sivp_interp

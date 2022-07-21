@@ -30,7 +30,9 @@ class NextStepEstimator(TrajectoryEstimator):
     """
 
     @abc.abstractmethod
-    def fit_next_step(self, X: np.ndarray, Y: np.ndarray) -> None:
+    def fit_next_step(
+        self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
+    ) -> None:
         """an alternative fit method that uses a trajectories data structure"""
         pass
 

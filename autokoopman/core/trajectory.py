@@ -13,24 +13,53 @@ class Trajectory:
         self,
         times: np.ndarray,
         states: np.ndarray,
+        inputs: Optional[np.ndarray],
         state_names: Optional[Sequence[str]] = None,
+        input_names: Optional[Sequence[str]] = None,
         threshold=None,
     ):
+        def _make_names(
+            names: Optional[Sequence[str]],
+            ref_in: Optional[np.ndarray],
+            ref_char: str,
+            category: str,
+        ):
+            if names is None:
+                if ref_in is None:
+                    return None
+                else:
+                    assert (
+                        len(np.array(ref_in).shape) == 2
+                    ), f"{category} must be able to be converted to 2D numpy array"
+                    l = np.array(ref_in).shape[1]
+                    return [f"{ref_char}{idx}" for idx in range(l)]
+            else:
+                return names
+
         assert times.ndim == 1, "times must be a 1d array"
         self._times = times
         self._states = states
-        if state_names is None:
-            assert (
-                len(np.array(self._states).shape) == 2
-            ), f"states must be able to be converted to 2D numpy array"
-            l = np.array(self._states).shape[1]
-            self._states = [f"x{idx}" for idx in range(l)]
-        else:
-            self._state_names = state_names
+        self._inputs = inputs
+        self._state_names = _make_names(state_names, self._states, "x", "states")
+        self._input_names = _make_names(input_names, self._inputs, "u", "inputs")
         self._threshold = 1e-12 if threshold is None else threshold
+
+        # more checks...
         assert self.dimension == len(
             self.names
         ), "dimension must match the length of state names!"
+        assert (
+            self.input_dimension == len(self.input_names)
+            if self.input_names is not None
+            else True
+        ), "input dimension must match the length of input names!"
+        assert len(self.times) == len(
+            self.states
+        ), "length of times must match length of states"
+        if input_names is not None and self.inputs is not None:
+            assert len(self.times) == len(
+                self.inputs
+            ), "length of inputs must match length of times"
 
     @property
     def times(self) -> np.ndarray:
@@ -45,12 +74,27 @@ class Trajectory:
         return self.states.shape[1]
 
     @property
+    def input_dimension(self) -> Optional[int]:
+        if self.inputs is None:
+            return None
+        else:
+            return self.inputs.shape[1]
+
+    @property
     def states(self) -> np.ndarray:
         return self._states
 
     @property
+    def inputs(self) -> Optional[np.ndarray]:
+        return self._inputs
+
+    @property
     def names(self) -> Sequence:
         return self._state_names
+
+    @property
+    def input_names(self) -> Optional[Sequence]:
+        return self._input_names
 
     @property
     def is_uniform_time(self) -> bool:
@@ -63,15 +107,42 @@ class Trajectory:
     def interp1d(self, times) -> "Trajectory":
         from scipy.interpolate import interp1d  # type: ignore
 
-        times = np.array(times)
-        f = interp1d(
-            np.array(self._times),
-            np.array(self._states),
-            fill_value="extrapolate",
-            axis=0,
-        )
-        states = f(times)
-        return Trajectory(times, states, self.names, threshold=self._threshold)
+        if self._inputs is None:
+            times = np.array(times)
+            f = interp1d(
+                np.array(self._times),
+                np.array(self._states),
+                fill_value="extrapolate",
+                axis=0,
+            )
+            states = f(times)
+            return Trajectory(
+                times, states, None, self.names, threshold=self._threshold
+            )
+        else:
+            times = np.array(times)
+            f = interp1d(
+                np.array(self._times),
+                np.array(self._states),
+                fill_value="extrapolate",
+                axis=0,
+            )
+            fi = interp1d(
+                np.array(self._times),
+                np.array(self._inputs),
+                fill_value="extrapolate",
+                axis=0,
+            )
+            states = f(times)
+            inputs = fi(times)
+            return Trajectory(
+                times,
+                states,
+                inputs,
+                state_names=self.names,
+                input_names=self.input_names,
+                threshold=self._threshold,
+            )
 
     def interp_uniform_time(self, sampling_period) -> "UniformTimeTrajectory":
         ts = np.arange(
@@ -84,11 +155,17 @@ class Trajectory:
         sp = np.diff(self._times)[0]
         start = self._times[0]
         return UniformTimeTrajectory(
-            self.states, sp, self.names, start_time=start, threshold=self._threshold
+            self.states,
+            self.inputs,
+            sp,
+            state_names=self.names,
+            input_names=self.input_names,
+            start_time=start,
+            threshold=self._threshold,
         )
 
     def __repr__(self):
-        return f"<{self.__class__.__name__} Dim: {self.dimension}, Length: {self.size}, State Names: {_clip_list(self.names)}>"
+        return f"<{self.__class__.__name__} Dim: {self.dimension}, Length: {self.size}, State Names: {_clip_list(self.names)}, Input Names: {_clip_list(self.input_names)}>"
 
     def _prepare_other(self, other: "Trajectory"):
         if len(self.times) != len(other.times) or not np.all(
@@ -103,7 +180,9 @@ class Trajectory:
         return Trajectory(
             self.times,
             self.states - otheri.states,
-            self.names,
+            None,
+            state_names=self.names,
+            input_names=None,
             threshold=self._threshold,
         )
 
@@ -112,17 +191,22 @@ class Trajectory:
         return Trajectory(
             self.times,
             self.states + otheri.states,
-            self.names,
+            None,
+            state_names=self.names,
+            input_names=None,
             threshold=self._threshold,
         )
 
     def norm(self, axis=1) -> "Trajectory":
+        # TODO: allow the norm type to be selected?
         from numpy.linalg import norm
 
         return Trajectory(
             self.times,
             norm(self.states, axis=axis)[:, np.newaxis],
-            ["<norm>"],
+            None,
+            state_names=["<norm>"],
+            input_names=None,
             threshold=self._threshold,
         )
 
@@ -133,8 +217,10 @@ class UniformTimeTrajectory(Trajectory):
     def __init__(
         self,
         states: np.ndarray,
+        inputs: Optional[np.ndarray],
         sampling_period: float,
         state_names: Optional[Sequence[str]] = None,
+        input_names: Optional[Sequence[str]] = None,
         start_time=0.0,
         threshold=None,
     ):
@@ -142,7 +228,9 @@ class UniformTimeTrajectory(Trajectory):
         times = np.arange(
             start_time, start_time + nsteps * sampling_period, sampling_period
         )[:nsteps]
-        super().__init__(times, states, state_names, threshold=threshold)
+        super().__init__(
+            times, states, inputs, state_names, input_names, threshold=threshold
+        )
         self._sampling_period = sampling_period
 
     @property
@@ -185,7 +273,7 @@ class TrajectoriesData:
     time_id_hname = "time"
 
     @staticmethod
-    def equal_lists(lists: Sequence[List]):
+    def equal_lists(lists: Sequence[Sequence]):
         """
         List Equality
             In a sequence of lists, determine if all list are equal to one another.
@@ -242,7 +330,9 @@ class TrajectoriesData:
             uvi: Trajectory(
                 data_df[data_df[traj_id] == uvi][time_id].to_numpy(),
                 data_df[data_df[traj_id] == uvi][state_names].to_numpy(),
+                None,
                 state_names,
+                None,
                 threshold=threshold,
             )
             for uvi in traj_ids
@@ -339,8 +429,13 @@ class TrajectoriesData:
     def __init__(self, trajs: Dict[Hashable, Union[UniformTimeTrajectory, Trajectory]]):
         self._trajs: Dict[Hashable, Union[UniformTimeTrajectory, Trajectory]] = trajs
         self._names_list = [v.names for _, v in self._trajs.items()]
+        self._input_names_list = [v.input_names for _, v in self._trajs.items()]
         assert self.equal_lists(self._names_list), "all state names must be the same"
+        assert self.equal_lists(
+            self._input_names_list
+        ), "all input names must be the same"
         self._state_names = self._names_list[0]
+        self._input_names = self._input_names_list[0]
 
     def get_trajectory(self, traj_id: Hashable) -> Trajectory:
         return self._trajs[traj_id]
@@ -354,6 +449,10 @@ class TrajectoriesData:
         return self._state_names
 
     @property
+    def input_names(self) -> Optional[Sequence[str]]:
+        return self._input_names
+
+    @property
     def traj_names(self) -> Set[Hashable]:
         return set(self._trajs.keys())
 
@@ -364,7 +463,8 @@ class TrajectoriesData:
         return (
             f"<{self.__class__.__name__} N Trajs: {self.n_trajs}, Traj "
             f"Names: [{_clip_list(list(self.traj_names))}], State "
-            f"Names: [{_clip_list(self.state_names)}]>"
+            f"Names: [{_clip_list(self.state_names)}], Input "
+            f"Names: [{_clip_list(self.input_names)}]>"
         )
 
     def __iter__(self):
@@ -460,7 +560,7 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
         return cls({k: v.to_uniform_time_traj() for k, v in traj_data._trajs.items()})
 
     @property
-    def next_step_matrices(self) -> Tuple[np.ndarray, np.ndarray]:
+    def next_step_matrices(self) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray]]:
         r"""
         Next Step Snapshot Matrices
             Return the two "snapshot matrices" :math:`\mathbf X, \mathbf X'` of observations :math:`\{x_1, x_2, ..., x_n \}`,
@@ -488,4 +588,9 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
 
         Xp = np.vstack([x.states[1:, :] for _, x in self._trajs.items()]).T
 
-        return X, Xp
+        if self.input_names is not None:
+            U = np.vstack([u.inputs[:-1, :] for _, u in self._trajs.items()]).T
+        else:
+            U = None
+
+        return X, Xp, U

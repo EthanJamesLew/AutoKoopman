@@ -1,147 +1,85 @@
 import autokoopman.core.estimator as kest
 import autokoopman.core.system as ksys
 import numpy as np
-from scipy.linalg import logm
-import functools
-import autokoopman.core.observables as kobs
+from typing import Optional
 
 
-def requires_trained(f):
-    @functools.wraps(f)
-    def inner(estimator, *args, **kwargs):
-        if estimator.has_trained:
-            return f(estimator, *args, **kwargs)
-        else:
-            raise RuntimeError(
-                f"method {f} requires that the estimator {estimator} has been trained"
-            )
+def dmdc(X, Xp, U, r):
+    """Dynamic Mode Decomposition with Control (DMDC)
 
-    return inner
+    DMD but extended to include control.
 
+    References
+        Proctor, J. L., Brunton, S. L., & Kutz, J. N. (2016). Dynamic mode decomposition with control. SIAM Journal on Applied Dynamical Systems, 15(1), 142-161.
 
-class Estimator:
-    """TODO: FIXME: maybe replace with scikit estimator"""
-
-    def __init__(self):
-        self.has_trained = False
-
-    def fit(self, X: np.ndarray, Y: np.ndarray) -> None:
-        pass
-
-    def predict(self, X: np.ndarray) -> np.ndarray:
-        pass
-
-
-class KoopmanSystemEstimator(Estimator):
-    def __init__(
-        self, observable_fcn: kobs.KoopmanObservable, sampling_period: float, rank=10
-    ):
-        super().__init__()
-        self.obs = observable_fcn
-        self.g = observable_fcn.obs_fcn
-        self.gd = observable_fcn.obs_grad
-        self.rank = rank
-        self.sampling_period = sampling_period
-        self._X, self._Xn = None, None
-        self._system, self._A, self._B = None, None, None
-
-    @requires_trained
-    def predict(self, X: np.ndarray) -> np.ndarray:
-        return np.array(
-            [
-                self._system.trajectory(
-                    x, (0.0, self.sampling_period), self.sampling_period
-                )[-1]
-                for x in X
-            ]
-        )
-
-
-def dmd(X, Xp, r=2):
-    """simple dynamic mode decomposition (dmd) implementation"""
-    # compute Atilde
-    U, Sigma, V = np.linalg.svd(X, False)
-    U, Sigma, V = U[:, :r], np.diag(Sigma)[:r, :r], V.conj().T[:, :r]
-    Atilde = U.conj().T @ Xp @ V @ np.linalg.inv(Sigma)
-
-    # eigenvalues of Atilde are same as A
-    D, W = np.linalg.eig(Atilde)
-
-    # recover U.shape[0] eigenfunctions of A
-    phi = Xp @ V @ (np.linalg.inv(Sigma)) @ W
-    return D, phi
-
-
-def evolve_modes(mu, Phi, ic, sampling_period, tmax=20.0):
-    """time evolve modes of the DMD"""
-    b = np.linalg.pinv(Phi) @ np.array(ic)
-    t = np.linspace(0, tmax, int(tmax / sampling_period))
-    dt = t[2] - t[1]
-    psi = np.zeros([len(ic), len(t)], dtype="complex")
-    for i, ti in enumerate(t):
-        psi[:, i] = np.multiply(np.power(mu, ti / dt), b)
-    return psi
-
-
-def learned_sys(Xc, Xcp, p, g, gradg, sampling_period):
-    Yc, Ycp = np.hstack([g(x, p=p) for x in Xc.T]), np.hstack(
-        [g(x, p=p) for x in Xcp.T]
-    )
-    A = Ycp @ np.linalg.pinv(Yc)
-    B = logm(A) / sampling_period
-
-    def sys(t, x):
-        return np.real(np.linalg.pinv(gradg(x, p=p)) @ B @ g(x, p=p)).flatten()
-
-    return sys
-
-
-def learned_dmd_sys(Xc, Xcp, g, gradg, sampling_period, r=30):
-    Yc, Ycp = np.hstack([g(x) for x in Xc.T]), np.hstack([g(x) for x in Xcp.T])
-    mucy, Phicy = dmd(Yc, Ycp, r=r)
-    A = Phicy @ np.diag(mucy) @ np.linalg.pinv(Phicy)
-    B = logm(A) / sampling_period
-
-    def sys(t, x):
-        return np.real(np.linalg.pinv(gradg(x)) @ B @ g(x)).flatten()
-
-    return sys
-
-
-def get_linear_transform(Xc, Xcp, g, sampling_period, r=30, continuous=True):
-    Yc, Ycp = np.hstack([g(x) for x in Xc.T]), np.hstack([g(x) for x in Xcp.T])
-    mucy, Phicy = dmd(Yc, Ycp, r)
-    A = Phicy @ np.diag(mucy) @ np.linalg.pinv(Phicy)
-    if continuous:
-        B = logm(A) / sampling_period
-        return B
+        See https://arxiv.org/pdf/1409.6358.pdf for more details
+    """
+    if U is not None:
+        Y = np.hstack((X, U)).T
     else:
-        return A
+        Y = X.T
+    Yp = Xp.T
+    state_size = Yp.shape[0]
 
+    # compute Atilde
+    U, Sigma, V = np.linalg.svd(Y, False)
+    U, Sigma, V = U[:, :r], np.diag(Sigma)[:r, :r], V.conj().T[:, :r]
 
-class KoopmanDiscSystemEstimator(KoopmanSystemEstimator):
-    def fit_disc(self, X: np.ndarray, Xn: np.ndarray) -> None:
-        Yc, Ycp = np.hstack([self.g(x) for x in X.T]), np.hstack(
-            [self.g(x) for x in Xn.T]
-        )
-        mucy, Phicy = dmd(Yc, Ycp, r=self.rank)
-        self._A = Phicy @ np.diag(mucy) @ np.linalg.pinv(Phicy)
-
-    def predict(self, x):
-        return np.real(self._A @ np.atleast_2d(self.g(x))).flatten()
+    # get the transformation
+    Atilde = Yp @ V @ np.linalg.inv(Sigma) @ U.conj().T
+    return Atilde[:, :state_size], Atilde[:, state_size:]
 
 
 class KoopmanDiscEstimator(kest.NextStepEstimator):
-    def __init__(self, observables, sampling_period, dim, rank):
-        self._est = KoopmanDiscSystemEstimator(observables, sampling_period, rank=rank)
-        self.dim = dim
+    """Koopman Discrete Estimator
 
-    def fit_next_step(self, X: np.ndarray, Y: np.ndarray) -> None:
-        self._est.fit_disc(X, Y)
+    This methods implements a regularized form of Koopman with Inputs (KIC). It assumes that the input
+    if piecewise constant, zeroing out some of the state + input transform.
+
+    TODO: add other ways to implement KIC
+    TODO: sampling period isn't used
+
+    :param observables: function that returns the observables of the system state
+    :param sampling_period: sampling period of the uniform time, discrete system
+    :param dim: dimension of the system state
+    :param rank: rank of the DMDc
+
+    References
+        Proctor, J. L., Brunton, S. L., & Kutz, J. N. (2018). Generalizing Koopman theory to allow for inputs and control. SIAM Journal on Applied Dynamical Systems, 17(1), 909-930.
+
+        See https://epubs.siam.org/doi/pdf/10.1137/16M1062296 for more details
+    """
+
+    def __init__(self, observables, sampling_period, dim, rank):
+        self.dim = dim
+        self.obs = observables
+        self.rank = rank
+
+    def fit_next_step(
+        self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
+    ) -> None:
+        """fits the discrete system model
+
+        calls DMDC after building out the observables
+        """
+        G = np.array([self.obs(xi).flatten() for xi in X.T])
+        Gp = np.array([self.obs(xi).flatten() for xi in Y.T])
+        self._A, self._B = dmdc(G, Gp, U.T if U is not None else U, self.rank)
+        self._has_input = U is not None
 
     @property
     def model(self) -> ksys.System:
-        def step_func(t, x):
-            return np.real(self._est.predict(np.atleast_2d(x))[:len(x)])
+        """
+        packs the learned linear transform into a discrete linear system
+        """
+
+        def step_func(t, x, i):
+            obs = (self.obs(x).flatten())[np.newaxis, :]
+            if self._has_input:
+                return np.real(
+                    self._A @ obs.T + self._B @ (i)[:, np.newaxis]
+                ).flatten()[: self.dim]
+            else:
+                return np.real(self._A @ obs.T).flatten()[: len(x)]
 
         return ksys.StepDiscreteSystem(step_func, self.names)

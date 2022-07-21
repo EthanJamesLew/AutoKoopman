@@ -33,9 +33,11 @@ class RobBench(asys.SymbolicContinuousSystem):
         H. H. Robertson. The solution of a set of reaction rate equations. In ”Numerical analysis: an introduction”, page 178–182. Academic Press, 1966.
     """
 
-    def __init__(self, alpha=0.4, beta = 100, gamma =  1000):
+    def __init__(self, alpha=0.4, beta=100, gamma=1000):
         x, y, z = sp.symbols("x y z")
-        xdot = [-alpha * x + beta * y * z,
-                alpha * x - beta * y * z - gamma * y * y,
-                gamma * y * y]
+        xdot = [
+            -alpha * x + beta * y * z,
+            alpha * x - beta * y * z - gamma * y * y,
+            gamma * y * y,
+        ]
         super(RobBench, self).__init__((x, y, z), xdot)

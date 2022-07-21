@@ -39,10 +39,10 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
     TODO: add other ways to implement KIC
     TODO: sampling period isn't used
 
-    @param observables: function that returns the observables of the system state
-    @param sampling_period: sampling period of the uniform time, discrete system
-    @param dim: dimension of the system state
-    @param rank: rank of the DMDc
+    :param observables: function that returns the observables of the system state
+    :param sampling_period: sampling period of the uniform time, discrete system
+    :param dim: dimension of the system state
+    :param rank: rank of the DMDc
 
     References
         Proctor, J. L., Brunton, S. L., & Kutz, J. N. (2018). Generalizing Koopman theory to allow for inputs and control. SIAM Journal on Applied Dynamical Systems, 17(1), 909-930.

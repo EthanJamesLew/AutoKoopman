@@ -99,6 +99,7 @@ def auto_koopman(
         estimators classes at a high level. A tuner can be chosen to find the best hyperparameter values.
 
     :param training_data: training trajectories data from which to learn the system
+    :param inputs_training_data: optional input trajectories data from which to learn the system (this isn't needed if the training data has inputs already)
     :param sampling_period: (for discrete time system) sampling period of training data
     :param opt: hyperparameter optimizer {"grid", "monte-carlo"}
     :param max_opt_iter: maximum iterations for the tuner to use

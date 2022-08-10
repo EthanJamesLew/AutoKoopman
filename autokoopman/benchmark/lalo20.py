@@ -59,6 +59,9 @@ class LaubLoomis(asys.SymbolicContinuousSystem):
     """
 
     def __init__(self):
+        self.name = "lalo20"
+        self.init_set_low = [1.1, 0.95, 1.4, 2.3, 0.9, 0, 0.35]
+        self.init_set_high = [1.3, 1.15, 1.6, 2.5, 1.1, 0.2, 0.55]
         x1, x2, x3, x4, x5, x6, x7 = sp.symbols("x1 x2 x3 x4 x5 x6 x7")
         xdot = [
             1.4 * x3 - 0.9 * x1,

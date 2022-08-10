@@ -24,6 +24,9 @@ class Bio2(asys.SymbolicContinuousSystem):
     """
 
     def __init__(self):
+        self.name = "bio2"
+        self.init_set_low = 0.99
+        self.init_set_high = 1.01
         x1, x2, x3, x4, x5, x6, x7, x8, x9 = sp.symbols("x1 x2 x3 x4 x5 x6 x7 x8 x9   ")
         xdot = [
             3 * x3 - x1 * x6,

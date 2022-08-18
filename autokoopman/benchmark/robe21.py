@@ -35,8 +35,8 @@ class RobBench(asys.SymbolicContinuousSystem):
 
     def __init__(self, alpha=0.4, beta=100, gamma=1000):
         self.name = "robe21"
-        self.init_set_low = []
-        self.init_set_high = []
+        self.init_set_low = 0
+        self.init_set_high = 1
         x, y, z = sp.symbols("x y z")
         xdot = [
             -alpha * x + beta * y * z,

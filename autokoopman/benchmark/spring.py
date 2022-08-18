@@ -27,8 +27,8 @@ class Spring(asys.SymbolicContinuousSystem):
 
     def __init__(self, g=9.81):
         self.name = "spring"
-        self.init_set_low = []
-        self.init_set_high = []
+        self.init_set_low = [1.19, 0.49, 0, 0]
+        self.init_set_high = [1.21, 0.51, 0, 0]
         r, theta, dr, dtheta = sp.symbols("r theta dr dtheta")
         xdot = [
             dr,

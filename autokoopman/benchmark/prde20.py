@@ -47,8 +47,8 @@ class ProdDestr(asys.SymbolicContinuousSystem):
 
     def __init__(self, alpha=0.3):
         self.name = "prde20"
-        self.init_set_low = []
-        self.init_set_high = []
+        self.init_set_low = [9.5,0,0]
+        self.init_set_high = [10,0.5,0.5]
         x0, x1, x2 = sp.symbols("x0 x1 x2")
         xdot = [(-x0 * x1) / (1 + x0), (x0 * x1) / (1 + x0) - alpha * x1, alpha * x1]
         super(ProdDestr, self).__init__((x0, x1, x2), xdot)

@@ -13,11 +13,13 @@ class MonteCarloTuner(atuner.HyperparameterTuner):
         ] = TrajectoryScoring.end_point_score,
     ) -> TuneResults:
         sampling = self.tune_sampling(nattempts, scoring_func)
-        sampling.send(None)
+        next(sampling)
+
         while True:
             try:
                 param = self._parameter_model.parameter_space.random()
                 sampling.send(param)
+                next(sampling)
             except StopIteration:
                 break
         return self.best_result

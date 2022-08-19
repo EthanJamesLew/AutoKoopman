@@ -50,14 +50,18 @@ class GridSearchTuner(atuner.HyperparameterTuner):
             [TrajectoriesData, TrajectoriesData], float
         ] = TrajectoryScoring.end_point_score,
     ) -> TuneResults:
+        # get the number of samples created from the meshgrid
         parameters = self.make_grid(self._parameter_model.parameter_space, self.n_samps)
-        sampling = self.tune_sampling(
-            np.prod(np.array([len(p) for p in parameters])), scoring_func
-        )
-        sampling.send(None)
+        nsamples = np.prod(np.array([len(p) for p in parameters]))
+
+        # create the sampler and send it the parameters
+        sampling = self.tune_sampling(nsamples, scoring_func)
+        next(sampling)
+
         for param in itertools.product(*parameters):
             try:
                 sampling.send(param)
+                next(sampling)
             except StopIteration:
                 break
         return self.best_result

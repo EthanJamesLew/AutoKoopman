@@ -220,10 +220,10 @@ class HyperparameterTuner(abc.ABC):
 
         if self.n_splits is not None:
             kf = KFold(n_splits=self.n_splits)
-        yield score
 
         for _ in tqdm.tqdm(range(nattempts), total=nattempts):
-            param = yield score
+            param = yield
+
             assert isinstance(param, Sequence), "yielded param must be a sequence"
             model = self._parameter_model.get_model(param)
             if self.n_splits is None:
@@ -275,3 +275,4 @@ class HyperparameterTuner(abc.ABC):
                 )
             self.scores.append(score if not np.isnan(score) else 1e12)
             self.best_scores.append(np.min(self.scores))
+            yield score

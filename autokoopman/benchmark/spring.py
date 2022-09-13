@@ -1,6 +1,4 @@
 import sympy as sp  # type: ignore
-from numpy import cos, sin
-
 import autokoopman.core.system as asys
 
 
@@ -33,7 +31,7 @@ class Spring(asys.SymbolicContinuousSystem):
         xdot = [
             dr,
             dtheta,
-            r * dtheta**2 + g * cos(theta) - 2 * (r - 1),
-            (-2 * dr * dtheta - g * sin(theta)) / r,
+            r * dtheta**2 + g * sp.cos(theta) - 2 * (r - 1),
+            (-2 * dr * dtheta - g * sp.sin(theta)) / r,
         ]
         super(Spring, self).__init__((r, theta, dr, dtheta), xdot)

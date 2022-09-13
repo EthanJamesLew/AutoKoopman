@@ -24,8 +24,8 @@ class PendulumWithInput(asys.SymbolicContinuousSystem):
 
     def __init__(self, g=9.81, l=1.0, beta=0.0):
         self.name = "pendulum"
-        self.init_set_low = -1
-        self.init_set_high = 1
+        self.init_set_low = [-1, -1]
+        self.init_set_high = [1, 1]
         self.teval = np.linspace(0, 10, 200)
         theta, thetadot = sp.symbols("theta thetadot")
         tau = sp.symbols("tau")

@@ -236,6 +236,9 @@ class DeepKoopman(kest.NextStepEstimator):
                 nUv = Uv / self.u_mult
             else:
                 nUv = None
+        else:
+            nXv = None
+            nUv = None
 
         def _get_loss(mseloss, l1loss, x, xn, y, yn, xr, Xn):
             ae_loss = mseloss(x, xr)

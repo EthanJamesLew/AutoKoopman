@@ -1,11 +1,41 @@
 import torch
 import torch.nn as nn
+import numpy as np
+from typing import Optional, Tuple
 import tqdm
+import autokoopman.core.system as ksys
+import autokoopman.core.estimator as kest
 
 
-class DeepKoopman:
-    """
+class DeepKoopman(kest.NextStepEstimator):
+    r"""
     Deep Learning Koopman with Inputs
+
+    This is a simple implementation of an AutoEncoder architecture to learn the Koopman observables and
+    operator. It allows an input space, which is directly injected into the observables space (like KIC).
+    To improve a good fit, a *metric loss* is introduced to make the distances between states approximately
+    preserve in the observables space.
+
+    The loss is defined as
+
+    .. math::
+        \mathcal L(\mathbf x, \mathbf x_r,\mathbf x', \mathbf x'_r, \mathbf y, \mathbf y') = \left\| \mathbf x-\mathbf x_r \right\|_2^2 + \lambda_p \left\| \mathbf x'-\mathbf x'_r \right\|_2^2 + \lambda_m \left| \left\| \mathbf y' - \mathbf y \right\|_2^2 -  \left\| \mathbf x' - \mathbf x \right\|_2^2 \right|
+
+    where :math:`\mathbf x` is the current state, :math:`\mathbf x_r` is the reconstructed current state,
+    :math:`\mathbf x'` is the next state, :math:`\mathbf x'_r` is the reconstructed state,
+    :math:`\mathbf y` is the current observable, and :math:`\mathbf y'` is the next observable.
+
+    TODO: implement normalizers
+
+    :param state_dim: system state space dimension
+    :param input_dim: system input space dimension
+    :param hidden_dim: observables space dimension
+    :param pred_loss_weight: weighting factor for prediction loss (of total loss)
+    :param metric_loss_weight: weighting factor for metric loss (of total loss)
+    :param hidden_enc_dim: dimension of hidden layers in the encoder/decoder
+    :param encoder_module: PyTorch Module Encoder (pass in externally)
+    :param decoder_module: PyTorch Module Decoder (pass in externally)
+    :param torch_device: device to run PyTorch (if None, it will attempt to use cuda:0)
 
     References
         Li, Y., He, H., Wu, J., Katabi, D., & Torralba, A. (2019).
@@ -15,15 +45,15 @@ class DeepKoopman:
 
     def __init__(
         self,
-        state_dim,
-        input_dim,
-        hidden_dim,
-        pred_loss_weight=1.0,
-        metric_loss_weight=0.2,
-        hidden_enc_dim=32,
-        encoder_module=None,
-        decoder_module=None,
-        torch_device=None,
+        state_dim: int,
+        input_dim: int,
+        hidden_dim: int,
+        pred_loss_weight: float = 1.0,
+        metric_loss_weight: float = 0.2,
+        hidden_enc_dim: int = 32,
+        encoder_module: Optional[nn.Module] = None,
+        decoder_module: Optional[nn.Module] = None,
+        torch_device: Optional[str] = None,
     ):
         if torch_device is None:
             self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -68,12 +98,18 @@ class DeepKoopman:
         self.metric_loss_weight = metric_loss_weight
         self.pred_loss_weight = pred_loss_weight
 
-    def forward(self, xt, ut):
+    def forward(self, x, u):
+        """
+        NN Forward Function
+
+        :param x: current system state
+        :param u: current system input
+        """
         # get current step observable
-        y = self.encoder(xt)
+        y = self.encoder(x)
 
         # get next step observable
-        yn = self.propagate(torch.cat((y, ut), axis=-1))
+        yn = self.propagate(torch.cat((y, u), axis=-1))
 
         # get next step state
         xn = self.decoder(yn)
@@ -81,16 +117,73 @@ class DeepKoopman:
         # get x reconstruction
         xr = self.decoder(y)
 
-        return xt, xn, y, yn, xr
+        return x, xn, y, yn, xr
 
     @property
-    def system_matrices(self):
+    def system_matrices(self) -> Tuple[np.ndarray, np.ndarray]:
+        """get the linear system matrices :math:`\mathbf x_{n+1} = A \mathbf x_n + B \mathbf u_n`
+
+        :returns: A, B
+        """
         weight = self.propagate.weight.data.numpy()
         A = weight[:, : self.hidden_dim]
         B = weight[:, self.hidden_dim :]
         return A, B
 
-    def train(self, X, Xn, U, max_iter=500, lr=1e-3, validation_data=None):
+    @property
+    def model(self) -> ksys.System:
+        """
+        packs the autoencoder into a system object
+        """
+
+        def step_func(t, x, i):
+            tx = torch.tensor(x, dtype=torch.float32).to(self.device)
+            tu = torch.tensor(i, dtype=torch.float32).to(self.device)
+            _, xn, _, _, _ = self.forward(tx, tu)
+            return xn.cpu().detach().numpy()
+
+        return ksys.StepDiscreteSystem(step_func, self.names)
+
+    def fit_next_step(
+        self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None, **kwargs
+    ) -> None:
+        """fits the discrete system model
+
+        :param X: snapshot of states
+        :param Y: snapshot of next states
+        :param U: snapshot of inputs corresponding to X
+        :param max_iter: maximum number of iterations
+        :param lr: learning rate
+        :param validation_data: additional (X, Xn, U) to validate at each iteration
+        """
+        tX = torch.tensor(X, dtype=torch.float32).to(self.device)
+        tY = torch.tensor(Y, dtype=torch.float32).to(self.device)
+        tU = torch.tensor(U, dtype=torch.float32).to(self.device)
+        self.train(tX, tY, tU, **kwargs)
+
+    def train(
+        self,
+        X: torch.Tensor,
+        Xn: torch.Tensor,
+        U: torch.Tensor,
+        max_iter: int = 500,
+        lr: float = 1e-3,
+        validation_data: Optional[Tuple[np.ndarray, np.ndarray, np.ndarray]] = None,
+    ):
+        """
+        Train the AutoEncoder
+
+        Internally updates the loss_hist field to record training information.
+
+        TODO: implement early stopping
+
+        :param X: snapshot of states
+        :param Xn: snapshot of next states
+        :param U: snapshot of inputs corresponding to X
+        :param max_iter: maximum number of iterations
+        :param lr: learning rate
+        :param validation_data: additional (X, Xn, U) to validate at each iteration
+        """
         mseloss = nn.MSELoss()
         l1loss = nn.L1Loss()
 

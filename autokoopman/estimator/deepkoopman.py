@@ -67,6 +67,8 @@ class DeepKoopman(kest.NextStepEstimator):
         self.lr = lr
         self.validation_data = validation_data
 
+        self.has_input = input_dim > 0
+
         if torch_device is None:
             self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         else:
@@ -125,7 +127,10 @@ class DeepKoopman(kest.NextStepEstimator):
         y = self.encoder(x)
 
         # get next step observable
-        yn = self.propagate(torch.cat((y, u), axis=-1))
+        if u is not None:
+            yn = self.propagate(torch.cat((y, u), axis=-1))
+        else:
+            yn = self.propagate(y)
 
         # get next step state
         xn = self.decoder(yn)
@@ -155,9 +160,12 @@ class DeepKoopman(kest.NextStepEstimator):
         def step_func(t, x, i):
             with torch.no_grad():
                 tx = torch.tensor(x, dtype=torch.float32).to(self.device)
-                tu = torch.tensor(i, dtype=torch.float32).to(self.device)
+                if self.has_input:
+                    tu = torch.tensor(i, dtype=torch.float32).to(self.device)
+                    tu /= self.u_mult
+                else:
+                    tu = None
                 tx /= self.x_mult
-                tu /= self.u_mult
                 _, xn, _, _, _ = self.forward(tx, tu)
                 xn *= self.x_mult
                 return xn.cpu().detach().numpy()
@@ -173,16 +181,20 @@ class DeepKoopman(kest.NextStepEstimator):
         :param Y: snapshot of next states
         :param U: snapshot of inputs corresponding to X
         """
-        tX = torch.tensor(X, dtype=torch.float32).to(self.device)
-        tY = torch.tensor(Y, dtype=torch.float32).to(self.device)
-        tU = torch.tensor(U, dtype=torch.float32).to(self.device)
-        self.train(tX.T, tY.T, tU.T, **kwargs)
+        tX = torch.tensor(X.T, dtype=torch.float32).to(self.device)
+        tY = torch.tensor(Y.T, dtype=torch.float32).to(self.device)
+        tU = (
+            torch.tensor(U.T, dtype=torch.float32).to(self.device)
+            if self.has_input
+            else None
+        )
+        self.train(tX, tY, tU, **kwargs)
 
     def train(
         self,
         X: torch.Tensor,
         Xn: torch.Tensor,
-        U: torch.Tensor,
+        U: Optional[torch.Tensor],
     ):
         """
         Train the AutoEncoder
@@ -197,13 +209,19 @@ class DeepKoopman(kest.NextStepEstimator):
         """
         mseloss = nn.MSELoss()
         l1loss = nn.L1Loss()
+        mselossv = nn.MSELoss()
+        l1lossv = nn.L1Loss()
 
         self.x_mult = torch.max(torch.abs(X))
-        self.u_mult = torch.max(torch.abs(U))
 
         nX = X / self.x_mult
         nXn = Xn / self.x_mult
-        nU = U / self.u_mult
+
+        if self.has_input:
+            self.u_mult = torch.max(torch.abs(U))
+            nU = U / self.u_mult
+        else:
+            nU = None
 
         # upload validation data to device if needed
         if self.validation_data is not None:
@@ -211,10 +229,13 @@ class DeepKoopman(kest.NextStepEstimator):
             _Xv, _Xnv, _Uv = self.validation_data.next_step_matrices
             Xv = torch.tensor(_Xv.T, dtype=torch.float32).to(self.device)
             Xnv = torch.tensor(_Xnv.T, dtype=torch.float32).to(self.device)
-            Uv = torch.tensor(_Uv.T, dtype=torch.float32).to(self.device)
             nXv = Xv / self.x_mult
             nXnv = Xnv / self.x_mult
-            nUv = Uv / self.u_mult
+            if self.has_input:
+                Uv = torch.tensor(_Uv.T, dtype=torch.float32).to(self.device)
+                nUv = Uv / self.u_mult
+            else:
+                nUv = None
 
         def _get_loss(mseloss, l1loss, x, xn, y, yn, xr, Xn):
             ae_loss = mseloss(x, xr)
@@ -264,7 +285,7 @@ class DeepKoopman(kest.NextStepEstimator):
             if self.validation_data is not None:
                 with torch.no_grad():
                     x, xn, y, yn, xr = self.forward(nXv, nUv)
-                    loss = _get_loss(mseloss, l1loss, x, xn, y, yn, xr, nXnv)
+                    loss = _get_loss(mselossv, l1lossv, x, xn, y, yn, xr, nXnv)
 
                     # add to the loss history with validation prefix
                     for k, v in loss.items():

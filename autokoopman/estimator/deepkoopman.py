@@ -5,6 +5,7 @@ from typing import Optional, Tuple
 import tqdm
 import autokoopman.core.system as ksys
 import autokoopman.core.estimator as kest
+import autokoopman.core.trajectory as ktraj
 
 
 class DeepKoopman(kest.NextStepEstimator):
@@ -33,6 +34,9 @@ class DeepKoopman(kest.NextStepEstimator):
     :param pred_loss_weight: weighting factor for prediction loss (of total loss)
     :param metric_loss_weight: weighting factor for metric loss (of total loss)
     :param hidden_enc_dim: dimension of hidden layers in the encoder/decoder
+    :param max_iter: maximum number of iterations
+    :param lr: learning rate
+    :param validation_data: additional uniform time trajectories to validate at each iteration
     :param encoder_module: PyTorch Module Encoder (pass in externally)
     :param decoder_module: PyTorch Module Decoder (pass in externally)
     :param torch_device: device to run PyTorch (if None, it will attempt to use cuda:0)
@@ -51,10 +55,18 @@ class DeepKoopman(kest.NextStepEstimator):
         pred_loss_weight: float = 1.0,
         metric_loss_weight: float = 0.2,
         hidden_enc_dim: int = 32,
+        max_iter: int = 500,
+        lr: float = 1e-3,
+        validation_data: Optional[ktraj.UniformTimeTrajectoriesData] = None,
+        num_hidden_layers: int = 1,
         encoder_module: Optional[nn.Module] = None,
         decoder_module: Optional[nn.Module] = None,
         torch_device: Optional[str] = None,
     ):
+        self.max_iter = max_iter
+        self.lr = lr
+        self.validation_data = validation_data
+
         if torch_device is None:
             self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         else:
@@ -66,8 +78,10 @@ class DeepKoopman(kest.NextStepEstimator):
             self.encoder = nn.Sequential(
                 nn.Linear(state_dim, hidden_enc_dim),
                 nn.PReLU(),
-                nn.Linear(hidden_enc_dim, hidden_enc_dim),
-                nn.PReLU(),
+                *(
+                    [nn.Linear(hidden_enc_dim, hidden_enc_dim), nn.PReLU()]
+                    * num_hidden_layers
+                ),
                 nn.Linear(hidden_enc_dim, hidden_dim),
                 nn.Tanh(),
             )
@@ -78,8 +92,10 @@ class DeepKoopman(kest.NextStepEstimator):
             self.decoder = nn.Sequential(
                 nn.Linear(hidden_dim, hidden_enc_dim),
                 nn.PReLU(),
-                nn.Linear(hidden_enc_dim, hidden_enc_dim),
-                nn.PReLU(),
+                *(
+                    [nn.Linear(hidden_enc_dim, hidden_enc_dim), nn.PReLU()]
+                    * num_hidden_layers
+                ),
                 nn.Linear(hidden_enc_dim, state_dim),
                 nn.Tanh(),
             )
@@ -137,10 +153,14 @@ class DeepKoopman(kest.NextStepEstimator):
         """
 
         def step_func(t, x, i):
-            tx = torch.tensor(x, dtype=torch.float32).to(self.device)
-            tu = torch.tensor(i, dtype=torch.float32).to(self.device)
-            _, xn, _, _, _ = self.forward(tx, tu)
-            return xn.cpu().detach().numpy()
+            with torch.no_grad():
+                tx = torch.tensor(x, dtype=torch.float32).to(self.device)
+                tu = torch.tensor(i, dtype=torch.float32).to(self.device)
+                tx /= self.x_mult
+                tu /= self.u_mult
+                _, xn, _, _, _ = self.forward(tx, tu)
+                xn *= self.x_mult
+                return xn.cpu().detach().numpy()
 
         return ksys.StepDiscreteSystem(step_func, self.names)
 
@@ -152,23 +172,17 @@ class DeepKoopman(kest.NextStepEstimator):
         :param X: snapshot of states
         :param Y: snapshot of next states
         :param U: snapshot of inputs corresponding to X
-        :param max_iter: maximum number of iterations
-        :param lr: learning rate
-        :param validation_data: additional (X, Xn, U) to validate at each iteration
         """
         tX = torch.tensor(X, dtype=torch.float32).to(self.device)
         tY = torch.tensor(Y, dtype=torch.float32).to(self.device)
         tU = torch.tensor(U, dtype=torch.float32).to(self.device)
-        self.train(tX, tY, tU, **kwargs)
+        self.train(tX.T, tY.T, tU.T, **kwargs)
 
     def train(
         self,
         X: torch.Tensor,
         Xn: torch.Tensor,
         U: torch.Tensor,
-        max_iter: int = 500,
-        lr: float = 1e-3,
-        validation_data: Optional[Tuple[np.ndarray, np.ndarray, np.ndarray]] = None,
     ):
         """
         Train the AutoEncoder
@@ -180,12 +194,27 @@ class DeepKoopman(kest.NextStepEstimator):
         :param X: snapshot of states
         :param Xn: snapshot of next states
         :param U: snapshot of inputs corresponding to X
-        :param max_iter: maximum number of iterations
-        :param lr: learning rate
-        :param validation_data: additional (X, Xn, U) to validate at each iteration
         """
         mseloss = nn.MSELoss()
         l1loss = nn.L1Loss()
+
+        self.x_mult = torch.max(torch.abs(X))
+        self.u_mult = torch.max(torch.abs(U))
+
+        nX = X / self.x_mult
+        nXn = Xn / self.x_mult
+        nU = U / self.u_mult
+
+        # upload validation data to device if needed
+        if self.validation_data is not None:
+            # transpose necessary to change construction
+            _Xv, _Xnv, _Uv = self.validation_data.next_step_matrices
+            Xv = torch.tensor(_Xv.T, dtype=torch.float32).to(self.device)
+            Xnv = torch.tensor(_Xnv.T, dtype=torch.float32).to(self.device)
+            Uv = torch.tensor(_Uv.T, dtype=torch.float32).to(self.device)
+            nXv = Xv / self.x_mult
+            nXnv = Xnv / self.x_mult
+            nUv = Uv / self.u_mult
 
         def _get_loss(mseloss, l1loss, x, xn, y, yn, xr, Xn):
             ae_loss = mseloss(x, xr)
@@ -204,16 +233,16 @@ class DeepKoopman(kest.NextStepEstimator):
                 "metric_loss": metric_loss,
             }
 
-        encoder_optimizer = torch.optim.Adam(self.encoder.parameters(), lr=lr)
-        decoder_optimizer = torch.optim.Adam(self.decoder.parameters(), lr=lr)
-        propagate_optimizer = torch.optim.Adam(self.propagate.parameters(), lr=lr)
+        encoder_optimizer = torch.optim.Adam(self.encoder.parameters(), lr=self.lr)
+        decoder_optimizer = torch.optim.Adam(self.decoder.parameters(), lr=self.lr)
+        propagate_optimizer = torch.optim.Adam(self.propagate.parameters(), lr=self.lr)
 
         loss_hist = {}
 
-        for it in tqdm.tqdm(range(max_iter)):
+        for _ in tqdm.tqdm(range(self.max_iter)):
             # get risk (loss)
-            x, xn, y, yn, xr = self.forward(X, U)
-            risk = _get_loss(mseloss, l1loss, x, xn, y, yn, xr, Xn)
+            x, xn, y, yn, xr = self.forward(nX, nU)
+            risk = _get_loss(mseloss, l1loss, x, xn, y, yn, xr, nXn)
             for k, v in risk.items():
                 if k in loss_hist:
                     loss_hist[k].append(v.cpu().detach().numpy())
@@ -232,11 +261,10 @@ class DeepKoopman(kest.NextStepEstimator):
             propagate_optimizer.step()
 
             # do validation if applicable
-            if validation_data is not None:
+            if self.validation_data is not None:
                 with torch.no_grad():
-                    Xv, Xnv, Uv = validation_data
-                    x, xn, y, yn, xr = self.forward(Xv, Uv)
-                    loss = _get_loss(mseloss, l1loss, x, xn, y, yn, xr, Xnv)
+                    x, xn, y, yn, xr = self.forward(nXv, nUv)
+                    loss = _get_loss(mseloss, l1loss, x, xn, y, yn, xr, nXnv)
 
                     # add to the loss history with validation prefix
                     for k, v in loss.items():

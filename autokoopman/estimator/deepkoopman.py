@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torchvision.transforms as transforms
 import numpy as np
 from typing import Optional, Tuple
 import tqdm
@@ -219,8 +218,6 @@ class DeepKoopman(kest.NextStepEstimator):
         self.x_mult = torch.max(torch.abs(X))
         self.xmean = torch.mean(X, dim=0)
         self.xstd = self.x_mult  # torch.std(X, dim=0)
-        self.x_norm = transforms.Normalize(self.xmean, self.xstd)
-        self.x_unorm = transforms.Normalize(-self.xmean / self.xstd, 1 / self.xstd)
 
         nX = (X - self.xmean) / self.xstd
         nXn = (Xn - self.xmean) / self.xstd
@@ -275,8 +272,8 @@ class DeepKoopman(kest.NextStepEstimator):
             total_loss = (
                 (ae_loss + pred_loss)
                 + self.pred_loss_weight * lin_loss
-                + 1e-5 * inf_loss
-                + 1e-5 * weight_loss
+                + 1e-2 * inf_loss
+                + 1e-4 * weight_loss
                 # + self.metric_loss_weight * metric_loss
             )
             return {

@@ -275,9 +275,9 @@ class DeepKoopman(kest.NextStepEstimator):
             total_loss = (
                 (ae_loss + pred_loss)
                 + self.pred_loss_weight * lin_loss
-                + 1e-3 * inf_loss
-                # + 1E-2 * weight_loss
-                + self.metric_loss_weight * metric_loss
+                + 1e-5 * inf_loss
+                + 1e-5 * weight_loss
+                # + self.metric_loss_weight * metric_loss
             )
             return {
                 "total_loss": total_loss,

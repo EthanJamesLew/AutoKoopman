@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torchvision.transforms as transforms
 import numpy as np
 from typing import Optional, Tuple
 import tqdm
@@ -76,14 +77,16 @@ class DeepKoopman(kest.NextStepEstimator):
 
         self.hidden_dim = hidden_dim
 
+        hidden_layers = [
+            nn.Linear(hidden_enc_dim, hidden_enc_dim),
+            nn.PReLU(),
+        ] * num_hidden_layers
+
         if encoder_module is None:
             self.encoder = nn.Sequential(
                 nn.Linear(state_dim, hidden_enc_dim),
                 nn.PReLU(),
-                *(
-                    [nn.Linear(hidden_enc_dim, hidden_enc_dim), nn.PReLU()]
-                    * num_hidden_layers
-                ),
+                *(hidden_layers),
                 nn.Linear(hidden_enc_dim, hidden_dim),
                 nn.Tanh(),
             )
@@ -165,9 +168,9 @@ class DeepKoopman(kest.NextStepEstimator):
                     tu /= self.u_mult
                 else:
                     tu = None
-                tx /= self.x_mult
+                tx = (tx - self.xmean) / self.xstd
                 _, xn, _, _, _ = self.forward(tx, tu)
-                xn *= self.x_mult
+                xn = xn * self.xstd + self.xmean
                 return xn.cpu().detach().numpy()
 
         return ksys.StepDiscreteSystem(step_func, self.names)
@@ -209,13 +212,18 @@ class DeepKoopman(kest.NextStepEstimator):
         """
         mseloss = nn.MSELoss()
         l1loss = nn.L1Loss()
+
         mselossv = nn.MSELoss()
         l1lossv = nn.L1Loss()
 
         self.x_mult = torch.max(torch.abs(X))
+        self.xmean = torch.mean(X, dim=0)
+        self.xstd = self.x_mult  # torch.std(X, dim=0)
+        self.x_norm = transforms.Normalize(self.xmean, self.xstd)
+        self.x_unorm = transforms.Normalize(-self.xmean / self.xstd, 1 / self.xstd)
 
-        nX = X / self.x_mult
-        nXn = Xn / self.x_mult
+        nX = (X - self.xmean) / self.xstd
+        nXn = (Xn - self.xmean) / self.xstd
 
         if self.has_input:
             self.u_mult = torch.max(torch.abs(U))
@@ -229,8 +237,8 @@ class DeepKoopman(kest.NextStepEstimator):
             _Xv, _Xnv, _Uv = self.validation_data.next_step_matrices
             Xv = torch.tensor(_Xv.T, dtype=torch.float32).to(self.device)
             Xnv = torch.tensor(_Xnv.T, dtype=torch.float32).to(self.device)
-            nXv = Xv / self.x_mult
-            nXnv = Xnv / self.x_mult
+            nXv = (Xv - self.xmean) / self.xstd
+            nXnv = (Xnv - self.xmean) / self.xstd
             if self.has_input:
                 Uv = torch.tensor(_Uv.T, dtype=torch.float32).to(self.device)
                 nUv = Uv / self.u_mult
@@ -241,19 +249,43 @@ class DeepKoopman(kest.NextStepEstimator):
             nUv = None
 
         def _get_loss(mseloss, l1loss, x, xn, y, yn, xr, Xn):
+            # reconstruction and prediction loss
             ae_loss = mseloss(x, xr)
             pred_loss = mseloss(xn, Xn)
+
+            # linearity loss
+            with torch.no_grad():
+                lin_loss = mseloss(yn, self.encoder(Xn))
+
+            # largest loss
+            inf_loss = torch.max(torch.abs(x - xr)) + torch.max(torch.abs(Xn - xn))
+
+            # metric loss
             metric_loss = l1loss(torch.norm(yn - y, dim=1), torch.norm(xn - x, dim=1))
 
+            # frobenius norm of operator
+            weight_loss = 0
+            for l in self.encoder:
+                if isinstance(l, nn.Linear):
+                    weight_loss += torch.norm(l.weight.data)
+            for l in self.decoder:
+                if isinstance(l, nn.Linear):
+                    weight_loss += torch.norm(l.weight.data)
+
             total_loss = (
-                ae_loss
-                + self.pred_loss_weight * pred_loss
+                (ae_loss + pred_loss)
+                + self.pred_loss_weight * lin_loss
+                + 1e-3 * inf_loss
+                # + 1E-2 * weight_loss
                 + self.metric_loss_weight * metric_loss
             )
             return {
                 "total_loss": total_loss,
                 "recon_loss": ae_loss,
                 "pred_loss": pred_loss,
+                "lin_loss": lin_loss,
+                "inf_loss": inf_loss,
+                "weight_loss": weight_loss,
                 "metric_loss": metric_loss,
             }
 

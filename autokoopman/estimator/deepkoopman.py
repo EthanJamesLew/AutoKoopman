@@ -251,8 +251,7 @@ class DeepKoopman(kest.NextStepEstimator):
             pred_loss = mseloss(xn, Xn)
 
             # linearity loss
-            with torch.no_grad():
-                lin_loss = mseloss(yn, self.encoder(Xn))
+            lin_loss = mseloss(yn, self.encoder(Xn))
 
             # largest loss
             inf_loss = torch.max(torch.abs(x - xr)) + torch.max(torch.abs(Xn - xn))
@@ -270,10 +269,10 @@ class DeepKoopman(kest.NextStepEstimator):
                     weight_loss += torch.norm(l.weight.data)
 
             total_loss = (
-                (ae_loss + pred_loss)
-                + self.pred_loss_weight * lin_loss
-                + 1e-2 * inf_loss
-                + 1e-4 * weight_loss
+                1.0 * (ae_loss + pred_loss)
+                + lin_loss
+                + 0.0 * inf_loss
+                + 0.0 * weight_loss
                 # + self.metric_loss_weight * metric_loss
             )
             return {

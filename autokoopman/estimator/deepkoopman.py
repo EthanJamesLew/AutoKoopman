@@ -269,11 +269,11 @@ class DeepKoopman(kest.NextStepEstimator):
                     weight_loss += torch.norm(l.weight.data)
 
             total_loss = (
-                1.0 * (ae_loss + pred_loss)
+                0.5 * (ae_loss + pred_loss)
                 + lin_loss
-                + 0.0 * inf_loss
-                + 0.0 * weight_loss
-                # + self.metric_loss_weight * metric_loss
+                + 1e-7 * inf_loss
+                + 1e-10 * weight_loss
+                + 1e-7 * metric_loss
             )
             return {
                 "total_loss": total_loss,

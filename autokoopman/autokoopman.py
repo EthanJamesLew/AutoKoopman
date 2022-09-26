@@ -92,8 +92,8 @@ def auto_koopman(
     rank: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
     grid_param_slices: int = 10,
     lengthscale: Tuple[float, float] = (1e-4, 1e1),
-    enc_dim: int = (16, 64, 16),
-    n_layers: int = (1, 8, 2),
+    enc_dim: Tuple[int, int, int] = (2, 64, 16),
+    n_layers: Tuple[int, int, int] = (1, 8, 2),
 ):
     """
     AutoKoopman Convenience Function
@@ -111,7 +111,7 @@ def auto_koopman(
     :param rank: (for koopman) rank range (start, stop) or (start, stop, step)
     :param grid_param_slices: (for grid tuner) resolution to slice continuous valued parameters into
     :param lengthscale: (for RFF observables) RFF kernel lengthscale
-    :param enc_dim: (for deep learning) number of dimensions in the encoder / decoder hidden layers
+    :param enc_dim: (for deep learning) number of dimensions in the latent space
     :param n_layers: (for deep learning) number of hidden layers in the encoder / decoder
 
     :returns: Tuned Model and Metadata
@@ -215,11 +215,12 @@ def _deep_model_map(
             return dk.DeepKoopman(
                 state_dim=dim,
                 input_dim=input_dim,
-                hidden_dim=obs_dim,
-                max_iter=200,
-                hidden_enc_dim=hyperparams[0],
+                hidden_dim=hyperparams[0],
+                max_iter=500,
+                lr=1e-3,
+                hidden_enc_dim=64,
                 num_hidden_layers=hyperparams[1],
-                pred_loss_weight=5.0,
+                pred_loss_weight=1.0,
                 metric_loss_weight=0.1,
             )
 

@@ -27,7 +27,7 @@ __all__ = ["auto_koopman"]
 
 
 # valid string identifiers for the autokoopman magic
-obs_types = {"rff", "quadratic", "id"}
+obs_types = {"rff", "quadratic", "id", "deep"}
 opt_types = {"grid", "monte-carlo"}
 
 
@@ -92,6 +92,8 @@ def auto_koopman(
     rank: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
     grid_param_slices: int = 10,
     lengthscale: Tuple[float, float] = (1e-4, 1e1),
+    enc_dim: Tuple[int, int, int] = (2, 64, 16),
+    n_layers: Tuple[int, int, int] = (1, 8, 2),
 ):
     """
     AutoKoopman Convenience Function
@@ -104,11 +106,13 @@ def auto_koopman(
     :param opt: hyperparameter optimizer {"grid", "monte-carlo"}
     :param max_opt_iter: maximum iterations for the tuner to use
     :param n_splits: (for optimizers) if set, switches to k-folds bootstrap validation for the hyperparameter tuning. This is useful for things like RFF tuning where the results have noise.
-    :param obs_type: (for koopman) koopman observables to use {"rff", "quadratic", "id"}
+    :param obs_type: (for koopman) koopman observables to use {"rff", "quadratic", "id", "deep"}
     :param  n_obs: (for koopman) number of observables to use (if applicable)
     :param rank: (for koopman) rank range (start, stop) or (start, stop, step)
     :param grid_param_slices: (for grid tuner) resolution to slice continuous valued parameters into
     :param lengthscale: (for RFF observables) RFF kernel lengthscale
+    :param enc_dim: (for deep learning) number of dimensions in the latent space
+    :param n_layers: (for deep learning) number of hidden layers in the encoder / decoder
 
     :returns: Tuned Model and Metadata
 
@@ -145,6 +149,131 @@ def auto_koopman(
             # 'estimator': <autokoopman.estimator.koopman.KoopmanDiscEstimator at 0x7f0f92ff0610>}
     """
 
+    training_data = _sanitize_training_data(
+        training_data, inputs_training_data, sampling_period, opt, obs_type
+    )
+
+    # get the hyperparameter map
+    if obs_type in {"deep"}:
+        modelmap = _deep_model_map(training_data, n_obs, enc_dim, n_layers)
+    else:
+        modelmap = _edmd_model_map(
+            training_data, rank, obs_type, n_obs, lengthscale, sampling_period
+        )
+
+    # setup the tuner
+    if opt == "grid":
+        gt = GridSearchTuner(
+            modelmap, training_data, n_samps=grid_param_slices, n_splits=n_splits
+        )
+    elif opt == "monte-carlo":
+        gt = MonteCarloTuner(modelmap, training_data, n_splits=n_splits)
+    else:
+        raise ValueError(f"could not match a tuner to the string {opt}")
+
+    res = gt.tune(nattempts=max_opt_iter)
+
+    # pack results into out custom output
+    result = {
+        "tuned_model": res["model"].model,
+        "model_class": modelmap.parameter_space.name,
+        "hyperparameters": [param.name for param in modelmap.parameter_space],
+        "hyperparameter_values": res["param"],
+        "tuner_score": res["score"],
+        "tuner": gt,
+        "estimator": res["model"],
+    }
+    return result
+
+
+def _deep_model_map(
+    training_data: TrajectoriesData, obs_dim, enc_dim, nlayers
+) -> HyperparameterMap:
+    import autokoopman.estimator.deepkoopman as dk
+
+    pspace = ParameterSpace(
+        "koopman-deep",
+        [
+            # DiscreteParameter("obs_dim", *obs_dim),
+            DiscreteParameter("enc_dim", *enc_dim),
+            DiscreteParameter("num_layers", *nlayers),
+        ],
+    )
+
+    # system dimension
+    dim = len(training_data.state_names)
+    input_dim = (
+        len(training_data.input_names) if training_data.input_names is not None else 0
+    )
+
+    class _ModelMap(HyperparameterMap):
+        def __init__(self):
+            self.names = training_data.state_names
+            super(_ModelMap, self).__init__(pspace)
+
+        def get_model(self, hyperparams: Sequence):
+            return dk.DeepKoopman(
+                state_dim=dim,
+                input_dim=input_dim,
+                hidden_dim=hyperparams[0],
+                max_iter=500,
+                lr=1e-3,
+                hidden_enc_dim=64,
+                num_hidden_layers=hyperparams[1],
+                pred_loss_weight=1.0,
+                metric_loss_weight=0.1,
+            )
+
+    # get the hyperparameter map
+    return _ModelMap()
+
+
+def _edmd_model_map(
+    training_data, rank, obs_type, n_obs, lengthscale, sampling_period
+) -> HyperparameterMap:
+    """model map for eDMD based methods
+
+    :param training_data:
+    :param rank: set of ranks to try (of DMD rank parameter)
+    :param obs_type:
+    :param n_obs: some obs type require a number of observables
+    :sampling_period:
+
+    :returns: hyperparameter map
+    """
+    # system dimension
+    dim = len(training_data.state_names)
+
+    # infer rank range and step
+    if rank is not None:
+        if len(rank) == 2:
+            rank = (*rank, 1)
+        else:
+            rank = rank
+    else:
+        rank = (2, n_obs + dim, 10)
+
+    # get the hyperparameter space
+    pspace = get_parameter_space(obs_type, lengthscale, rank)
+
+    class _ModelMap(HyperparameterMap):
+        """SINDy with hyperparameters for polynomial library"""
+
+        def __init__(self):
+            self.names = training_data.state_names
+            super(_ModelMap, self).__init__(pspace)
+
+        def get_model(self, hyperparams: Sequence):
+            return get_estimator(obs_type, sampling_period, dim, n_obs, hyperparams)
+
+    # get the hyperparameter map
+    return _ModelMap()
+
+
+def _sanitize_training_data(
+    training_data, inputs_training_data, sampling_period, opt, obs_type
+):
+    """auto_koopman input sanitization"""
     # sanitize the input
     # check the strings
     if isinstance(obs_type, str):
@@ -184,54 +313,4 @@ def auto_koopman(
                 }
             )
 
-    # system dimension
-    dim = len(training_data.state_names)
-
-    # infer rank range and step
-    if rank is not None:
-        if len(rank) == 2:
-            rank = (*rank, 1)
-        else:
-            rank = rank
-    else:
-        rank = (2, n_obs + dim, 10)
-
-    # get the hyperparameter space
-    pspace = get_parameter_space(obs_type, lengthscale, rank)
-
-    class _ModelMap(HyperparameterMap):
-        """SINDy with hyperparameters for polynomial library"""
-
-        def __init__(self):
-            self.names = training_data.state_names
-            super(_ModelMap, self).__init__(pspace)
-
-        def get_model(self, hyperparams: Sequence):
-            return get_estimator(obs_type, sampling_period, dim, n_obs, hyperparams)
-
-    # get the hyperparameter map
-    modelmap = _ModelMap()
-
-    # setup the tuner
-    if opt == "grid":
-        gt = GridSearchTuner(
-            modelmap, training_data, n_samps=grid_param_slices, n_splits=n_splits
-        )
-    elif opt == "monte-carlo":
-        gt = MonteCarloTuner(modelmap, training_data, n_splits=n_splits)
-    else:
-        raise ValueError(f"could not match a tuner to the string {opt}")
-
-    res = gt.tune(nattempts=max_opt_iter)
-
-    # pack results into out custom output
-    result = {
-        "tuned_model": res["model"].model,
-        "model_class": modelmap.parameter_space.name,
-        "hyperparameters": [param.name for param in modelmap.parameter_space],
-        "hyperparameter_values": res["param"],
-        "tuner_score": res["score"],
-        "tuner": gt,
-        "estimator": res["model"],
-    }
-    return result
+    return training_data

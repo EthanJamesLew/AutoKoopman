@@ -594,3 +594,22 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
             U = None
 
         return X, Xp, U
+
+    @property
+    def differentiate(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        r"""
+        Numerical Differentiation -- Current State, Gradient State Estimate, Input
+        """
+        X = np.vstack([x.states[:-1, :] for _, x in self._trajs.items()]).T
+
+        # finite difference
+        Xp = np.vstack([x.states[1:, :] for _, x in self._trajs.items()]).T
+        Xp -= X
+        Xp /= self.sampling_period
+
+        if self.input_names is not None:
+            U = np.vstack([u.inputs[:-1, :] for _, u in self._trajs.items()]).T
+        else:
+            U = None
+
+        return X, Xp, U

@@ -161,6 +161,10 @@ class ContinuousSystem(System):
         sampling_period: float = 0.1,
     ) -> Union[atraj.UniformTimeTrajectoriesData, atraj.TrajectoriesData]:
         ret = {}
+        if inputs is not None:
+            assert len(inputs) == len(
+                initial_states
+            ), f"length of inputs {len(inputs)} must match length of initial states {len(initial_states)}"
         for idx, state in enumerate(initial_states):
             ret[idx] = self.solve_ivp(
                 state,

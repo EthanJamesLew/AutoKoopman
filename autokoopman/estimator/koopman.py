@@ -83,3 +83,52 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
                 return np.real(self._A @ obs.T).flatten()[: len(x)]
 
         return ksys.StepDiscreteSystem(step_func, self.names)
+
+
+class KoopmanContinuousEstimator(kest.GradientEstimator):
+    """Koopman Continuous Estimator
+
+    :param observables: function that returns the observables of the system state
+    :param dim: dimension of the system state
+    :param rank: rank of the DMDc
+
+    References
+        Proctor, J. L., Brunton, S. L., & Kutz, J. N. (2018). Generalizing Koopman theory to allow for inputs and control. SIAM Journal on Applied Dynamical Systems, 17(1), 909-930.
+
+        See https://epubs.siam.org/doi/pdf/10.1137/16M1062296 for more details
+
+    """
+
+    def __init__(self, observables, dim, rank):
+        self.dim = dim
+        self.obs = observables
+        self.rank = rank
+
+    def fit_gradient(
+        self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
+    ) -> None:
+        """fits the gradient system model
+
+        calls DMDC after building out the observables
+        """
+        G = np.array([self.obs(xi).flatten() for xi in X.T])
+        Gp = np.array([self.obs(xi).flatten() for xi in Y.T])
+        self._A, self._B = dmdc(G, Gp, U.T if U is not None else U, self.rank)
+        self._has_input = U is not None
+
+    @property
+    def model(self) -> ksys.System:
+        """
+        packs the learned linear transform into a continuous linear system
+        """
+
+        def grad_func(t, x, i):
+            obs = (self.obs(x).flatten())[np.newaxis, :]
+            if self._has_input:
+                return np.real(
+                    self._A @ obs.T + self._B @ (i)[:, np.newaxis]
+                ).flatten()[: self.dim]
+            else:
+                return np.real(self._A @ obs.T).flatten()[: len(x)]
+
+        return ksys.GradientContinuousSystem(grad_func, self.names)

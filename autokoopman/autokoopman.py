@@ -21,6 +21,7 @@ from autokoopman.core.tuner import (
 from autokoopman.estimator.koopman import KoopmanDiscEstimator
 from autokoopman.tuner.gridsearch import GridSearchTuner
 from autokoopman.tuner.montecarlo import MonteCarloTuner
+from autokoopman.tuner.bayesianopt import BayesianOptTuner
 from autokoopman.core.observables import KoopmanObservable
 
 __all__ = ["auto_koopman"]
@@ -28,7 +29,7 @@ __all__ = ["auto_koopman"]
 
 # valid string identifiers for the autokoopman magic
 obs_types = {"rff", "quadratic", "id", "deep"}
-opt_types = {"grid", "monte-carlo"}
+opt_types = {"grid", "monte-carlo", "bopt"}
 
 
 def get_parameter_space(obs_type, threshold_range, rank):
@@ -168,6 +169,8 @@ def auto_koopman(
         )
     elif opt == "monte-carlo":
         gt = MonteCarloTuner(modelmap, training_data, n_splits=n_splits)
+    elif opt == "bopt":
+        gt = BayesianOptTuner(modelmap, training_data)
     else:
         raise ValueError(f"could not match a tuner to the string {opt}")
 

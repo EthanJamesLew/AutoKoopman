@@ -53,7 +53,7 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
     def __init__(self, observables, sampling_period, dim, rank):
         self.dim = dim
         self.obs = observables
-        self.rank = rank
+        self.rank = int(rank)
 
     def fit_next_step(
         self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
@@ -102,7 +102,7 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
     def __init__(self, observables, dim, rank):
         self.dim = dim
         self.obs = observables
-        self.rank = rank
+        self.rank = int(rank)
 
     def fit_gradient(
         self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None

@@ -18,6 +18,7 @@ and the variable PATH below needs to be updated accordingly"""
 
 PATH = '/home/niklas/Downloads/'
 
+
 def load_data(benchmark):
     """load the measured data"""
 
@@ -42,6 +43,7 @@ def load_data(benchmark):
 
     return data
 
+
 def split_data(data, num_test=10):
     """randomly split data into training and test set"""
 
@@ -58,6 +60,7 @@ def split_data(data, num_test=10):
     test_data = traj.TrajectoriesData(dict(zip(ids, test_data)))
 
     return training_data, test_data
+
 
 def train_model(data, obs_type):
     """train the Koopman model using the AutoKoopman library"""
@@ -79,6 +82,7 @@ def train_model(data, obs_type):
 
     return model
 
+
 def compute_error(model, test_data):
     """compute error between model prediction and real data"""
 
@@ -89,11 +93,10 @@ def compute_error(model, test_data):
     tmp = list(test_data._trajs.values())
 
     for t in tmp:
-
         # simulate using the learned model
         iv = t.states[0, :]
         start_time = t.times[0]
-        end_time = t.times[len(t.times)-1]
+        end_time = t.times[len(t.times) - 1]
         teval = np.linspace(start_time, end_time, len(t.times))
 
         trajectory = model.solve_ivp(
@@ -116,6 +119,7 @@ def compute_error(model, test_data):
 
     return perc_error, mse
 
+
 if __name__ == '__main__':
 
     # initialization
@@ -134,14 +138,13 @@ if __name__ == '__main__':
         data = load_data(benchmark)
 
         # split into training and validation set
-        n_test = min(10, np.floor(0.4*len(data)).astype(int))
+        n_test = min(10, np.floor(0.4 * len(data)).astype(int))
         training_data, test_data = split_data(data, n_test)
 
         # loop over the different observable types
         result = []
 
         for obs in obs_types:
-
             # train the Koopman model
             start = time.time()
             model = train_model(training_data, obs)

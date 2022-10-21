@@ -22,4 +22,6 @@ class MonteCarloTuner(atuner.HyperparameterTuner):
                 next(sampling)
             except StopIteration:
                 break
+            except Exception as exc:
+                print(f"Error: {exc}")
         return self.best_result

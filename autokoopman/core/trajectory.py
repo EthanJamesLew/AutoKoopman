@@ -560,7 +560,9 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
         return cls({k: v.to_uniform_time_traj() for k, v in traj_data._trajs.items()})
 
     @property
-    def next_step_matrices(self) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray]]:
+    def next_step_matrices(
+        self, nstep=1
+    ) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray]]:
         r"""
         Next Step Snapshot Matrices
             Return the two "snapshot matrices" :math:`\mathbf X, \mathbf X'` of observations :math:`\{x_1, x_2, ..., x_n \}`,
@@ -578,15 +580,43 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
             is used. Importantly, note that the observations are column vectors, which is counter to convention commonly
             used in vector processing.
 
+        :param nstep: number of time steps in the future
+
         :returns: tuple of (:math:`\mathbf X, \mathbf X'`).
 
         References
             Brunton, S. L., & Kutz, J. N. (2022). Data-driven science and engineering: Machine learning,
             dynamical systems, and control. Cambridge University Press. pp 236-7
         """
+        return self.n_step_matrices(1)
+
+    def n_step_matrices(
+        self, nstep
+    ) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray]]:
+        X = np.vstack([x.states[:-nstep:nstep, :] for _, x in self._trajs.items()]).T
+
+        Xp = np.vstack([x.states[nstep::nstep, :] for _, x in self._trajs.items()]).T
+
+        if self.input_names is not None:
+            U = np.vstack(
+                [u.inputs[:-nstep:nstep, :] for _, u in self._trajs.items()]
+            ).T
+        else:
+            U = None
+
+        return X, Xp, U
+
+    @property
+    def differentiate(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        r"""
+        Numerical Differentiation -- Current State, Gradient State Estimate, Input
+        """
         X = np.vstack([x.states[:-1, :] for _, x in self._trajs.items()]).T
 
+        # finite difference
         Xp = np.vstack([x.states[1:, :] for _, x in self._trajs.items()]).T
+        Xp -= X
+        Xp /= self.sampling_period
 
         if self.input_names is not None:
             U = np.vstack([u.inputs[:-1, :] for _, u in self._trajs.items()]).T

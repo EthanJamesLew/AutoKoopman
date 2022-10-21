@@ -192,6 +192,8 @@ class HyperparameterTuner(abc.ABC):
         parameter_model: HyperparameterMap,
         training_data: TrajectoriesData,
         n_splits=None,
+        display_progress: bool = True,
+        verbose: bool = True,
     ):
         self._parameter_model = parameter_model
         self._training_data = training_data
@@ -199,6 +201,8 @@ class HyperparameterTuner(abc.ABC):
         self.best_scores = []
         self.best_result = None
         self.n_splits = n_splits
+        self.verbose = verbose
+        self.disp_progress = display_progress
 
     def _reset_scores(self):
         self.scores = []
@@ -231,7 +235,15 @@ class HyperparameterTuner(abc.ABC):
         if self.n_splits is not None:
             kf = KFold(n_splits=self.n_splits)
 
-        for _ in tqdm.tqdm(range(nattempts), total=nattempts):
+        for _ in (
+            tqdm.tqdm(
+                range(nattempts),
+                total=nattempts,
+                desc=f"Tuning {self.__class__.__name__}",
+            )
+            if (self.verbose and self.disp_progress)
+            else range(nattempts)
+        ):
             param = yield
 
             assert isinstance(param, Sequence), "yielded param must be a sequence"

@@ -200,7 +200,7 @@ def auto_koopman(
     # get the hyperparameter map
     if obs_type in {"deep"}:
         modelmap = _deep_model_map(
-            training_data, n_obs, enc_dim, n_layers, torch_device
+            training_data, n_obs, enc_dim, n_layers, torch_device, verbose
         )
     else:
         modelmap = _edmd_model_map(
@@ -210,12 +210,18 @@ def auto_koopman(
     # setup the tuner
     if opt == "grid":
         gt = GridSearchTuner(
-            modelmap, training_data, n_samps=grid_param_slices, n_splits=n_splits
+            modelmap,
+            training_data,
+            n_samps=grid_param_slices,
+            n_splits=n_splits,
+            verbose=verbose,
         )
     elif opt == "monte-carlo":
-        gt = MonteCarloTuner(modelmap, training_data, n_splits=n_splits)
+        gt = MonteCarloTuner(
+            modelmap, training_data, n_splits=n_splits, verbose=verbose
+        )
     elif opt == "bopt":
-        gt = BayesianOptTuner(modelmap, training_data)
+        gt = BayesianOptTuner(modelmap, training_data, verbose=verbose)
     else:
         raise ValueError(f"could not match a tuner to the string {opt}")
 
@@ -235,7 +241,7 @@ def auto_koopman(
 
 
 def _deep_model_map(
-    training_data: TrajectoriesData, obs_dim, enc_dim, nlayers, torch_device
+    training_data: TrajectoriesData, obs_dim, enc_dim, nlayers, torch_device, verbose
 ) -> HyperparameterMap:
     import autokoopman.estimator.deepkoopman as dk
 
@@ -271,6 +277,8 @@ def _deep_model_map(
                 pred_loss_weight=1.0,
                 metric_loss_weight=0.1,
                 torch_device=torch_device,
+                verbose=verbose,
+                display_progress=False,  # don't nest progress bars
             )
 
     # get the hyperparameter map

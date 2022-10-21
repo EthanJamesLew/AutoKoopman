@@ -77,6 +77,20 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
     ) -> TuneResults:
         import GPyOpt
         import GPy
+        import os, sys
+
+        class hide_prints:
+            """ugly stuff because GPyOpt prints
+            TODO: switch to something more modern (not GPyOpt?)
+            """
+
+            def __enter__(self):
+                self._original_stdout = sys.stdout
+                sys.stdout = open(os.devnull, "w")
+
+            def __exit__(self, exc_type, exc_val, exc_tb):
+                sys.stdout.close()
+                sys.stdout = self._original_stdout
 
         # get GPyOpt domain
         bounds, lengthscales = self.make_bounds(self._parameter_model.parameter_space)
@@ -105,9 +119,10 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
             lengthscale=np.array(lengthscales) / 5.0,
             ARD=True,
         )
-        self.model = GPyOpt.models.gpmodel.GPModel(kernel=kern, verbose=False)
-        self.bopt = GPyOpt.methods.BayesianOptimization(
-            gpy_obj, domain=bounds, model=self.model, verbose=False
-        )
+        with hide_prints():
+            self.model = GPyOpt.models.gpmodel.GPModel(kernel=kern, verbose=False)
+            self.bopt = GPyOpt.methods.BayesianOptimization(
+                gpy_obj, domain=bounds, model=self.model, verbose=False
+            )
         self.bopt.run_optimization(max_iter=nattempts)
         return self.best_result

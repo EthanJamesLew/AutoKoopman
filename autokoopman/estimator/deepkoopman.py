@@ -26,8 +26,6 @@ class DeepKoopman(kest.TrajectoryEstimator):
     :math:`\mathbf x'` is the next state, :math:`\mathbf x'_r` is the reconstructed state,
     :math:`\mathbf y` is the current observable, and :math:`\mathbf y'` is the next observable.
 
-    TODO: implement normalizers
-
     :param state_dim: system state space dimension
     :param input_dim: system input space dimension
     :param hidden_dim: observables space dimension
@@ -43,6 +41,8 @@ class DeepKoopman(kest.TrajectoryEstimator):
     :param encoder_module: PyTorch Module Encoder (pass in externally)
     :param decoder_module: PyTorch Module Decoder (pass in externally)
     :param torch_device: device to run PyTorch (if None, it will attempt to use cuda:0)
+    :param display_progress: show progress bar
+    :param verbose: set verbosity
 
     References
         Li, Y., He, H., Wu, J., Katabi, D., & Torralba, A. (2019).
@@ -68,6 +68,8 @@ class DeepKoopman(kest.TrajectoryEstimator):
         encoder_module: Optional[nn.Module] = None,
         decoder_module: Optional[nn.Module] = None,
         torch_device: Optional[str] = None,
+        display_progress: bool = True,
+        verbose: bool = True,
     ):
         hidden_enc_dim = int(hidden_enc_dim)
         num_hidden_layers = int(num_hidden_layers)
@@ -76,11 +78,15 @@ class DeepKoopman(kest.TrajectoryEstimator):
         self.max_iter = max_iter
         self.lr = lr
         self.validation_data = validation_data
+        self.verbose = verbose
+        self.disp_progress = display_progress
 
         self.has_input = input_dim > 0
 
         if torch_device is None:
             self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+            if self.verbose:
+                print(f"DeepKoopman is using torch device '{self.device}'")
         else:
             self.device = torch_device
 
@@ -312,7 +318,11 @@ class DeepKoopman(kest.TrajectoryEstimator):
 
         loss_hist = {}
 
-        for _ in tqdm.tqdm(range(self.max_iter)):
+        for _ in (
+            tqdm.tqdm(range(self.max_iter))
+            if (self.verbose and self.disp_progress)
+            else range(self.max_iter)
+        ):
             risk = None
             # roll out over several steps
             for step_size in range(1, self.rollout_steps + 1):

@@ -154,10 +154,11 @@ class QuadraticObservable(SymbolicObservable):
 class PolynomialObservable(KoopmanObservable):
     def __init__(self, dimension, degree) -> None:
         from sklearn.preprocessing import PolynomialFeatures
+
         super(PolynomialObservable, self).__init__()
         self.degree = degree
         self.dimension = dimension
-        self.poly = PolynomialFeatures(int(self.degree))
+        self.poly = PolynomialFeatures(int(self.degree), include_bias=False)
         self.poly.fit_transform(np.zeros((1, self.dimension)))
 
     def obs_fcn(self, X: np.ndarray) -> np.ndarray:

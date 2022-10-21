@@ -1,6 +1,7 @@
 
 import numpy as np
 import GPyOpt
+import GPy
 
 from autokoopman.core.trajectory import TrajectoriesData
 from autokoopman.core.tuner import (
@@ -23,6 +24,7 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
     def make_bounds(param_space: ParameterSpace):
         """make GPyOpt Optimization Problem domain"""
         bounds = []
+        lengths = []
         for idx, coord in enumerate(param_space):
             if isinstance(coord, ContinuousParameter):
                 g_var = {
@@ -30,23 +32,27 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
                 'type': 'continuous' if isinstance(coord, ContinuousParameter) else 'discrete',
                 'domain': (coord._interval[0], coord._interval[1])
                 }
+                g_len = coord._interval[1] - coord._interval[0]
             elif isinstance(coord, DiscreteParameter):
                 g_var = {
                 'name': f"var_{coord.name}_{idx}",
                 'type': 'continuous' if isinstance(coord, ContinuousParameter) else 'discrete',
                 'domain': tuple(coord.elements)
                 }
+                g_len = max(coord.elements) - min(coord.elements)
             elif isinstance(coord, FiniteParameter):
                 g_var = {
                 'name': f"var_{coord.name}_{idx}",
                 'type': 'continuous' if isinstance(coord, ContinuousParameter) else 'discrete',
                 'domain': tuple(coord.elements)
                 }
+                g_len = max(coord.elements) - min(coord.elements)
             else:
                 g_var = None
             if g_var is not None:
                 bounds.append(g_var)
-        return bounds 
+                lengths.append(g_len)
+        return bounds, lengths
 
     def __init__(
         self,
@@ -66,7 +72,7 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
         ] = TrajectoryScoring.end_point_score,
     ) -> TuneResults:
         # get GPyOpt domain
-        bounds = self.make_bounds(self._parameter_model.parameter_space)
+        bounds, lengthscales = self.make_bounds(self._parameter_model.parameter_space)
 
         # create the sampler and send it the parameters
         sampling = self.tune_sampling(nattempts, scoring_func)
@@ -79,10 +85,16 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
             try:
                 val = sampling.send(tuple(param.flatten()))
                 next(sampling)
+                print(val)
                 return val
             except StopIteration:
-                return np.infty
+                return 1E2
+            except Exception as exc:
+                print(f"Error {exc}")
+                return 1E2
         
-        self.bopt = GPyOpt.methods.BayesianOptimization(gpy_obj, domain=bounds)
+        kern = GPy.kern.RBF(len(bounds), variance=1., lengthscale=np.array(lengthscales) / 5.0, ARD=True)
+        self.model = GPyOpt.models.gpmodel.GPModel(kernel=kern)
+        self.bopt = GPyOpt.methods.BayesianOptimization(gpy_obj, domain=bounds, model=self.model)
         self.bopt.run_optimization(max_iter = nattempts)
         return self.best_result

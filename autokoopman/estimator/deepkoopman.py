@@ -69,6 +69,10 @@ class DeepKoopman(kest.TrajectoryEstimator):
         decoder_module: Optional[nn.Module] = None,
         torch_device: Optional[str] = None,
     ):
+        hidden_enc_dim = int(hidden_enc_dim)
+        num_hidden_layers = int(num_hidden_layers)
+        hidden_dim = int(hidden_dim)
+
         self.max_iter = max_iter
         self.lr = lr
         self.validation_data = validation_data

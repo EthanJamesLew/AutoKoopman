@@ -28,7 +28,7 @@ __all__ = ["auto_koopman"]
 
 
 # valid string identifiers for the autokoopman magic
-obs_types = {"rff", "quadratic", "id", "deep"}
+obs_types = {"rff", "poly", "quadratic", "id", "deep"}
 opt_types = {"grid", "monte-carlo", "bopt"}
 
 
@@ -51,6 +51,15 @@ def get_parameter_space(obs_type, threshold_range, rank):
                 DiscreteParameter("rank", *rank),
             ],
         )
+    elif obs_type == "poly":
+        return ParameterSpace(
+            "koopman-quadratic",
+            [
+                DiscreteParameter("degree", 1, 5),
+                DiscreteParameter("rank", *rank),
+            ],
+        )
+
     elif obs_type == "id":
         return ParameterSpace(
             "koopman-id",
@@ -74,11 +83,18 @@ def get_estimator(obs_type, sampling_period, dim, obs, hyperparams):
         return KoopmanDiscEstimator(
             observables, sampling_period, dim, rank=hyperparams[0]
         )
+    elif obs_type == "poly":
+        observables = kobs.PolynomialObservable(dim, hyperparams[0])
+        return KoopmanDiscEstimator(
+            observables, sampling_period, dim, rank=hyperparams[1]
+        )
     elif obs_type == "id":
         observables = kobs.IdentityObservable()
         return KoopmanDiscEstimator(
             observables, sampling_period, dim, rank=hyperparams[0]
         )
+    else:
+        raise ValueError(f"unknown observables type {obs_type}")
 
 
 def auto_koopman(

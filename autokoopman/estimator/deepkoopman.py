@@ -193,12 +193,12 @@ class DeepKoopman(kest.TrajectoryEstimator):
 
         return ksys.StepDiscreteSystem(step_func, self.names)
 
-    def fit(self, trajs: ktraj.TrajectoriesData) -> None:
+    def fit(self, X: ktraj.TrajectoriesData) -> None:
         """fits the discrete system model
 
         :param X: trajectories
         """
-        self.train(trajs)
+        self.train(X)
 
     def train(self, trajs):
         """

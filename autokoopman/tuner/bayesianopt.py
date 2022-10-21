@@ -52,6 +52,7 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
                 g_len = max(coord.elements) - min(coord.elements)
             else:
                 g_var = None
+                g_len = None
             if g_var is not None:
                 bounds.append(g_var)
                 lengths.append(g_len)

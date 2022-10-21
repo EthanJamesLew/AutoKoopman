@@ -159,7 +159,7 @@ class TrajectoryScoring:
             abs_error = np.linalg.norm(pred_t.states - true_t.states)
             mean_error = np.linalg.norm(pred_t.states - np.mean(pred_t.states, axis=0))
             err_term.append(abs_error / mean_error)
-        return np.mean(err_term)
+        return np.mean(np.array(err_term))
 
 
 class HyperparameterTuner(abc.ABC):

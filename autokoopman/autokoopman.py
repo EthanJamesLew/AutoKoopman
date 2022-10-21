@@ -1,7 +1,6 @@
 """
 Main AutoKoopman Function (Convenience Function)
 """
-from subprocess import call
 from typing import Callable, Union, Sequence, Optional, Tuple
 
 import numpy as np

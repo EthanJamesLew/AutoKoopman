@@ -1,7 +1,8 @@
 """
 Main AutoKoopman Function (Convenience Function)
 """
-from typing import Union, Sequence, Optional, Tuple
+from subprocess import call
+from typing import Callable, Union, Sequence, Optional, Tuple
 
 import numpy as np
 
@@ -17,6 +18,7 @@ from autokoopman.core.tuner import (
     ParameterSpace,
     ContinuousParameter,
     DiscreteParameter,
+    TrajectoryScoring,
 )
 from autokoopman.estimator.koopman import KoopmanDiscEstimator
 from autokoopman.tuner.gridsearch import GridSearchTuner
@@ -30,6 +32,24 @@ __all__ = ["auto_koopman"]
 # valid string identifiers for the autokoopman magic
 obs_types = {"rff", "poly", "quadratic", "id", "deep"}
 opt_types = {"grid", "monte-carlo", "bopt"}
+scoring_func_types = {"total", "end", "relative"}
+
+
+def get_scoring_func(score_name):
+    """resolve scoring function from name or callable type"""
+    # if callable, just return it
+    if callable(score_name):
+        return score_name
+    if score_name == "total":
+        return TrajectoryScoring.total_score
+    elif score_name == "end":
+        return TrajectoryScoring.end_point_score
+    elif score_name == "relative":
+        return TrajectoryScoring.relative_score
+    else:
+        raise ValueError(
+            f"Scoring function name {score_name} is not in available list (names are {scoring_func_types})"
+        )
 
 
 def get_parameter_space(obs_type, threshold_range, rank):
@@ -105,12 +125,16 @@ def auto_koopman(
     max_opt_iter: int = 100,
     n_splits: Optional[int] = None,
     obs_type: Union[str, KoopmanObservable] = "rff",
+    cost_func: Union[
+        str, Callable[[TrajectoriesData, TrajectoriesData], float]
+    ] = "total",
     n_obs: int = 100,
     rank: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
     grid_param_slices: int = 10,
     lengthscale: Tuple[float, float] = (1e-4, 1e1),
     enc_dim: Tuple[int, int, int] = (2, 64, 16),
     n_layers: Tuple[int, int, int] = (1, 8, 2),
+    verbose: bool = True,
 ):
     """
     AutoKoopman Convenience Function
@@ -120,16 +144,18 @@ def auto_koopman(
     :param training_data: training trajectories data from which to learn the system
     :param inputs_training_data: optional input trajectories data from which to learn the system (this isn't needed if the training data has inputs already)
     :param sampling_period: (for discrete time system) sampling period of training data
-    :param opt: hyperparameter optimizer {"grid", "monte-carlo"}
+    :param opt: hyperparameter optimizer {"grid", "monte-carlo", "bopt"}
     :param max_opt_iter: maximum iterations for the tuner to use
     :param n_splits: (for optimizers) if set, switches to k-folds bootstrap validation for the hyperparameter tuning. This is useful for things like RFF tuning where the results have noise.
-    :param obs_type: (for koopman) koopman observables to use {"rff", "quadratic", "id", "deep"}
+    :param obs_type: (for koopman) koopman observables to use {"rff", "quadratic", "poly", "id", "deep"}
+    :param cost_func: cost function to use for hyperparameter optimization
     :param  n_obs: (for koopman) number of observables to use (if applicable)
     :param rank: (for koopman) rank range (start, stop) or (start, stop, step)
     :param grid_param_slices: (for grid tuner) resolution to slice continuous valued parameters into
     :param lengthscale: (for RFF observables) RFF kernel lengthscale
     :param enc_dim: (for deep learning) number of dimensions in the latent space
     :param n_layers: (for deep learning) number of hidden layers in the encoder / decoder
+    :param verbose: whether to print progress and messages
 
     :returns: Tuned Model and Metadata
 
@@ -190,7 +216,7 @@ def auto_koopman(
     else:
         raise ValueError(f"could not match a tuner to the string {opt}")
 
-    res = gt.tune(nattempts=max_opt_iter)
+    res = gt.tune(nattempts=max_opt_iter, scoring_func=get_scoring_func(cost_func))
 
     # pack results into out custom output
     result = {

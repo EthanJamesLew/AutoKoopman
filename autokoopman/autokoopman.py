@@ -73,7 +73,7 @@ def get_parameter_space(obs_type, threshold_range, rank):
         )
     elif obs_type == "poly":
         return ParameterSpace(
-            "koopman-quadratic",
+            "koopman-polynomial",
             [
                 DiscreteParameter("degree", 1, 5),
                 DiscreteParameter("rank", *rank),
@@ -134,6 +134,7 @@ def auto_koopman(
     lengthscale: Tuple[float, float] = (1e-4, 1e1),
     enc_dim: Tuple[int, int, int] = (2, 64, 16),
     n_layers: Tuple[int, int, int] = (1, 8, 2),
+    torch_device: Optional[str] = None,
     verbose: bool = True,
 ):
     """
@@ -155,6 +156,7 @@ def auto_koopman(
     :param lengthscale: (for RFF observables) RFF kernel lengthscale
     :param enc_dim: (for deep learning) number of dimensions in the latent space
     :param n_layers: (for deep learning) number of hidden layers in the encoder / decoder
+    :param torch_device: (for deep learning) specify torch compute device
     :param verbose: whether to print progress and messages
 
     :returns: Tuned Model and Metadata
@@ -198,7 +200,9 @@ def auto_koopman(
 
     # get the hyperparameter map
     if obs_type in {"deep"}:
-        modelmap = _deep_model_map(training_data, n_obs, enc_dim, n_layers)
+        modelmap = _deep_model_map(
+            training_data, n_obs, enc_dim, n_layers, torch_device
+        )
     else:
         modelmap = _edmd_model_map(
             training_data, rank, obs_type, n_obs, lengthscale, sampling_period
@@ -232,7 +236,7 @@ def auto_koopman(
 
 
 def _deep_model_map(
-    training_data: TrajectoriesData, obs_dim, enc_dim, nlayers
+    training_data: TrajectoriesData, obs_dim, enc_dim, nlayers, torch_device
 ) -> HyperparameterMap:
     import autokoopman.estimator.deepkoopman as dk
 
@@ -267,6 +271,7 @@ def _deep_model_map(
                 num_hidden_layers=hyperparams[1],
                 pred_loss_weight=1.0,
                 metric_loss_weight=0.1,
+                torch_device=torch_device,
             )
 
     # get the hyperparameter map

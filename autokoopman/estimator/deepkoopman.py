@@ -35,6 +35,7 @@ class DeepKoopman(kest.TrajectoryEstimator):
     :param weight_decay_weight: weight decay
     :param hidden_enc_dim: dimension of hidden layers in the encoder/decoder
     :param max_iter: maximum number of iterations
+    :param max_epochs: maximum number of training epochs
     :param lr: learning rate
     :param validation_data: additional uniform time trajectories to validate at each iteration
     :param rollout_steps: number of rollout steps
@@ -61,6 +62,7 @@ class DeepKoopman(kest.TrajectoryEstimator):
         weight_decay_weight: float = 1e-7,
         hidden_enc_dim: int = 32,
         max_iter: int = 500,
+        max_epochs: int = 500,
         lr: float = 1e-3,
         validation_data: Optional[ktraj.UniformTimeTrajectoriesData] = None,
         num_hidden_layers: int = 1,

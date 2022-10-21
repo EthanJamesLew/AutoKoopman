@@ -12,6 +12,9 @@ class MonteCarloTuner(atuner.HyperparameterTuner):
             [TrajectoriesData, TrajectoriesData], float
         ] = TrajectoryScoring.end_point_score,
     ) -> TuneResults:
+        import random
+        import numpy as np
+
         sampling = self.tune_sampling(nattempts, scoring_func)
         next(sampling)
 

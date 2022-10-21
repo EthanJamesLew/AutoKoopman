@@ -29,6 +29,9 @@ class NextStepEstimator(TrajectoryEstimator):
     Requires that the data be uniform time
     """
 
+    def __init__(self) -> None:
+        self.names = None
+
     @abc.abstractmethod
     def fit_next_step(
         self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None

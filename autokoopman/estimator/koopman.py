@@ -51,6 +51,7 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
     """
 
     def __init__(self, observables, sampling_period, dim, rank):
+        super().__init__()
         self.dim = dim
         self.obs = observables
         self.rank = int(rank)
@@ -100,6 +101,7 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
     """
 
     def __init__(self, observables, dim, rank):
+        super().__init__()
         self.dim = dim
         self.obs = observables
         self.rank = int(rank)

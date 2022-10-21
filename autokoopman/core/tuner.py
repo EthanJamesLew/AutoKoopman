@@ -246,16 +246,17 @@ class HyperparameterTuner(abc.ABC):
         ):
             param = yield
 
+            assert isinstance(param, Sequence), "yielded param must be a sequence"
+            model = self._parameter_model.get_model(param)
+
             # have something, even if it can't be optimized
             if len(self.scores) == 0:
                 self.best_result = TuneResults(
-                    model=self._parameter_model.get_model(param),
+                    model=model,
                     param=param,
                     score=np.infty,
                 )
 
-            assert isinstance(param, Sequence), "yielded param must be a sequence"
-            model = self._parameter_model.get_model(param)
             if self.n_splits is None:
                 model.fit(self._training_data)
                 prediction_data = self.generate_predictions(model, self._training_data)

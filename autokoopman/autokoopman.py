@@ -122,6 +122,7 @@ def auto_koopman(
     sampling_period: float = 0.05,
     opt: Union[str, HyperparameterTuner] = "monte-carlo",
     max_opt_iter: int = 100,
+    max_epochs: int = 500,
     n_splits: Optional[int] = None,
     obs_type: Union[str, KoopmanObservable] = "rff",
     cost_func: Union[
@@ -146,6 +147,7 @@ def auto_koopman(
     :param sampling_period: (for discrete time system) sampling period of training data
     :param opt: hyperparameter optimizer {"grid", "monte-carlo", "bopt"}
     :param max_opt_iter: maximum iterations for the tuner to use
+    :param max_epochs: maximum number of training epochs
     :param n_splits: (for optimizers) if set, switches to k-folds bootstrap validation for the hyperparameter tuning. This is useful for things like RFF tuning where the results have noise.
     :param obs_type: (for koopman) koopman observables to use {"rff", "quadratic", "poly", "id", "deep"}
     :param cost_func: cost function to use for hyperparameter optimization
@@ -200,7 +202,7 @@ def auto_koopman(
     # get the hyperparameter map
     if obs_type in {"deep"}:
         modelmap = _deep_model_map(
-            training_data, n_obs, enc_dim, n_layers, torch_device
+            training_data, max_epochs, n_obs, enc_dim, n_layers, torch_device, verbose
         )
     else:
         modelmap = _edmd_model_map(
@@ -210,12 +212,18 @@ def auto_koopman(
     # setup the tuner
     if opt == "grid":
         gt = GridSearchTuner(
-            modelmap, training_data, n_samps=grid_param_slices, n_splits=n_splits
+            modelmap,
+            training_data,
+            n_samps=grid_param_slices,
+            n_splits=n_splits,
+            verbose=verbose,
         )
     elif opt == "monte-carlo":
-        gt = MonteCarloTuner(modelmap, training_data, n_splits=n_splits)
+        gt = MonteCarloTuner(
+            modelmap, training_data, n_splits=n_splits, verbose=verbose
+        )
     elif opt == "bopt":
-        gt = BayesianOptTuner(modelmap, training_data)
+        gt = BayesianOptTuner(modelmap, training_data, verbose=verbose)
     else:
         raise ValueError(f"could not match a tuner to the string {opt}")
 
@@ -235,7 +243,13 @@ def auto_koopman(
 
 
 def _deep_model_map(
-    training_data: TrajectoriesData, obs_dim, enc_dim, nlayers, torch_device
+    training_data: TrajectoriesData,
+    epochs,
+    obs_dim,
+    enc_dim,
+    nlayers,
+    torch_device,
+    verbose,
 ) -> HyperparameterMap:
     import autokoopman.estimator.deepkoopman as dk
 
@@ -264,13 +278,15 @@ def _deep_model_map(
                 state_dim=dim,
                 input_dim=input_dim,
                 hidden_dim=hyperparams[0],
-                max_iter=500,
+                max_iter=epochs,
                 lr=1e-3,
                 hidden_enc_dim=64,
                 num_hidden_layers=hyperparams[1],
                 pred_loss_weight=1.0,
                 metric_loss_weight=0.1,
                 torch_device=torch_device,
+                verbose=verbose,
+                display_progress=False,  # don't nest progress bars
             )
 
     # get the hyperparameter map

@@ -16,7 +16,7 @@ import autokoopman.core.trajectory as traj
 https://drive.google.com/drive/folders/1blkHkK3tMG2lKaq3POWtxquYHYw6kf6i?usp=sharing 
 and the variable PATH below needs to be updated accordingly"""
 
-PATH = '/home/niklas/Downloads/'
+PATH = '/Users/b6062805/Documents/Koopman/RealDataModels'
 
 
 def load_data(benchmark):
@@ -59,6 +59,7 @@ def split_data(data, num_test=10):
     ids = np.arange(0, len(test_data)).tolist()
     test_data = traj.TrajectoriesData(dict(zip(ids, test_data)))
 
+    print(len(training_data))
     return training_data, test_data
 
 
@@ -137,13 +138,14 @@ def store_data_heads(row, filename='real_data'):
 if __name__ == '__main__':
 
     # initialization
-    benchmarks = ['ElectricCircuit', 'F1tenthCar', 'Robot']
-    obs_types = ['id', 'poly', 'rff', 'deep']
+    # benchmarks = ['ElectricCircuit', 'F1tenthCar', 'Robot']
+    benchmarks = ['Robot']
+    obs_types = ['id']
     store_data_heads(["", ""] + ["perc_error", "time(s)", ""] * 4)
 
     # loop over all benchmarks
     for i in range(1):
-        store_data([f"Iteration {i+1}"])
+        store_data([f"Iteration {i + 1}"])
         for benchmark in benchmarks:
 
             print(' ')

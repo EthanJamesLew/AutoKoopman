@@ -147,7 +147,8 @@ class TrajectoryScoring:
     def total_score(true_data: TrajectoriesData, prediction_data: TrajectoriesData):
         errors = (prediction_data - true_data).norm()
         end_errors = np.array([s.states.flatten() for s in errors])
-        return np.mean(end_errors)
+
+        return np.mean(np.concatenate(end_errors, axis=0))
 
     @staticmethod
     def relative_score(true_data: TrajectoriesData, prediction_data: TrajectoriesData):

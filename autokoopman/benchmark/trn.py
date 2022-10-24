@@ -13,21 +13,25 @@ class TRN(asys.SymbolicContinuousSystem):
         IEEE Transactions on Automatic Control, 61(9), pp.2341-2356.
     """
 
-    def __init__(self):
+    # Wrong, we need to have alpha, k and mu as inputs, what shape would they be??
+
+    def __init__(self, b=-0.5, n=2, n_genes=24):
         self.name = "trn"
-        # self.init_set_low = [1.1, 0.95, 1.4, 2.3, 0.9, 0, 0.35]
-        # self.init_set_high = [1.3, 1.15, 1.6, 2.5, 1.1, 0.2, 0.55]
-        trn_vars_string = "alpha"
-        for i in range(1, 25): vars_string += f"m{i} k{i} alpha{i}"
-        print(trn_vars_string)
-        x1, x2, x3, x4, x5, x6, x7 = sp.symbols("x1 x2 x3 x4 x5 x6 x7")
-        xdot = [
-            1.4 * x3 - 0.9 * x1,
-            2.5 * x5 - 1.5 * x2,
-            0.6 * x7 - 0.8 * x2 * x3,
-            2 - 1.3 * x3 * x4,
-            0.7 * x1 - x4 * x5,
-            0.3 * x1 - 3.1 * x6,
-            1.8 * x6 - 1.5 * x2 * x7,
-        ]
-        super(TRN, self).__init__((x1, x2, x3, x4, x5, x6, x7), xdot)
+        init_pattern_low = [35, 27, 30, 25, 40, 32]
+        init_pattern_high = [40, 32, 35, 30, 45, 37]
+        self.init_set_low = [0.5, 1.9, 1.9]
+        self.init_set_high = [1.5, 2.1, 2.1]
+        for i in range(n_genes):
+            self.init_set_low += [init_pattern_low[(i % 3) * 2], init_pattern_low[(i % 3) * 2 + 1], 25]
+            self.init_set_high += [init_pattern_high[(i % 3) * 2], init_pattern_high[(i % 3) * 2 + 1], 26]
+        trn_vars_string = "alpha k mu "
+        for i in range(1, n_genes+1): trn_vars_string += f"m{i} p{i} alpha{i} "
+        trn_vars = sp.symbols(trn_vars_string)
+        xdot = [0, 0, 0]
+        xdot += [-trn_vars[3] + b * trn_vars[4] + (trn_vars[0] / (1 + trn_vars[3 * 24 + 1] ** n)) + trn_vars[5],
+                 trn_vars[1] * trn_vars[3] - trn_vars[2] * trn_vars[4], 0]
+        for i in range(2, n_genes+1): xdot += [
+            -trn_vars[3 * i] + b * trn_vars[3 * i + 1] + (trn_vars[0] / (1 + trn_vars[3 * (i - 1) + 1] ** n)) +
+            trn_vars[3 * i + 2],
+            trn_vars[1] * trn_vars[3 * i] - trn_vars[2] * trn_vars[3 * i + 1], 0]
+        super(TRN, self).__init__(trn_vars, xdot)

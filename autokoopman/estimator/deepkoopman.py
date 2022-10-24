@@ -8,7 +8,7 @@ import autokoopman.core.estimator as kest
 import autokoopman.core.trajectory as ktraj
 
 
-class DeepKoopman(kest.NextStepEstimator):
+class DeepKoopman(kest.TrajectoryEstimator):
     r"""
     Deep Learning Koopman with Inputs
 
@@ -26,20 +26,23 @@ class DeepKoopman(kest.NextStepEstimator):
     :math:`\mathbf x'` is the next state, :math:`\mathbf x'_r` is the reconstructed state,
     :math:`\mathbf y` is the current observable, and :math:`\mathbf y'` is the next observable.
 
-    TODO: implement normalizers
-
     :param state_dim: system state space dimension
     :param input_dim: system input space dimension
     :param hidden_dim: observables space dimension
     :param pred_loss_weight: weighting factor for prediction loss (of total loss)
     :param metric_loss_weight: weighting factor for metric loss (of total loss)
+    :param max_loss_weight: weighting factor against max loss (0 if outliers)
+    :param weight_decay_weight: weight decay
     :param hidden_enc_dim: dimension of hidden layers in the encoder/decoder
     :param max_iter: maximum number of iterations
     :param lr: learning rate
     :param validation_data: additional uniform time trajectories to validate at each iteration
+    :param rollout_steps: number of rollout steps
     :param encoder_module: PyTorch Module Encoder (pass in externally)
     :param decoder_module: PyTorch Module Decoder (pass in externally)
     :param torch_device: device to run PyTorch (if None, it will attempt to use cuda:0)
+    :param display_progress: show progress bar
+    :param verbose: set verbosity
 
     References
         Li, Y., He, H., Wu, J., Katabi, D., & Torralba, A. (2019).
@@ -52,25 +55,39 @@ class DeepKoopman(kest.NextStepEstimator):
         state_dim: int,
         input_dim: int,
         hidden_dim: int,
-        pred_loss_weight: float = 1.0,
-        metric_loss_weight: float = 0.2,
+        pred_loss_weight: float = 0.5,
+        metric_loss_weight: float = 1e-5,
+        max_loss_weight: float = 1e-5,
+        weight_decay_weight: float = 1e-7,
         hidden_enc_dim: int = 32,
         max_iter: int = 500,
         lr: float = 1e-3,
         validation_data: Optional[ktraj.UniformTimeTrajectoriesData] = None,
         num_hidden_layers: int = 1,
+        rollout_steps: int = 4,
         encoder_module: Optional[nn.Module] = None,
         decoder_module: Optional[nn.Module] = None,
         torch_device: Optional[str] = None,
+        display_progress: bool = True,
+        verbose: bool = True,
     ):
+        hidden_enc_dim = int(hidden_enc_dim)
+        num_hidden_layers = int(num_hidden_layers)
+        hidden_dim = int(hidden_dim)
+
+        self.names = None
         self.max_iter = max_iter
         self.lr = lr
         self.validation_data = validation_data
+        self.verbose = verbose
+        self.disp_progress = display_progress
 
         self.has_input = input_dim > 0
 
         if torch_device is None:
             self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+            if self.verbose:
+                print(f"DeepKoopman is using torch device '{self.device}'")
         else:
             self.device = torch_device
 
@@ -117,8 +134,11 @@ class DeepKoopman(kest.NextStepEstimator):
         self.loss_hist = None
         self.metric_loss_weight = metric_loss_weight
         self.pred_loss_weight = pred_loss_weight
+        self.max_loss_weight = max_loss_weight
+        self.weight_decay_weight = weight_decay_weight
+        self.rollout_steps = rollout_steps
 
-    def forward(self, x, u):
+    def forward(self, x, u, step_size):
         """
         NN Forward Function
 
@@ -133,6 +153,12 @@ class DeepKoopman(kest.NextStepEstimator):
             yn = self.propagate(torch.cat((y, u), axis=-1))
         else:
             yn = self.propagate(y)
+        if step_size > 1:
+            for _ in range(step_size - 1):
+                if u is not None:
+                    yn = self.propagate(torch.cat((yn, u), axis=-1))
+                else:
+                    yn = self.propagate(yn)
 
         # get next step state
         xn = self.decoder(yn)
@@ -168,36 +194,20 @@ class DeepKoopman(kest.NextStepEstimator):
                 else:
                     tu = None
                 tx = (tx - self.xmean) / self.xstd
-                _, xn, _, _, _ = self.forward(tx, tu)
+                _, xn, _, _, _ = self.forward(tx, tu, 1)
                 xn = xn * self.xstd + self.xmean
                 return xn.cpu().detach().numpy()
 
         return ksys.StepDiscreteSystem(step_func, self.names)
 
-    def fit_next_step(
-        self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None, **kwargs
-    ) -> None:
+    def fit(self, X: ktraj.TrajectoriesData) -> None:
         """fits the discrete system model
 
-        :param X: snapshot of states
-        :param Y: snapshot of next states
-        :param U: snapshot of inputs corresponding to X
+        :param X: trajectories
         """
-        tX = torch.tensor(X.T, dtype=torch.float32).to(self.device)
-        tY = torch.tensor(Y.T, dtype=torch.float32).to(self.device)
-        tU = (
-            torch.tensor(U.T, dtype=torch.float32).to(self.device)
-            if self.has_input
-            else None
-        )
-        self.train(tX, tY, tU, **kwargs)
+        self.train(X)
 
-    def train(
-        self,
-        X: torch.Tensor,
-        Xn: torch.Tensor,
-        U: Optional[torch.Tensor],
-    ):
+    def train(self, trajs):
         """
         Train the AutoEncoder
 
@@ -209,16 +219,34 @@ class DeepKoopman(kest.NextStepEstimator):
         :param Xn: snapshot of next states
         :param U: snapshot of inputs corresponding to X
         """
+        assert isinstance(
+            trajs, ktraj.UniformTimeTrajectoriesData
+        ), "trajs must be uniform time"
+        self.sampling_period = trajs.sampling_period
+        self.names = trajs.state_names
+
         mseloss = nn.MSELoss()
         l1loss = nn.L1Loss()
 
         mselossv = nn.MSELoss()
         l1lossv = nn.L1Loss()
 
+        # upload single step matrices to the compute device
+        X, Xn, U = trajs.next_step_matrices
+        X = torch.tensor(X.T, dtype=torch.float32).to(self.device)
+        Xn = torch.tensor(Xn.T, dtype=torch.float32).to(self.device)
+        U = (
+            torch.tensor(U.T, dtype=torch.float32).to(self.device)
+            if self.has_input
+            else None
+        )
+
+        # get the scaling factors
         self.x_mult = torch.max(torch.abs(X))
         self.xmean = torch.mean(X, dim=0)
         self.xstd = self.x_mult  # torch.std(X, dim=0)
 
+        # normalize it
         nX = (X - self.xmean) / self.xstd
         nXn = (Xn - self.xmean) / self.xstd
 
@@ -269,11 +297,11 @@ class DeepKoopman(kest.NextStepEstimator):
                     weight_loss += torch.norm(l.weight.data)
 
             total_loss = (
-                0.5 * (ae_loss + pred_loss)
+                self.pred_loss_weight * (ae_loss + pred_loss)
                 + lin_loss
-                + 1e-7 * inf_loss
-                + 1e-10 * weight_loss
-                + 1e-7 * metric_loss
+                + self.max_loss_weight * inf_loss
+                + self.weight_decay_weight * weight_loss
+                + self.metric_loss_weight * metric_loss
             )
             return {
                 "total_loss": total_loss,
@@ -291,10 +319,42 @@ class DeepKoopman(kest.NextStepEstimator):
 
         loss_hist = {}
 
-        for _ in tqdm.tqdm(range(self.max_iter)):
-            # get risk (loss)
-            x, xn, y, yn, xr = self.forward(nX, nU)
-            risk = _get_loss(mseloss, l1loss, x, xn, y, yn, xr, nXn)
+        for _ in (
+            tqdm.tqdm(range(self.max_iter))
+            if (self.verbose and self.disp_progress)
+            else range(self.max_iter)
+        ):
+            risk = None
+            # roll out over several steps
+            for step_size in range(1, self.rollout_steps + 1):
+                # upload to GPU and normalize the data
+                # NOTE: this is expensive :(
+                X, Xn, U = trajs.n_step_matrices(step_size)
+                X = torch.tensor(X.T, dtype=torch.float32).to(self.device)
+                Xn = torch.tensor(Xn.T, dtype=torch.float32).to(self.device)
+                U = (
+                    torch.tensor(U.T, dtype=torch.float32).to(self.device)
+                    if self.has_input
+                    else None
+                )
+                nX = (X - self.xmean) / self.xstd
+                nXn = (Xn - self.xmean) / self.xstd
+                if self.has_input:
+                    nU = U / self.u_mult
+                else:
+                    nU = None
+
+                # get risk (loss)
+                # sum over all rollouts
+                x, xn, y, yn, xr = self.forward(nX, nU, step_size)
+                if risk is None:
+                    risk = _get_loss(mseloss, l1loss, x, xn, y, yn, xr, nXn)
+                else:
+                    _risk = _get_loss(mseloss, l1loss, x, xn, y, yn, xr, nXn)
+                    for k, v in _risk.items():
+                        risk[k] += v
+
+            # store total loss
             for k, v in risk.items():
                 if k in loss_hist:
                     loss_hist[k].append(v.cpu().detach().numpy())
@@ -315,7 +375,7 @@ class DeepKoopman(kest.NextStepEstimator):
             # do validation if applicable
             if self.validation_data is not None:
                 with torch.no_grad():
-                    x, xn, y, yn, xr = self.forward(nXv, nUv)
+                    x, xn, y, yn, xr = self.forward(nXv, nUv, 1)
                     loss = _get_loss(mselossv, l1lossv, x, xn, y, yn, xr, nXnv)
 
                     # add to the loss history with validation prefix

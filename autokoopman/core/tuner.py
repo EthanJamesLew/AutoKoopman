@@ -141,15 +141,25 @@ class TrajectoryScoring:
     def end_point_score(true_data: TrajectoriesData, prediction_data: TrajectoriesData):
         errors = (prediction_data - true_data).norm()
         end_errors = np.array([s.states[-1] for s in errors])
-        return np.sqrt(np.mean((end_errors) ** 2))
+        return np.mean(end_errors)
 
     @staticmethod
     def total_score(true_data: TrajectoriesData, prediction_data: TrajectoriesData):
         errors = (prediction_data - true_data).norm()
-        end_errors = np.array(
-            [np.sqrt(np.mean((s.states.flatten()) ** 2)) for s in errors]
-        )
-        return np.sqrt(np.mean((end_errors) ** 2))
+        end_errors = np.array([s.states.flatten() for s in errors])
+        return np.mean(end_errors)
+
+    @staticmethod
+    def relative_score(true_data: TrajectoriesData, prediction_data: TrajectoriesData):
+        # TODO: implement this
+        err_term = []
+        for k in prediction_data.traj_names:
+            pred_t = prediction_data[k]
+            true_t = true_data[k]
+            abs_error = np.linalg.norm(pred_t.states - true_t.states)
+            mean_error = np.linalg.norm(pred_t.states - np.mean(pred_t.states, axis=0))
+            err_term.append(abs_error / mean_error)
+        return np.mean(np.array(err_term))
 
 
 class HyperparameterTuner(abc.ABC):
@@ -182,6 +192,8 @@ class HyperparameterTuner(abc.ABC):
         parameter_model: HyperparameterMap,
         training_data: TrajectoriesData,
         n_splits=None,
+        display_progress: bool = True,
+        verbose: bool = True,
     ):
         self._parameter_model = parameter_model
         self._training_data = training_data
@@ -189,6 +201,8 @@ class HyperparameterTuner(abc.ABC):
         self.best_scores = []
         self.best_result = None
         self.n_splits = n_splits
+        self.verbose = verbose
+        self.disp_progress = display_progress
 
     def _reset_scores(self):
         self.scores = []
@@ -221,11 +235,28 @@ class HyperparameterTuner(abc.ABC):
         if self.n_splits is not None:
             kf = KFold(n_splits=self.n_splits)
 
-        for _ in tqdm.tqdm(range(nattempts), total=nattempts):
+        for _ in (
+            tqdm.tqdm(
+                range(nattempts),
+                total=nattempts,
+                desc=f"Tuning {self.__class__.__name__}",
+            )
+            if (self.verbose and self.disp_progress)
+            else range(nattempts)
+        ):
             param = yield
 
             assert isinstance(param, Sequence), "yielded param must be a sequence"
             model = self._parameter_model.get_model(param)
+
+            # have something, even if it can't be optimized
+            if len(self.scores) == 0:
+                self.best_result = TuneResults(
+                    model=model,
+                    param=param,
+                    score=np.infty,
+                )
+
             if self.n_splits is None:
                 model.fit(self._training_data)
                 prediction_data = self.generate_predictions(model, self._training_data)

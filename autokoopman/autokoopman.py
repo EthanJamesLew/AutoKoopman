@@ -1,7 +1,7 @@
 """
 Main AutoKoopman Function (Convenience Function)
 """
-from typing import Union, Sequence, Optional, Tuple
+from typing import Callable, Union, Sequence, Optional, Tuple
 
 import numpy as np
 
@@ -17,18 +17,38 @@ from autokoopman.core.tuner import (
     ParameterSpace,
     ContinuousParameter,
     DiscreteParameter,
+    TrajectoryScoring,
 )
 from autokoopman.estimator.koopman import KoopmanDiscEstimator
 from autokoopman.tuner.gridsearch import GridSearchTuner
 from autokoopman.tuner.montecarlo import MonteCarloTuner
+from autokoopman.tuner.bayesianopt import BayesianOptTuner
 from autokoopman.core.observables import KoopmanObservable
 
 __all__ = ["auto_koopman"]
 
 
 # valid string identifiers for the autokoopman magic
-obs_types = {"rff", "quadratic", "id", "deep"}
-opt_types = {"grid", "monte-carlo"}
+obs_types = {"rff", "poly", "quadratic", "id", "deep"}
+opt_types = {"grid", "monte-carlo", "bopt"}
+scoring_func_types = {"total", "end", "relative"}
+
+
+def get_scoring_func(score_name):
+    """resolve scoring function from name or callable type"""
+    # if callable, just return it
+    if callable(score_name):
+        return score_name
+    if score_name == "total":
+        return TrajectoryScoring.total_score
+    elif score_name == "end":
+        return TrajectoryScoring.end_point_score
+    elif score_name == "relative":
+        return TrajectoryScoring.relative_score
+    else:
+        raise ValueError(
+            f"Scoring function name {score_name} is not in available list (names are {scoring_func_types})"
+        )
 
 
 def get_parameter_space(obs_type, threshold_range, rank):
@@ -50,6 +70,15 @@ def get_parameter_space(obs_type, threshold_range, rank):
                 DiscreteParameter("rank", *rank),
             ],
         )
+    elif obs_type == "poly":
+        return ParameterSpace(
+            "koopman-polynomial",
+            [
+                DiscreteParameter("degree", 1, 5),
+                DiscreteParameter("rank", *rank),
+            ],
+        )
+
     elif obs_type == "id":
         return ParameterSpace(
             "koopman-id",
@@ -73,11 +102,18 @@ def get_estimator(obs_type, sampling_period, dim, obs, hyperparams):
         return KoopmanDiscEstimator(
             observables, sampling_period, dim, rank=hyperparams[0]
         )
+    elif obs_type == "poly":
+        observables = kobs.PolynomialObservable(dim, hyperparams[0])
+        return KoopmanDiscEstimator(
+            observables, sampling_period, dim, rank=hyperparams[1]
+        )
     elif obs_type == "id":
         observables = kobs.IdentityObservable()
         return KoopmanDiscEstimator(
             observables, sampling_period, dim, rank=hyperparams[0]
         )
+    else:
+        raise ValueError(f"unknown observables type {obs_type}")
 
 
 def auto_koopman(
@@ -86,14 +122,20 @@ def auto_koopman(
     sampling_period: float = 0.05,
     opt: Union[str, HyperparameterTuner] = "monte-carlo",
     max_opt_iter: int = 100,
+    max_epochs: int = 500,
     n_splits: Optional[int] = None,
     obs_type: Union[str, KoopmanObservable] = "rff",
+    cost_func: Union[
+        str, Callable[[TrajectoriesData, TrajectoriesData], float]
+    ] = "total",
     n_obs: int = 100,
     rank: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
     grid_param_slices: int = 10,
     lengthscale: Tuple[float, float] = (1e-4, 1e1),
     enc_dim: Tuple[int, int, int] = (2, 64, 16),
     n_layers: Tuple[int, int, int] = (1, 8, 2),
+    torch_device: Optional[str] = None,
+    verbose: bool = True,
 ):
     """
     AutoKoopman Convenience Function
@@ -103,16 +145,20 @@ def auto_koopman(
     :param training_data: training trajectories data from which to learn the system
     :param inputs_training_data: optional input trajectories data from which to learn the system (this isn't needed if the training data has inputs already)
     :param sampling_period: (for discrete time system) sampling period of training data
-    :param opt: hyperparameter optimizer {"grid", "monte-carlo"}
+    :param opt: hyperparameter optimizer {"grid", "monte-carlo", "bopt"}
     :param max_opt_iter: maximum iterations for the tuner to use
+    :param max_epochs: maximum number of training epochs
     :param n_splits: (for optimizers) if set, switches to k-folds bootstrap validation for the hyperparameter tuning. This is useful for things like RFF tuning where the results have noise.
-    :param obs_type: (for koopman) koopman observables to use {"rff", "quadratic", "id", "deep"}
+    :param obs_type: (for koopman) koopman observables to use {"rff", "quadratic", "poly", "id", "deep"}
+    :param cost_func: cost function to use for hyperparameter optimization
     :param  n_obs: (for koopman) number of observables to use (if applicable)
     :param rank: (for koopman) rank range (start, stop) or (start, stop, step)
     :param grid_param_slices: (for grid tuner) resolution to slice continuous valued parameters into
     :param lengthscale: (for RFF observables) RFF kernel lengthscale
     :param enc_dim: (for deep learning) number of dimensions in the latent space
     :param n_layers: (for deep learning) number of hidden layers in the encoder / decoder
+    :param torch_device: (for deep learning) specify torch compute device
+    :param verbose: whether to print progress and messages
 
     :returns: Tuned Model and Metadata
 
@@ -155,7 +201,9 @@ def auto_koopman(
 
     # get the hyperparameter map
     if obs_type in {"deep"}:
-        modelmap = _deep_model_map(training_data, n_obs, enc_dim, n_layers)
+        modelmap = _deep_model_map(
+            training_data, max_epochs, n_obs, enc_dim, n_layers, torch_device, verbose
+        )
     else:
         modelmap = _edmd_model_map(
             training_data, rank, obs_type, n_obs, lengthscale, sampling_period
@@ -164,14 +212,22 @@ def auto_koopman(
     # setup the tuner
     if opt == "grid":
         gt = GridSearchTuner(
-            modelmap, training_data, n_samps=grid_param_slices, n_splits=n_splits
+            modelmap,
+            training_data,
+            n_samps=grid_param_slices,
+            n_splits=n_splits,
+            verbose=verbose,
         )
     elif opt == "monte-carlo":
-        gt = MonteCarloTuner(modelmap, training_data, n_splits=n_splits)
+        gt = MonteCarloTuner(
+            modelmap, training_data, n_splits=n_splits, verbose=verbose
+        )
+    elif opt == "bopt":
+        gt = BayesianOptTuner(modelmap, training_data, verbose=verbose)
     else:
         raise ValueError(f"could not match a tuner to the string {opt}")
 
-    res = gt.tune(nattempts=max_opt_iter)
+    res = gt.tune(nattempts=max_opt_iter, scoring_func=get_scoring_func(cost_func))
 
     # pack results into out custom output
     result = {
@@ -187,7 +243,13 @@ def auto_koopman(
 
 
 def _deep_model_map(
-    training_data: TrajectoriesData, obs_dim, enc_dim, nlayers
+    training_data: TrajectoriesData,
+    epochs,
+    obs_dim,
+    enc_dim,
+    nlayers,
+    torch_device,
+    verbose,
 ) -> HyperparameterMap:
     import autokoopman.estimator.deepkoopman as dk
 
@@ -216,12 +278,15 @@ def _deep_model_map(
                 state_dim=dim,
                 input_dim=input_dim,
                 hidden_dim=hyperparams[0],
-                max_iter=500,
+                max_iter=epochs,
                 lr=1e-3,
                 hidden_enc_dim=64,
                 num_hidden_layers=hyperparams[1],
                 pred_loss_weight=1.0,
                 metric_loss_weight=0.1,
+                torch_device=torch_device,
+                verbose=verbose,
+                display_progress=False,  # don't nest progress bars
             )
 
     # get the hyperparameter map

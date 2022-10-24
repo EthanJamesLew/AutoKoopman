@@ -38,7 +38,7 @@ class GridSearchTuner(atuner.HyperparameterTuner):
         parameter_model: HyperparameterMap,
         training_data: TrajectoriesData,
         n_samps=10,
-        **kwargs
+        **kwargs,
     ):
         super(GridSearchTuner, self).__init__(parameter_model, training_data, **kwargs)
         self.n_samps = n_samps
@@ -64,4 +64,6 @@ class GridSearchTuner(atuner.HyperparameterTuner):
                 next(sampling)
             except StopIteration:
                 break
+            except Exception as exc:
+                print(f"Error: {exc}")
         return self.best_result

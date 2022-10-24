@@ -114,57 +114,69 @@ def compute_error(model, test_data):
         perc_errors.append(perc_error)
 
     # take mean over all errors
-    perc_error = round(statistics.mean(perc_errors), 3)
-    mse = round(statistics.mean(mses), 3)
+    perc_error = statistics.mean(perc_errors)
+    mse = statistics.mean(mses)
 
     return perc_error, mse
+
+
+def store_data(row, filename='real_data'):
+    with open(f'data/{filename}', 'a') as f:
+        writer = csv.writer(f)
+        writer.writerow(row)
+
+
+def store_data_heads(row, filename='real_data'):
+    if not os.path.exists('data'):
+        os.makedirs('data')
+    with open(f'data/{filename}', 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(row)
 
 
 if __name__ == '__main__':
 
     # initialization
     benchmarks = ['ElectricCircuit', 'F1tenthCar', 'Robot']
-    obs_types = ['id', 'quadratic', 'rff', 'deep']
-    results = []
+    obs_types = ['id', 'poly', 'rff', 'deep']
+    store_data_heads(["", ""] + ["perc_error", "time(s)", ""] * 4)
 
     # loop over all benchmarks
-    for benchmark in benchmarks:
+    for i in range(1):
+        store_data([f"Iteration {i+1}"])
+        for benchmark in benchmarks:
 
-        print(' ')
-        print(benchmark, ' --------------------------------------------------------------')
-        print(' ')
+            print(' ')
+            print(benchmark, ' --------------------------------------------------------------')
+            print(' ')
 
-        # load data
-        data = load_data(benchmark)
+            # load data
+            data = load_data(benchmark)
 
-        # split into training and validation set
-        n_test = min(10, np.floor(0.4 * len(data)).astype(int))
-        training_data, test_data = split_data(data, n_test)
+            # split into training and validation set
+            n_test = min(10, np.floor(0.4 * len(data)).astype(int))
+            training_data, test_data = split_data(data, n_test)
 
-        # loop over the different observable types
-        result = []
+            # loop over the different observable types
+            result = [benchmark, ""]
 
-        for obs in obs_types:
-            # train the Koopman model
-            start = time.time()
-            model = train_model(training_data, obs)
-            end = time.time()
+            for obs in obs_types:
+                np.random.seed(0)
+                # train the Koopman model
+                start = time.time()
+                model = train_model(training_data, obs)
+                end = time.time()
 
-            comp_time = round(end - start, 3)
+                comp_time = round(end - start, 3)
 
-            # compute error
-            perc_error, mse = compute_error(model, test_data)
+                # compute error
+                perc_error, mse = compute_error(model, test_data)
 
-            # store and print results
-            result.append(perc_error)
-            result.append(comp_time)
+                # store and print results
+                result.append(perc_error)
+                result.append(comp_time)
+                result.append("")
 
-            print(obs, ": ", perc_error, " (error), ", comp_time, " (time)")
+                print(obs, ": ", perc_error, " (error), ", comp_time, " (time)")
 
-        results.append(result)
-
-    # write results to .csv file
-    with open('results_real_data.csv', 'w', encoding='UTF8') as f:
-        writer = csv.writer(f)
-        for row in results:
-            writer.writerow(row)
+            store_data(result)

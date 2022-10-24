@@ -121,9 +121,9 @@ def test_trajectories(bench, num_tests, samp_period):
     for j in range(num_tests):
         iv = get_init_states(bench, 1, j + 10000)[0]
         trajectory, true_trajectory = get_trajectories(bench, iv, samp_period)
-        mse = mean_squared_error(trajectory.states.T, true_trajectory.states.T)
+        mse = mean_squared_error(true_trajectory.states, trajectory.states)
         mses.append(mse)
-        perc_error = mean_absolute_percentage_error(trajectory.states.T, true_trajectory.states.T)
+        perc_error = mean_absolute_percentage_error(true_trajectory.states, trajectory.states)
         perc_errors.append(perc_error)
 
     return statistics.mean(mses), statistics.mean(perc_errors)

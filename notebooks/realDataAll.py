@@ -109,9 +109,9 @@ def compute_error(model, test_data):
         )
 
         # compute error
-        mse = mean_squared_error(trajectory.states.T, t.states.T)
+        mse = mean_squared_error(t.states, trajectory.states)
         mses.append(mse)
-        perc_error = mean_absolute_percentage_error(trajectory.states.T, t.states.T)
+        perc_error = mean_absolute_percentage_error(t.states, trajectory.states)
         perc_errors.append(perc_error)
 
     # take mean over all errors
@@ -139,8 +139,8 @@ if __name__ == '__main__':
 
     # initialization
     # benchmarks = ['ElectricCircuit', 'F1tenthCar', 'Robot']
-    benchmarks = ['Robot']
-    obs_types = ['id']
+    benchmarks = ['ElectricCircuit']
+    obs_types = ['id', "poly", "rff"]
     store_data_heads(["", ""] + ["perc_error", "time(s)", ""] * 4)
 
     # loop over all benchmarks

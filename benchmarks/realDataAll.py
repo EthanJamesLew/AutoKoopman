@@ -16,7 +16,7 @@ import autokoopman.core.trajectory as traj
 https://drive.google.com/drive/folders/1blkHkK3tMG2lKaq3POWtxquYHYw6kf6i?usp=sharing 
 and the variable PATH below needs to be updated accordingly"""
 
-PATH = '/Users/b6062805/Documents/Koopman/RealDataModels'
+PATH = '/Users/b6062805/realData'
 
 
 def load_data(benchmark):

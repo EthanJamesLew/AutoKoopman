@@ -187,7 +187,6 @@ def plot_trajectory(bench, var_1=0, var_2=-1, seed=100):
 
 
 if __name__ == '__main__':
-
     benches = [bio2.Bio2(), fhn.FitzHughNagumo(), lalo20.LaubLoomis(), pendulum.PendulumWithInput(beta=0.05),
                prde20.ProdDestr(), robe21.RobBench(), spring.Spring(), trn_constants.TRNConstants()]
     obs_types = ['id', 'poly', 'rff', 'deep']
@@ -218,12 +217,7 @@ if __name__ == '__main__':
                 )
                 end = time.time()
 
-                mse = [-1]
-                perc_error = [-1]
-                try:
-                    mse, perc_error = test_trajectories(benchmark, 10, param_dict["samp_period"])
-                except ValueError:
-                    print("can't compute for this setting")
+                mse, perc_error = test_trajectories(benchmark, 10, param_dict["samp_period"])
 
                 comp_time = round(end - start, 3)
                 print("time taken: ", comp_time)

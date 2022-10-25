@@ -100,15 +100,14 @@ class ContinuousSystem(System):
         if inputs is None:
             if teval is None:
                 t_eval = np.arange(
-                    tspan[0], tspan[-1] + sampling_period * (1 + 1e-12), sampling_period
+                    tspan[0], tspan[-1] + sampling_period * (1 - 1e-12), sampling_period
                 )
                 sol = scint.solve_ivp(
                     self.gradient,
                     (min(t_eval), max(t_eval)),
                     initial_state,
                     args=(None,),
-                    # TODO: this is hacky
-                    t_eval=tspan,
+                    t_eval=t_eval,
                 )
                 return atraj.UniformTimeTrajectory(
                     sol.y.T,

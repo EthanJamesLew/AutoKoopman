@@ -16,8 +16,8 @@ class MonteCarloTuner(atuner.HyperparameterTuner):
         next(sampling)
 
         while True:
+            param = self._parameter_model.parameter_space.random()
             try:
-                param = self._parameter_model.parameter_space.random()
                 sampling.send(param)
                 next(sampling)
             except StopIteration:

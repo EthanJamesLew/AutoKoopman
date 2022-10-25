@@ -128,8 +128,8 @@ def store_data(row, filename='real_data'):
 
 
 def store_data_heads(row, filename='real_data'):
-    if not os.path.exists('../notebooks/data'):
-        os.makedirs('../notebooks/data')
+    if not os.path.exists('data'):
+        os.makedirs('data')
     with open(f'data/{filename}', 'w') as f:
         writer = csv.writer(f)
         writer.writerow(row)

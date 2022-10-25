@@ -80,13 +80,14 @@ if __name__ == '__main__':
         for benchmark, train_data, tspan, trajectories_filepath in zip(benches, train_datas, tspans, trajectories_filepaths):
             result = [benchmark, ""]
             for obs in obs_types:
+                np.random.seed(0)
                 training_data, dirname = get_train_data(train_data)
                 start = time.time()
                 # learn model from data
                 experiment_results = auto_koopman(
                     training_data,  # list of trajectories
                     sampling_period=0.1,  # sampling period of trajectory snapshots
-                    obs_type="quadratic",  # use Random Fourier Features Observables
+                    obs_type=obs,  # use Random Fourier Features Observables
                     opt="grid",  # grid search to find best hyperparameters
                     n_obs=200,  # maximum number of observables to try
                     max_opt_iter=200,  # maximum number of optimization iterations
@@ -96,4 +97,14 @@ if __name__ == '__main__':
                 )
                 end = time.time()
                 true_trajectories, model = get_true_trajectories(trajectories_filepath)
-                test_trajectories(true_trajectories, model, tspan)
+                perc_error = test_trajectories(true_trajectories, model, tspan)
+
+                comp_time = round(end - start, 3)
+                print("time taken: ", comp_time)
+                print(f"The average percentage error is {perc_error}%")
+
+                result.append(perc_error)
+                result.append(comp_time)
+                result.append("")
+
+            store_data(result)

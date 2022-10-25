@@ -191,7 +191,7 @@ if __name__ == '__main__':
     benches = [bio2.Bio2(), fhn.FitzHughNagumo(), lalo20.LaubLoomis(), pendulum.PendulumWithInput(beta=0.05),
                prde20.ProdDestr(), robe21.RobBench(), spring.Spring(), trn_constants.TRNConstants()]
     obs_types = ['id', 'poly', 'rff', 'deep']
-    store_data_heads(["", ""] + ["perc_error", "time(s)", ""] * 4)
+    store_data_heads(["", ""] + ["perc_error", "mse", "time(s)", ""] * 4)
     for i in range(1):
         store_data([f"Iteration {i + 1}"])
         for benchmark in benches:
@@ -230,6 +230,7 @@ if __name__ == '__main__':
                 print(f"The average percentage error is {perc_error}%")
 
                 result.append(perc_error)
+                result.append(mse)
                 result.append(comp_time)
                 result.append("")
 

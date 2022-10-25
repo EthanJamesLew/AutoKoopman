@@ -139,9 +139,9 @@ if __name__ == '__main__':
 
     # initialization
     # benchmarks = ['ElectricCircuit', 'F1tenthCar', 'Robot']
-    benchmarks = ['ElectricCircuit']
+    benchmarks = ['F1tenthCar']
     obs_types = ['id', "poly", "rff"]
-    store_data_heads(["", ""] + ["perc_error", "time(s)", ""] * 4)
+    store_data_heads(["", ""] + ["perc_error", "mse", "time(s)", ""] * 4)
 
     # loop over all benchmarks
     for i in range(1):
@@ -176,6 +176,7 @@ if __name__ == '__main__':
 
                 # store and print results
                 result.append(perc_error)
+                result.append(mse)
                 result.append(comp_time)
                 result.append("")
 

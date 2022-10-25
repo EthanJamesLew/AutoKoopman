@@ -34,6 +34,7 @@ def get_true_trajectories(filepath):
 
 
 def test_trajectories(true_trajectories, model, tspan):
+    mses = []
     perc_errors = []
     for i in range(9):
         init_s = true_trajectories[i].states[0]
@@ -44,10 +45,12 @@ def test_trajectories(true_trajectories, model, tspan):
             tspan=tspan,
             sampling_period=0.1
         )
+        mse = mean_squared_error(true_trajectories[i].states, trajectory.states)
+        mses.append(mse)
         perc_error = mean_absolute_percentage_error(true_trajectories[i].states, trajectory.states)
         perc_errors.append(perc_error)
 
-        return statistics.mean(perc_errors)
+    return statistics.mean(mses), statistics.mean(perc_errors)
 
 
 def store_data(row, filename='black_box_data'):
@@ -69,15 +72,18 @@ if __name__ == '__main__':
 
     benches = ["Engine Control", "Longitudunal", "Ground_collision"]
     train_datas = ['f16/data/trainingdata/engine/trainingDataUniform20.csv',
-                  'f16/data/trainingdata/long/trainingDataUniform20.csv', 'f16/data/trainingdata/gsac/trainingDataUniform400.csv']
+                   'f16/data/trainingdata/long/trainingDataUniform20.csv',
+                   'f16/data/trainingdata/gsac/trainingDataUniform400.csv']
     tspans = [(0.0, 60), (0.0, 15), (0.0, 15)]
-    trajectories_filepaths = ['f16/data/testdata/checkEngine.csv', 'f16/data/testdata/long.csv', 'f16/data/testdata/gsac.csv']
+    trajectories_filepaths = ['f16/data/testdata/checkEngine.csv', 'f16/data/testdata/long.csv',
+                              'f16/data/testdata/gsac.csv']
     # obs_types = ['id', 'poly', 'rff', 'deep']
     obs_types = ['id']
-    store_data_heads(["", ""] + ["perc_error", "time(s)", ""] * 4)
+    store_data_heads(["", ""] + ["perc_error", "mse", "time(s)", ""] * 4)
     for i in range(1):
         store_data([f"Iteration {i + 1}"])
-        for benchmark, train_data, tspan, trajectories_filepath in zip(benches, train_datas, tspans, trajectories_filepaths):
+        for benchmark, train_data, tspan, trajectories_filepath in zip(benches, train_datas, tspans,
+                                                                       trajectories_filepaths):
             result = [benchmark, ""]
             for obs in obs_types:
                 np.random.seed(0)
@@ -97,13 +103,14 @@ if __name__ == '__main__':
                 )
                 end = time.time()
                 true_trajectories, model = get_true_trajectories(trajectories_filepath)
-                perc_error = test_trajectories(true_trajectories, model, tspan)
+                mse, perc_error = test_trajectories(true_trajectories, model, tspan)
 
                 comp_time = round(end - start, 3)
                 print("time taken: ", comp_time)
                 print(f"The average percentage error is {perc_error}%")
 
                 result.append(perc_error)
+                result.append(mse)
                 result.append(comp_time)
                 result.append("")
 

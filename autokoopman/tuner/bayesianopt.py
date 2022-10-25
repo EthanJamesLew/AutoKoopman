@@ -111,6 +111,7 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
                 return 1e10
             except Exception as exc:
                 print(f"Error:<{exc}>")
+                self.error_messages.append((param, exc))
                 return 1e10
 
         kern = GPy.kern.RBF(

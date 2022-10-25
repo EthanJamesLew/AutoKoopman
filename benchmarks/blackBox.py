@@ -2,7 +2,7 @@
 import csv
 import os
 import time
-
+import torch
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -77,8 +77,7 @@ if __name__ == '__main__':
     tspans = [(0.0, 60), (0.0, 15), (0.0, 15)]
     trajectories_filepaths = ['f16/data/testdata/checkEngine.csv', 'f16/data/testdata/long.csv',
                               'f16/data/testdata/gsac.csv']
-    # obs_types = ['id', 'poly', 'rff', 'deep']
-    obs_types = ['id']
+    obs_types = ['id', 'poly', 'rff', 'deep']
     store_data_heads(["", ""] + ["perc_error", "mse", "time(s)", ""] * 4)
     for i in range(1):
         store_data([f"Iteration {i + 1}"])

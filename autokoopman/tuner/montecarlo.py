@@ -12,9 +12,6 @@ class MonteCarloTuner(atuner.HyperparameterTuner):
             [TrajectoriesData, TrajectoriesData], float
         ] = TrajectoryScoring.end_point_score,
     ) -> TuneResults:
-        import random
-        import numpy as np
-
         sampling = self.tune_sampling(nattempts, scoring_func)
         next(sampling)
 
@@ -27,4 +24,5 @@ class MonteCarloTuner(atuner.HyperparameterTuner):
                 break
             except Exception as exc:
                 print(f"Error: {exc}")
+                self.error_messages.append((param, exc))
         return self.best_result

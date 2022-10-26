@@ -99,15 +99,15 @@ class ContinuousSystem(System):
             raise RuntimeError(f"teval or tspan must be set")
         if inputs is None:
             if teval is None:
+                t_eval = np.arange(
+                    tspan[0], tspan[-1] + sampling_period * (1 - 1e-12), sampling_period
+                )
                 sol = scint.solve_ivp(
                     self.gradient,
-                    tspan,
+                    (min(t_eval), max(t_eval)),
                     initial_state,
                     args=(None,),
-                    # TODO: this is hacky
-                    t_eval=np.arange(
-                        tspan[0], tspan[-1] + sampling_period - 1e-10, sampling_period
-                    ),
+                    t_eval=t_eval,
                 )
                 return atraj.UniformTimeTrajectory(
                     sol.y.T,

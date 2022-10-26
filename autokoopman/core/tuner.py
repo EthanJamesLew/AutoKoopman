@@ -201,6 +201,7 @@ class HyperparameterTuner(abc.ABC):
         self.scores = []
         self.best_scores = []
         self.best_result = None
+        self.error_messages = []
         self.n_splits = n_splits
         self.verbose = verbose
         self.disp_progress = display_progress

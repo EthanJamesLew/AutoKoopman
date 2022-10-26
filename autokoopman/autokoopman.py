@@ -238,6 +238,8 @@ def auto_koopman(
         "tuner_score": res["score"],
         "tuner": gt,
         "estimator": res["model"],
+        "has_errors": len(gt.error_messages) > 0,
+        "error_messages": gt.error_messages,
     }
     return result
 

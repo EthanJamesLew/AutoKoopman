@@ -141,7 +141,7 @@ if __name__ == '__main__':
 
     # initialization
     benchmarks = ['ElectricCircuit', 'F1tenthCar', 'Robot']
-    obs_types = ['id', 'polynomial', 'rff', 'deep']
+    obs_types = ['id', 'poly', 'rff', 'deep']
     store_data_heads(["", ""] + ["perc_error", "time(s)", ""] * 4)
 
     # loop over all benchmarks

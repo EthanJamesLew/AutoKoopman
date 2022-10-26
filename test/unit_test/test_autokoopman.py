@@ -35,7 +35,6 @@ def test_autokoopman(obs, opt, cost):
         obs_type=obs,
         opt=opt,
         cost_func=cost,
-        n_obs=20,
         max_opt_iter=2,
         grid_param_slices=2,
         n_splits=2,

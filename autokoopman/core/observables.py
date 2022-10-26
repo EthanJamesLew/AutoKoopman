@@ -171,7 +171,7 @@ class RFFObservable(KoopmanObservable):
         self.gamma = gamma
         self.dimension = dimension
         self.metric = metric
-        self.D = num_features
+        self.D = int(num_features)
         # Generate D iid samples from p(w)
         if self.metric == "rbf":
             self.w = np.sqrt(2 * self.gamma) * np.random.normal(

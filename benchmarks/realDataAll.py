@@ -47,7 +47,7 @@ def load_data(benchmark):
 def split_data(data, num_test=10):
     """randomly split data into training and test set"""
 
-    np.random.seed(0)
+    random.seed(0)
     ind = random.sample(range(0, len(data)), num_test)
 
     test_data = [data[i] for i in ind]
@@ -66,14 +66,16 @@ def split_data(data, num_test=10):
 def train_model(data, obs_type):
     """train the Koopman model using the AutoKoopman library"""
 
+    dt = data._trajs[0].times[1] - data._trajs[0].times[0]
+
     # learn model from data
     experiment_results = auto_koopman(
         data,  # list of trajectories
+        sampling_period=dt,
         obs_type=obs_type,
-        n_splits=5,
-        opt='bopt',
+        opt='grid',
         n_obs=200,
-        rank=(1, 200, 40),
+        rank=(1, 20, 1),
         grid_param_slices=5,
         max_opt_iter=200
     )
@@ -87,45 +89,38 @@ def train_model(data, obs_type):
 def compute_error(model, test_data):
     """compute error between model prediction and real data"""
 
-    mses = []
     perc_errors = []
 
     # loop over all test trajectories
     tmp = list(test_data._trajs.values())
 
     for t in tmp:
+
         # simulate using the learned model
         iv = t.states[0, :]
         start_time = t.times[0]
         end_time = t.times[len(t.times) - 1]
         teval = np.linspace(start_time, end_time, len(t.times))
 
-        try:
-            trajectory = model.solve_ivp(
-                initial_state=iv,
-                tspan=(start_time, end_time),
-                sampling_period=t.times[1] - t.times[0],
-                inputs=t.inputs,
-                teval=teval
-            )
+        trajectory = model.solve_ivp(
+            initial_state=iv,
+            tspan=(start_time, end_time),
+            sampling_period=t.times[1] - t.times[0],
+            inputs=t.inputs,
+            teval=teval
+        )
 
-            # compute error
-            mse = mean_squared_error(t.states, trajectory.states)
-            mses.append(mse)
-            perc_error = mean_absolute_percentage_error(t.states, trajectory.states)
-            perc_errors.append(perc_error)
-
-        except:
-            print("ERROR--solve_ivp failed (likely unstable model)")
-            # NOTE: Robot has constant 0 states, resulting in high error numbers (MSE is good)
-            mses.append(np.infty)
-            perc_errors.append(np.infty)
+        # compute error
+        y_true = np.matrix.flatten(t.states)
+        y_pred = np.matrix.flatten(trajectory.states)
+        ind = abs(y_true) > 0.01
+        perc_error = mean_absolute_percentage_error(y_true[ind], y_pred[ind])
+        perc_errors.append(perc_error)
 
     # take mean over all errors
     perc_error = statistics.mean(perc_errors)
-    mse = statistics.mean(mses)
 
-    return perc_error, mse
+    return perc_error
 
 
 def store_data(row, filename='real_data'):
@@ -146,12 +141,14 @@ if __name__ == '__main__':
 
     # initialization
     benchmarks = ['ElectricCircuit', 'F1tenthCar', 'Robot']
-    obs_types = ['id', "poly", "rff", "deep", "quadratic"]
-    store_data_heads(["", ""] + ["perc_error", "mse", "time(s)", ""] * 5)
+    obs_types = ['id', 'polynomial', 'rff', 'deep']
+    store_data_heads(["", ""] + ["perc_error", "time(s)", ""] * 4)
 
     # loop over all benchmarks
     for i in range(1):
+
         store_data([f"Iteration {i + 1}"])
+
         for benchmark in benchmarks:
 
             print(' ')
@@ -169,8 +166,10 @@ if __name__ == '__main__':
             result = [benchmark, ""]
 
             for obs in obs_types:
-                np.random.seed(0)
+
                 # train the Koopman model
+                np.random.seed(0)
+
                 start = time.time()
                 model = train_model(training_data, obs)
                 end = time.time()
@@ -178,11 +177,10 @@ if __name__ == '__main__':
                 comp_time = round(end - start, 3)
 
                 # compute error
-                perc_error, mse = compute_error(model, test_data)
+                perc_error = compute_error(model, test_data)
 
                 # store and print results
                 result.append(perc_error)
-                result.append(mse)
                 result.append(comp_time)
                 result.append("")
 

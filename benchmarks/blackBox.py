@@ -38,17 +38,23 @@ def test_trajectories(true_trajectories, model, tspan):
     perc_errors = []
     for i in range(9):
         init_s = true_trajectories[i].states[0]
-
         iv = init_s
-        trajectory = model.solve_ivp(
-            initial_state=iv,
-            tspan=tspan,
-            sampling_period=0.1
-        )
-        mse = mean_squared_error(true_trajectories[i].states, trajectory.states)
-        mses.append(mse)
-        perc_error = mean_absolute_percentage_error(true_trajectories[i].states, trajectory.states)
-        perc_errors.append(perc_error)
+        try:
+            trajectory = model.solve_ivp(
+                initial_state=iv,
+                tspan=tspan,
+                sampling_period=0.1
+            )
+            mse = mean_squared_error(true_trajectories[i].states, trajectory.states)
+            mses.append(mse)
+            perc_error = mean_absolute_percentage_error(true_trajectories[i].states, trajectory.states)
+            perc_errors.append(perc_error)
+
+        except:
+            print("ERROR--solve_ivp failed (likely unstable model)")
+            # NOTE: Robot has constant 0 states, resulting in high error numbers (MSE is good)
+            mses.append(np.infty)
+            perc_errors.append(np.infty)
 
     return statistics.mean(mses), statistics.mean(perc_errors)
 

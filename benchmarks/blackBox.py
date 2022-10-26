@@ -59,13 +59,13 @@ def test_trajectories(true_trajectories, model, tspan):
     return statistics.mean(mses), statistics.mean(perc_errors)
 
 
-def store_data(row, filename='black_box_data'):
+def store_data(row, filename='black_box_data_bopt'):
     with open(f'data/{filename}', 'a') as f:
         writer = csv.writer(f)
         writer.writerow(row)
 
 
-def store_data_heads(row, filename='black_box_data'):
+def store_data_heads(row, filename='black_box_data_bopt'):
     if not os.path.exists('data'):
         os.makedirs('data')
 
@@ -99,7 +99,7 @@ if __name__ == '__main__':
                     training_data,  # list of trajectories
                     sampling_period=0.1,  # sampling period of trajectory snapshots
                     obs_type=obs,  # use Random Fourier Features Observables
-                    opt="grid",  # grid search to find best hyperparameters
+                    opt="bopt",  # grid search to find best hyperparameters
                     n_obs=200,  # maximum number of observables to try
                     max_opt_iter=200,  # maximum number of optimization iterations
                     grid_param_slices=5,  # for grid search, number of slices for each parameter

@@ -71,7 +71,7 @@ def train_model(data, obs_type):
         data,  # list of trajectories
         obs_type=obs_type,
         n_splits=5,
-        opt='grid',
+        opt='bopt',
         n_obs=200,
         rank=(1, 200, 40),
         grid_param_slices=5,

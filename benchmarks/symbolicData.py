@@ -153,13 +153,13 @@ def make_random_input(low, high, teval):
     return inp
 
 
-def store_data(row, filename='symbolic_data'):
+def store_data(row, filename='symbolic_data_bopt'):
     with open(f'data/{filename}', 'a') as f:
         writer = csv.writer(f)
         writer.writerow(row)
 
 
-def store_data_heads(row, filename='symbolic_data'):
+def store_data_heads(row, filename='symbolic_data_bopt'):
     if not os.path.exists('data'):
         os.makedirs('data')
 
@@ -203,7 +203,7 @@ if __name__ == '__main__':
             result = [benchmark.name, ""]
             for obs in obs_types:
                 np.random.seed(0)
-                param_dict = {"train_size": 10, "samp_period": 0.1, "obs_type": obs, "opt": "grid", "n_obs": 200,
+                param_dict = {"train_size": 10, "samp_period": 0.1, "obs_type": obs, "opt": "bopt", "n_obs": 200,
                               "grid_param_slices": 5, "n_splits": 5, "rank": (1, 200, 40)}
                 # generate training data
                 training_data = get_training_data(benchmark, param_dict)

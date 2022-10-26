@@ -145,10 +145,9 @@ def store_data_heads(row, filename='real_data'):
 if __name__ == '__main__':
 
     # initialization
-    # benchmarks = ['ElectricCircuit', 'F1tenthCar', 'Robot']
-    benchmarks = ['F1tenthCar']
-    obs_types = ['id', "poly", "rff"]
-    store_data_heads(["", ""] + ["perc_error", "mse", "time(s)", ""] * 4)
+    benchmarks = ['ElectricCircuit', 'F1tenthCar', 'Robot']
+    obs_types = ['id', "poly", "rff", "deep", "quadratic"]
+    store_data_heads(["", ""] + ["perc_error", "mse", "time(s)", ""] * 5)
 
     # loop over all benchmarks
     for i in range(1):

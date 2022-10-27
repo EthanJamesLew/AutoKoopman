@@ -17,7 +17,7 @@ if __name__ == "__main__":
     fhn = lalo20.LaubLoomis()
     training_data = fhn.solve_ivps(
         initial_states=np.random.uniform(low=0.1, high=5.0, size=(30, 7)),
-        tspan=[0.0, 10.0],
+        tspan=(0.0, 10.0),
         sampling_period=0.1
     )
 

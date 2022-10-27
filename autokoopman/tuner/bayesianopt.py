@@ -22,14 +22,18 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
         """make GPyOpt Optimization Problem domain"""
         bounds = []
         lengths = []
+        is_log = []
         for idx, coord in enumerate(param_space):
             if isinstance(coord, ContinuousParameter):
+                g_log = coord.distribution == "loguniform"
                 g_var = {
                     "name": f"var_{coord.name}_{idx}",
                     "type": "continuous"
                     if isinstance(coord, ContinuousParameter)
                     else "discrete",
-                    "domain": (coord._interval[0], coord._interval[1]),
+                    "domain": (
+                        np.log(coord._interval[0]) if g_log else coord._interval[0], 
+                        np.log(coord._interval[1]) if g_log else coord._interval[1]),
                 }
                 g_len = coord._interval[1] - coord._interval[0]
             elif isinstance(coord, DiscreteParameter):
@@ -41,6 +45,7 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
                     "domain": tuple(coord.elements),
                 }
                 g_len = max(coord.elements) - min(coord.elements)
+                g_log = False
             elif isinstance(coord, FiniteParameter):
                 g_var = {
                     "name": f"var_{coord.name}_{idx}",
@@ -50,13 +55,16 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
                     "domain": tuple(coord.elements),
                 }
                 g_len = max(coord.elements) - min(coord.elements)
+                g_log = False
             else:
                 g_var = None
                 g_len = None
+                g_log = False
             if g_var is not None:
                 bounds.append(g_var)
                 lengths.append(g_len)
-        return bounds, lengths
+                is_log.append(g_log)
+        return bounds, lengths, is_log
 
     def __init__(
         self,
@@ -93,7 +101,7 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
                 sys.stdout = self._original_stdout
 
         # get GPyOpt domain
-        bounds, lengthscales = self.make_bounds(self._parameter_model.parameter_space)
+        bounds, lengthscales, is_logs = self.make_bounds(self._parameter_model.parameter_space)
 
         # create the sampler and send it the parameters
         sampling = self.tune_sampling(nattempts, scoring_func)
@@ -104,7 +112,9 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
             TODO: deal with logspace correctly
             """
             try:
-                val = sampling.send(tuple(param.flatten()))
+                param_v = tuple(param.flatten())
+                param = [(p if not il else np.exp(p)) for il, p in zip(is_logs, param_v)]
+                val = sampling.send(param)
                 next(sampling)
                 return val
             except StopIteration:
@@ -114,7 +124,7 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
                 self.error_messages.append((param, exc))
                 return 1e10
 
-        kern = GPy.kern.RBF(
+        kern = GPy.kern.Matern52(
             len(bounds),
             variance=1.0,
             lengthscale=np.array(lengthscales) / 5.0,

@@ -95,27 +95,31 @@ def compute_error(model, test_data):
     tmp = list(test_data._trajs.values())
 
     for t in tmp:
+        try:
+            # simulate using the learned model
+            iv = t.states[0, :]
+            start_time = t.times[0]
+            end_time = t.times[len(t.times) - 1]
+            teval = np.linspace(start_time, end_time, len(t.times))
 
-        # simulate using the learned model
-        iv = t.states[0, :]
-        start_time = t.times[0]
-        end_time = t.times[len(t.times) - 1]
-        teval = np.linspace(start_time, end_time, len(t.times))
+            trajectory = model.solve_ivp(
+                initial_state=iv,
+                tspan=(start_time, end_time),
+                sampling_period=t.times[1] - t.times[0],
+                inputs=t.inputs,
+                teval=teval
+            )
 
-        trajectory = model.solve_ivp(
-            initial_state=iv,
-            tspan=(start_time, end_time),
-            sampling_period=t.times[1] - t.times[0],
-            inputs=t.inputs,
-            teval=teval
-        )
-
-        # compute error
-        y_true = np.matrix.flatten(t.states)
-        y_pred = np.matrix.flatten(trajectory.states)
-        ind = abs(y_true) > 0.01
-        perc_error = mean_absolute_percentage_error(y_true[ind], y_pred[ind])
-        perc_errors.append(perc_error)
+            # compute error
+            y_true = np.matrix.flatten(t.states)
+            y_pred = np.matrix.flatten(trajectory.states)
+            ind = abs(y_true) > 0.01
+            perc_error = mean_absolute_percentage_error(y_true[ind], y_pred[ind])
+            perc_errors.append(perc_error)
+        except:
+            print("ERROR--solve_ivp failed (likely unstable model)")
+            # NOTE: Robot has constant 0 states, resulting in high error numbers (MSE is good)
+            perc_errors.append(np.infty)
 
     # take mean over all errors
     perc_error = statistics.mean(perc_errors)

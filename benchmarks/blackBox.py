@@ -2,7 +2,7 @@
 import csv
 import os
 import time
-from random import random
+import random
 
 import torch
 import matplotlib.pyplot as plt
@@ -91,7 +91,7 @@ if __name__ == '__main__':
                               'f16/data/testdata/gsac.csv']
     obs_types = ['id', 'poly', 'rff', 'deep']
     store_data_heads(["", ""] + ["mse", "perc_error","r2_score", "time(s)", ""] * 4)
-    for i in range(2):
+    for i in range(1):
         store_data([f"Iteration {i + 1 }"])
         for benchmark, train_data, tspan, trajectories_filepath in zip(benches, train_datas, tspans,
                                                                        trajectories_filepaths):

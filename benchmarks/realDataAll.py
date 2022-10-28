@@ -149,9 +149,9 @@ if __name__ == '__main__':
     store_data_heads(["", ""] + ["perc_error", "time(s)", ""] * 4)
 
     # loop over all benchmarks
-    for i in range(1):
+    for i in range(4):
 
-        store_data([f"Iteration {i + 1}"])
+        store_data([f"Iteration {i + 2}"])
 
         for benchmark in benchmarks:
 

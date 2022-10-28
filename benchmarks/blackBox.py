@@ -83,8 +83,8 @@ if __name__ == '__main__':
                               'f16/data/testdata/gsac.csv']
     obs_types = ['id', 'poly', 'rff', 'deep']
     store_data_heads(["", ""] + ["perc_error", "time(s)", ""] * 4)
-    for i in range(3):
-        store_data([f"Iteration {i + 1}"])
+    for i in range(2):
+        store_data([f"Iteration {i + 4 }"])
         for benchmark, train_data, tspan, trajectories_filepath in zip(benches, train_datas, tspans,
                                                                        trajectories_filepaths):
             result = [benchmark, ""]

@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 # this is the convenience function
+import torch
+
 from autokoopman import auto_koopman
 # for a complete example, let's create an example dataset using an included benchmark system
 from autokoopman.benchmark import bio2, fhn, lalo20, prde20, robe21, spring, pendulum, trn_constants
@@ -8,7 +10,7 @@ from benchmarks.glop import Glop
 import random
 import copy
 
-from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
+from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error, r2_score
 import statistics
 import os
 import csv
@@ -117,6 +119,8 @@ def get_trajectories(bench, iv, samp_period):
 
 def test_trajectories(bench, num_tests, samp_period):
     perc_errors = []
+    mses = []
+    r_squares = []
     for j in range(num_tests):
         iv = get_init_states(bench, 1, j + 10000)[0]
         try:
@@ -126,12 +130,16 @@ def test_trajectories(bench, num_tests, samp_period):
             ind = abs(y_true) > 0.01
             perc_error = mean_absolute_percentage_error(y_true[ind], y_pred[ind])
             perc_errors.append(perc_error)
+            mse = mean_squared_error(y_true, y_pred)
+            mses.append(mse)
+            r_square = r2_score(y_true, y_pred)
+            r_squares.append(r_square)
 
         except:
             print("ERROR--solve_ivp failed (likely unstable model)")
             perc_errors.append(np.infty)
 
-    return statistics.mean(perc_errors)
+    return statistics.mean(mses), statistics.mean(perc_errors), statistics.mean(r_squares)
 
 
 def make_input_step(duty, on_amplitude, off_amplitude, teval):
@@ -195,14 +203,20 @@ if __name__ == '__main__':
     benches = [bio2.Bio2(), fhn.FitzHughNagumo(), lalo20.LaubLoomis(), pendulum.PendulumWithInput(beta=0.05),
                prde20.ProdDestr(), robe21.RobBench(), spring.Spring(), trn_constants.TRNConstants()]
     obs_types = ['id', 'poly', 'rff', 'deep']
-    store_data_heads(["", ""] + ["perc_error", "time(s)", ""] * 4)
-    for i in range(2):
-        store_data([f"Iteration {i + 4}"])
+    store_data_heads(["", ""] + ["mse", "perc_error","r2_score", "time(s)", ""] * 4)
+    for i in range(1):
+        store_data([f"Iteration {i + 1}"])
         for benchmark in benches:
             result = [benchmark.name, ""]
             for obs in obs_types:
                 np.random.seed(0)
-                param_dict = {"train_size": 10, "samp_period": 0.1, "obs_type": obs, "opt": "grid", "n_obs": 200,
+                random.seed(0)
+                torch.manual_seed(0)
+                if obs == 'deep':
+                    opt = 'bopt'
+                else:
+                    opt = 'grid'
+                param_dict = {"train_size": 10, "samp_period": 0.1, "obs_type": obs, "opt": opt, "n_obs": 200,
                               "grid_param_slices": 5, "n_splits": 5, "rank": (1, 200, 40)}
                 # generate training data
                 training_data = get_training_data(benchmark, param_dict)
@@ -222,13 +236,15 @@ if __name__ == '__main__':
                 )
                 end = time.time()
 
-                perc_error = test_trajectories(benchmark, 10, param_dict["samp_period"])
+                mse, perc_error, r_square = test_trajectories(benchmark, 10, param_dict["samp_period"])
 
                 comp_time = round(end - start, 3)
                 print("time taken: ", comp_time)
                 print(f"The average percentage error is {perc_error}%")
 
+                result.append(mse)
                 result.append(perc_error)
+                result.append(r_square)
                 result.append(comp_time)
                 result.append("")
 

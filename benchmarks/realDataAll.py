@@ -6,7 +6,8 @@ import random
 import time
 import csv
 import pandas as pd
-from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
+import torch
+from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error, r2_score
 import statistics
 
 from autokoopman import auto_koopman
@@ -68,12 +69,17 @@ def train_model(data, obs_type):
 
     dt = data._trajs[0].times[1] - data._trajs[0].times[0]
 
+    if obs_type == 'deep':
+        opt = 'bopt'
+    else:
+        opt = 'grid'
+
     # learn model from data
     experiment_results = auto_koopman(
         data,  # list of trajectories
         sampling_period=dt,
         obs_type=obs_type,
-        opt='grid',
+        opt=opt,
         n_obs=200,
         rank=(1, 20, 1),
         grid_param_slices=5,
@@ -90,6 +96,8 @@ def compute_error(model, test_data):
     """compute error between model prediction and real data"""
 
     perc_errors = []
+    mses = []
+    r_squares = []
 
     # loop over all test trajectories
     tmp = list(test_data._trajs.values())
@@ -116,15 +124,16 @@ def compute_error(model, test_data):
             ind = abs(y_true) > 0.01
             perc_error = mean_absolute_percentage_error(y_true[ind], y_pred[ind])
             perc_errors.append(perc_error)
+            mse = mean_squared_error(y_true, y_pred)
+            mses.append(mse)
+            r_square = r2_score(y_true, y_pred)
+            r_squares.append(r_square)
         except:
             print("ERROR--solve_ivp failed (likely unstable model)")
             # NOTE: Robot has constant 0 states, resulting in high error numbers (MSE is good)
             perc_errors.append(np.infty)
 
-    # take mean over all errors
-    perc_error = statistics.mean(perc_errors)
-
-    return perc_error
+    return statistics.mean(mses), statistics.mean(perc_errors), statistics.mean(r_squares)
 
 
 def store_data(row, filename='real_data'):
@@ -146,12 +155,12 @@ if __name__ == '__main__':
     # initialization
     benchmarks = ['ElectricCircuit', 'F1tenthCar', 'Robot']
     obs_types = ['id', 'poly', 'rff', 'deep']
-    store_data_heads(["", ""] + ["perc_error", "time(s)", ""] * 4)
+    store_data_heads(["", ""] + ["mse", "perc_error","r2_score", "time(s)", ""] * 4)
 
     # loop over all benchmarks
-    for i in range(4):
+    for i in range(1):
 
-        store_data([f"Iteration {i + 2}"])
+        store_data([f"Iteration {i + 1}"])
 
         for benchmark in benchmarks:
 
@@ -170,9 +179,9 @@ if __name__ == '__main__':
             result = [benchmark, ""]
 
             for obs in obs_types:
-
-                # train the Koopman model
                 np.random.seed(0)
+                random.seed(0)
+                torch.manual_seed(0)
 
                 start = time.time()
                 model = train_model(training_data, obs)
@@ -181,10 +190,12 @@ if __name__ == '__main__':
                 comp_time = round(end - start, 3)
 
                 # compute error
-                perc_error = compute_error(model, test_data)
+                mse, perc_error, r_square = compute_error(model, test_data)
 
                 # store and print results
+                result.append(mse)
                 result.append(perc_error)
+                result.append(r_square)
                 result.append(comp_time)
                 result.append("")
 

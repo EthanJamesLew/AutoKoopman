@@ -119,7 +119,7 @@ def get_estimator(obs_type, sampling_period, dim, obs, hyperparams):
 def auto_koopman(
     training_data: Union[TrajectoriesData, Sequence[np.ndarray]],
     inputs_training_data: Optional[Sequence[np.ndarray]] = None,
-    sampling_period: float = 0.05,
+    sampling_period: Optional[float] = None,
     opt: Union[str, HyperparameterTuner] = "monte-carlo",
     max_opt_iter: int = 100,
     max_epochs: int = 500,
@@ -195,7 +195,7 @@ def auto_koopman(
             # 'estimator': <autokoopman.estimator.koopman.KoopmanDiscEstimator at 0x7f0f92ff0610>}
     """
 
-    training_data = _sanitize_training_data(
+    training_data, sampling_period = _sanitize_training_data(
         training_data, inputs_training_data, sampling_period, opt, obs_type
     )
 
@@ -341,6 +341,13 @@ def _sanitize_training_data(
     training_data, inputs_training_data, sampling_period, opt, obs_type
 ):
     """auto_koopman input sanitization"""
+
+    # if sampling period is None AND discrete system is wanted
+    if sampling_period is None:
+        sampling_period = np.infty
+        for t in training_data:
+            sampling_period = min(sampling_period, min(np.diff(t.times)))
+
     # sanitize the input
     # check the strings
     if isinstance(obs_type, str):
@@ -380,4 +387,4 @@ def _sanitize_training_data(
                 }
             )
 
-    return training_data
+    return training_data, sampling_period

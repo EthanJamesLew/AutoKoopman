@@ -8,6 +8,7 @@ import csv
 import pandas as pd
 import torch
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error, r2_score
+from numpy.linalg import norm
 import statistics
 
 from autokoopman import auto_koopman
@@ -98,6 +99,8 @@ def compute_error(model, test_data):
     perc_errors = []
     mses = []
     r_squares = []
+    euc_norms_ign = []
+    euc_norms = []
 
     # loop over all test trajectories
     tmp = list(test_data._trajs.values())
@@ -128,12 +131,17 @@ def compute_error(model, test_data):
             mses.append(mse)
             r_square = r2_score(y_true, y_pred)
             r_squares.append(r_square)
+            euc_norm_ign = norm(y_true[ind] - y_pred[ind]) / norm(y_true[ind])
+            euc_norms_ign.append(euc_norm_ign)
+            euc_norm = norm(y_true - y_pred) / norm(y_true)
+            euc_norms.append(euc_norm)
         except:
             print("ERROR--solve_ivp failed (likely unstable model)")
             # NOTE: Robot has constant 0 states, resulting in high error numbers (MSE is good)
             perc_errors.append(np.infty)
 
-    return statistics.mean(mses), statistics.mean(perc_errors), statistics.mean(r_squares)
+    return statistics.mean(mses), statistics.mean(perc_errors), statistics.mean(r_squares), statistics.mean(
+        euc_norms_ign), statistics.mean(euc_norms)
 
 
 def store_data(row, filename='real_data'):
@@ -190,12 +198,19 @@ if __name__ == '__main__':
                 comp_time = round(end - start, 3)
 
                 # compute error
-                mse, perc_error, r_square = compute_error(model, test_data)
+                mse, perc_error, r_square, euc_norm_ign, euc_norm = compute_error(model, test_data)
+
+                print("time taken: ", comp_time)
+                print(f"The average percentage error is {perc_error * 100}%")
+                print(f"The average euc_ignore norm perc error is {euc_norm_ign * 100}%")
+                print(f"The average euc norm perc error is {euc_norm * 100}%")
 
                 # store and print results
                 result.append(mse)
                 result.append(perc_error)
                 result.append(r_square)
+                result.append(euc_norm_ign)
+                result.append(euc_norm)
                 result.append(comp_time)
                 result.append("")
 

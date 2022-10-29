@@ -14,6 +14,7 @@ from autokoopman import auto_koopman
 import autokoopman.benchmark.fhn as fhn
 import autokoopman.core.trajectory as traj
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error, r2_score
+from numpy.linalg import norm
 import statistics
 
 
@@ -39,6 +40,8 @@ def test_trajectories(true_trajectories, model, tspan):
     perc_errors = []
     mses = []
     r_squares = []
+    euc_norms_ign = []
+    euc_norms = []
     for i in range(9):
         init_s = true_trajectories[i].states[0]
         iv = init_s
@@ -57,12 +60,17 @@ def test_trajectories(true_trajectories, model, tspan):
             mses.append(mse)
             r_square = r2_score(y_true, y_pred)
             r_squares.append(r_square)
+            euc_norm_ign = norm(y_true[ind] - y_pred[ind]) / norm(y_true[ind])
+            euc_norms_ign.append(euc_norm_ign)
+            euc_norm = norm(y_true - y_pred) / norm(y_true)
+            euc_norms.append(euc_norm)
 
         except:
             print("ERROR--solve_ivp failed (likely unstable model)")
             perc_errors.append(np.infty)
 
-    return statistics.mean(mses), statistics.mean(perc_errors), statistics.mean(r_squares)
+    return statistics.mean(mses), statistics.mean(perc_errors), statistics.mean(r_squares), statistics.mean(
+        euc_norms_ign), statistics.mean(euc_norms)
 
 
 def store_data(row, filename='black_box_data'):
@@ -121,15 +129,19 @@ if __name__ == '__main__':
                 )
                 end = time.time()
                 true_trajectories, model = get_true_trajectories(trajectories_filepath)
-                mse, perc_error, r_square = test_trajectories(true_trajectories, model, tspan)
+                mse, perc_error, r_square, euc_norm_ign, euc_norm = test_trajectories(true_trajectories, model, tspan)
 
                 comp_time = round(end - start, 3)
                 print("time taken: ", comp_time)
-                print(f"The average percentage error is {perc_error}%")
+                print(f"The average percentage error is {perc_error * 100}%")
+                print(f"The average euc_ignore norm perc error is {euc_norm_ign * 100}%")
+                print(f"The average euc norm perc error is {euc_norm * 100}%")
 
                 result.append(mse)
                 result.append(perc_error)
                 result.append(r_square)
+                result.append(euc_norm_ign)
+                result.append(euc_norm)
                 result.append(comp_time)
                 result.append("")
 

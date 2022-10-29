@@ -11,6 +11,7 @@ import random
 import copy
 
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error, r2_score
+from numpy.linalg import norm
 import statistics
 import os
 import csv
@@ -121,6 +122,8 @@ def test_trajectories(bench, num_tests, samp_period):
     perc_errors = []
     mses = []
     r_squares = []
+    euc_norms_ign = []
+    euc_norms = []
     for j in range(num_tests):
         iv = get_init_states(bench, 1, j + 10000)[0]
         try:
@@ -134,12 +137,17 @@ def test_trajectories(bench, num_tests, samp_period):
             mses.append(mse)
             r_square = r2_score(y_true, y_pred)
             r_squares.append(r_square)
+            euc_norm_ign = norm(y_true[ind] - y_pred[ind]) / norm(y_true[ind])
+            euc_norms_ign.append(euc_norm_ign)
+            euc_norm = norm(y_true - y_pred) / norm(y_true)
+            euc_norms.append(euc_norm)
 
         except:
             print("ERROR--solve_ivp failed (likely unstable model)")
             perc_errors.append(np.infty)
 
-    return statistics.mean(mses), statistics.mean(perc_errors), statistics.mean(r_squares)
+    return statistics.mean(mses), statistics.mean(perc_errors), statistics.mean(r_squares), statistics.mean(
+        euc_norms_ign), statistics.mean(euc_norms)
 
 
 def make_input_step(duty, on_amplitude, off_amplitude, teval):
@@ -203,7 +211,7 @@ if __name__ == '__main__':
     benches = [bio2.Bio2(), fhn.FitzHughNagumo(), lalo20.LaubLoomis(), pendulum.PendulumWithInput(beta=0.05),
                prde20.ProdDestr(), robe21.RobBench(), spring.Spring(), trn_constants.TRNConstants()]
     obs_types = ['id', 'poly', 'rff', 'deep']
-    store_data_heads(["", ""] + ["mse", "perc_error","r2_score", "time(s)", ""] * 4)
+    store_data_heads(["", ""] + ["mse", "perc_error", "r2_score", "euc_norm_ign", "euc_norm", "time(s)", ""] * 4)
     for i in range(1):
         store_data([f"Iteration {i + 1}"])
         for benchmark in benches:
@@ -236,15 +244,19 @@ if __name__ == '__main__':
                 )
                 end = time.time()
 
-                mse, perc_error, r_square = test_trajectories(benchmark, 10, param_dict["samp_period"])
+                mse, perc_error, r_square, euc_norm_ign, euc_norm = test_trajectories(benchmark, 10, param_dict["samp_period"])
 
                 comp_time = round(end - start, 3)
                 print("time taken: ", comp_time)
-                print(f"The average percentage error is {perc_error}%")
+                print(f"The average percentage error is {perc_error * 100}%")
+                print(f"The average euc_ignore norm perc error is {euc_norm_ign * 100}%")
+                print(f"The average euc norm perc error is {euc_norm * 100}%")
 
                 result.append(mse)
                 result.append(perc_error)
                 result.append(r_square)
+                result.append(euc_norm_ign)
+                result.append(euc_norm)
                 result.append(comp_time)
                 result.append("")
 

@@ -137,8 +137,9 @@ def test_trajectories(bench, num_tests, samp_period):
             mses.append(mse)
             r_square = r2_score(y_true, y_pred)
             r_squares.append(r_square)
-            euc_norm_ign = norm(y_true[ind] - y_pred[ind]) / norm(y_true[ind])
-            euc_norms_ign.append(euc_norm_ign)
+            if norm(y_true) > 0.01:
+                euc_norm_ign = norm(y_true - y_pred) / norm(y_true)
+                euc_norms_ign.append(euc_norm_ign)
             euc_norm = norm(y_true - y_pred) / norm(y_true)
             euc_norms.append(euc_norm)
 
@@ -244,7 +245,8 @@ if __name__ == '__main__':
                 )
                 end = time.time()
 
-                mse, perc_error, r_square, euc_norm_ign, euc_norm = test_trajectories(benchmark, 10, param_dict["samp_period"])
+                mse, perc_error, r_square, euc_norm_ign, euc_norm = test_trajectories(benchmark, 10,
+                                                                                      param_dict["samp_period"])
 
                 comp_time = round(end - start, 3)
                 print("time taken: ", comp_time)

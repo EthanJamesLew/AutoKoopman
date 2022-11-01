@@ -1,3 +1,6 @@
+import csv
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 # this is the convenience function
@@ -138,24 +141,52 @@ def make_random_input(low, high, teval):
     return inp
 
 
-def plot(trajectories):
-    plt.figure(figsize=(10, 6))
+def plot(bench, trajectories):
     # plot the results
-    for i, (label, trajectory) in enumerate(trajectories.items()):
-        plt.plot(trajectory.states.T[0], trajectory.states.T[1], label=label)
-        # plt.plot(trajectory.states[:, 1], label=label)
 
-    plt.xlabel("$x_1$")
-    plt.ylabel("$x_2$")
-    plt.grid()
-    plt.legend()
-    plt.title("Test Trajectory Plot")
-    plt.show()
+    figs, axs = [], []
+    for i in range(3):
+        fig, ax = plt.subplots()
+        ax.grid()
+        ax.set_title("Test Trajectory plot")
+        figs.append(fig)
+        axs.append(ax)
+    for i, (label, trajectory) in enumerate(trajectories.items()):
+        axs[0].plot(trajectory.states.T[0], trajectory.states.T[1], label=label)
+        axs[0].legend()
+        store_data_heads(f'{bench.name}_{label}_01')
+        store_data(trajectory.states.T[0], f'{bench.name}_{label}_01')
+        store_data(trajectory.states.T[1], f'{bench.name}_{label}_01')
+        axs[1].plot(trajectory.states[:, 0], label=label)
+        axs[1].legend()
+        store_data_heads(f'{bench.name}_{label}_0')
+        store_data(trajectory.states[:, 0], f'{bench.name}_{label}_0')
+        axs[2].plot(trajectory.states[:, 1], label=label)
+        axs[2].legend()
+        store_data_heads(f'{bench.name}_{label}_1')
+        store_data(trajectory.states[:, 1], f'{bench.name}_{label}_1')
+
+    figs[0].savefig(f'trajectories/{bench.name}_01.png')
+    figs[1].savefig(f'trajectories/{bench.name}_0.png')
+    figs[2].savefig(f'trajectories/{bench.name}_1.png')
+
+
+def store_data(row, filename='trajectory'):
+    with open(f'trajectories/{filename}', 'a') as f:
+        writer = csv.writer(f)
+        writer.writerow(row)
+
+
+def store_data_heads(filename='trajectory'):
+    if not os.path.exists('trajectories'):
+        os.makedirs('trajectories')
+
+    open(f'trajectories/{filename}', 'w').close()
 
 
 if __name__ == '__main__':
     benches = [trn_constants.TRNConstants()]
-    obs_types = ['id', 'poly']
+    obs_types = ['id', 'poly', 'rff', 'deep']
     for benchmark in benches:
         iv = get_init_states(benchmark, 1, 1000)[0]
         true_trajectory = get_true_trajectories(benchmark, iv, 0.1)
@@ -187,5 +218,5 @@ if __name__ == '__main__':
             )
 
             trajectory = get_trajectories(benchmark, iv, 0.1)
-            trajectories[f'{obs} trajectory'] = trajectory
-        plot(trajectories)
+            trajectories[f'{obs}'] = trajectory
+        plot(benchmark, trajectories)

@@ -37,10 +37,6 @@ def get_true_trajectories(filepath):
 
 
 def test_trajectories(true_trajectories, model, tspan):
-    perc_errors = []
-    mses = []
-    r_squares = []
-    euc_norms_ign = []
     euc_norms = []
     for i in range(9):
         init_s = true_trajectories[i].states[0]
@@ -53,24 +49,14 @@ def test_trajectories(true_trajectories, model, tspan):
             )
             y_true = np.matrix.flatten(true_trajectories[i].states)
             y_pred = np.matrix.flatten(trajectory.states)
-            ind = abs(y_true) > 0.01
-            perc_error = mean_absolute_percentage_error(y_true[ind], y_pred[ind])
-            perc_errors.append(perc_error)
-            mse = mean_squared_error(y_true, y_pred)
-            mses.append(mse)
-            r_square = r2_score(y_true, y_pred)
-            r_squares.append(r_square)
-            euc_norm_ign = norm(y_true[ind] - y_pred[ind]) / norm(y_true[ind])
-            euc_norms_ign.append(euc_norm_ign)
             euc_norm = norm(y_true - y_pred) / norm(y_true)
             euc_norms.append(euc_norm)
 
         except:
             print("ERROR--solve_ivp failed (likely unstable model)")
-            perc_errors.append(np.infty)
+            euc_norms.append(np.infty)
 
-    return statistics.mean(mses), statistics.mean(perc_errors), statistics.mean(r_squares), statistics.mean(
-        euc_norms_ign), statistics.mean(euc_norms)
+    return statistics.mean(euc_norms)
 
 
 def store_data(row, filename='black_box_data'):
@@ -98,51 +84,45 @@ if __name__ == '__main__':
     trajectories_filepaths = ['f16/data/testdata/checkEngine.csv', 'f16/data/testdata/long.csv',
                               'f16/data/testdata/gsac.csv']
     obs_types = ['id', 'poly', 'rff', 'deep']
-    store_data_heads(["", ""] + ["mse", "perc_error","r2_score", "time(s)", ""] * 4)
-    for i in range(1):
-        store_data([f"Iteration {i + 1 }"])
-        for benchmark, train_data, tspan, trajectories_filepath in zip(benches, train_datas, tspans,
-                                                                       trajectories_filepaths):
-            result = [benchmark, ""]
-            for obs in obs_types:
-                np.random.seed(0)
-                random.seed(0)
-                torch.manual_seed(0)
-                training_data, dirname = get_train_data(train_data)
-                start = time.time()
+    store_data_heads(["", ""] + ["euc_norm", "time(s)", ""] * len(obs_types))
+    for benchmark, train_data, tspan, trajectories_filepath in zip(benches, train_datas, tspans,
+                                                                   trajectories_filepaths):
+        result = [benchmark, ""]
+        for obs in obs_types:
+            np.random.seed(0)
+            random.seed(0)
+            torch.manual_seed(0)
+            training_data, dirname = get_train_data(train_data)
+            start = time.time()
 
-                if obs == 'deep':
-                    opt = 'bopt'
-                else:
-                    opt = 'grid'
-                # learn model from data
-                experiment_results = auto_koopman(
-                    training_data,  # list of trajectories
-                    sampling_period=0.1,  # sampling period of trajectory snapshots
-                    obs_type=obs,  # use Random Fourier Features Observables
-                    opt=opt,  # grid search to find best hyperparameters
-                    n_obs=200,  # maximum number of observables to try
-                    max_opt_iter=200,  # maximum number of optimization iterations
-                    grid_param_slices=5,  # for grid search, number of slices for each parameter
-                    n_splits=5,  # k-folds validation for tuning, helps stabilize the scoring
-                    rank=(1, 200, 40)  # rank range (start, stop, step) DMD hyperparameter
-                )
-                end = time.time()
-                true_trajectories, model = get_true_trajectories(trajectories_filepath)
-                mse, perc_error, r_square, euc_norm_ign, euc_norm = test_trajectories(true_trajectories, model, tspan)
+            if obs == 'deep':
+                opt = 'bopt'
+            else:
+                opt = 'grid'
+            # learn model from data
+            experiment_results = auto_koopman(
+                training_data,  # list of trajectories
+                sampling_period=0.1,  # sampling period of trajectory snapshots
+                obs_type=obs,  # use Random Fourier Features Observables
+                opt=opt,  # grid search to find best hyperparameters
+                n_obs=200,  # maximum number of observables to try
+                max_opt_iter=200,  # maximum number of optimization iterations
+                grid_param_slices=5,  # for grid search, number of slices for each parameter
+                n_splits=5,  # k-folds validation for tuning, helps stabilize the scoring
+                rank=(1, 200, 40)  # rank range (start, stop, step) DMD hyperparameter
+            )
+            end = time.time()
+            true_trajectories, model = get_true_trajectories(trajectories_filepath)
+            euc_norm = test_trajectories(true_trajectories, model, tspan)
+            comp_time = round(end - start, 3)
 
-                comp_time = round(end - start, 3)
-                print("time taken: ", comp_time)
-                print(f"The average percentage error is {perc_error * 100}%")
-                print(f"The average euc_ignore norm perc error is {euc_norm_ign * 100}%")
-                print(f"The average euc norm perc error is {euc_norm * 100}%")
+            print(benchmark)
+            print(f"observables type: {obs}")
+            print(f"The average euc norm perc error is {round(euc_norm * 100, 2)}%")
+            print("time taken: ", comp_time)
+            # store and print results
+            result.append(round(euc_norm * 100, 2))
+            result.append(comp_time)
+            result.append("")
 
-                result.append(mse)
-                result.append(perc_error)
-                result.append(r_square)
-                result.append(euc_norm_ign)
-                result.append(euc_norm)
-                result.append(comp_time)
-                result.append("")
-
-            store_data(result)
+        store_data(result)

@@ -95,11 +95,6 @@ def train_model(data, obs_type):
 
 def compute_error(model, test_data):
     """compute error between model prediction and real data"""
-
-    perc_errors = []
-    mses = []
-    r_squares = []
-    euc_norms_ign = []
     euc_norms = []
 
     # loop over all test trajectories
@@ -124,24 +119,14 @@ def compute_error(model, test_data):
             # compute error
             y_true = np.matrix.flatten(t.states)
             y_pred = np.matrix.flatten(trajectory.states)
-            ind = abs(y_true) > 0.01
-            perc_error = mean_absolute_percentage_error(y_true[ind], y_pred[ind])
-            perc_errors.append(perc_error)
-            mse = mean_squared_error(y_true, y_pred)
-            mses.append(mse)
-            r_square = r2_score(y_true, y_pred)
-            r_squares.append(r_square)
-            euc_norm_ign = norm(y_true[ind] - y_pred[ind]) / norm(y_true[ind])
-            euc_norms_ign.append(euc_norm_ign)
             euc_norm = norm(y_true - y_pred) / norm(y_true)
             euc_norms.append(euc_norm)
         except:
             print("ERROR--solve_ivp failed (likely unstable model)")
             # NOTE: Robot has constant 0 states, resulting in high error numbers (MSE is good)
-            perc_errors.append(np.infty)
+            euc_norms.append(np.infty)
 
-    return statistics.mean(mses), statistics.mean(perc_errors), statistics.mean(r_squares), statistics.mean(
-        euc_norms_ign), statistics.mean(euc_norms)
+    return statistics.mean(euc_norms)
 
 
 def store_data(row, filename='real_data'):
@@ -163,57 +148,44 @@ if __name__ == '__main__':
     # initialization
     benchmarks = ['ElectricCircuit', 'F1tenthCar', 'Robot']
     obs_types = ['id', 'poly', 'rff', 'deep']
-    store_data_heads(["", ""] + ["mse", "perc_error","r2_score", "time(s)", ""] * 4)
+    store_data_heads(["", ""] + ["euc_norm", "time(s)", ""] * len(obs_types))
 
-    # loop over all benchmarks
-    for i in range(1):
+    for benchmark in benchmarks:
 
-        store_data([f"Iteration {i + 1}"])
+        print(' ')
+        print(benchmark, ' --------------------------------------------------------------')
+        print(' ')
 
-        for benchmark in benchmarks:
+        # load data
+        data = load_data(benchmark)
 
-            print(' ')
-            print(benchmark, ' --------------------------------------------------------------')
-            print(' ')
+        # split into training and validation set
+        n_test = min(10, np.floor(0.4 * len(data)).astype(int))
+        training_data, test_data = split_data(data, n_test)
 
-            # load data
-            data = load_data(benchmark)
+        # loop over the different observable types
+        result = [benchmark, ""]
 
-            # split into training and validation set
-            n_test = min(10, np.floor(0.4 * len(data)).astype(int))
-            training_data, test_data = split_data(data, n_test)
+        for obs in obs_types:
+            np.random.seed(0)
+            random.seed(0)
+            torch.manual_seed(0)
 
-            # loop over the different observable types
-            result = [benchmark, ""]
+            start = time.time()
+            model = train_model(training_data, obs)
+            end = time.time()
 
-            for obs in obs_types:
-                np.random.seed(0)
-                random.seed(0)
-                torch.manual_seed(0)
+            # compute error
+            euc_norm = compute_error(model, test_data)
+            comp_time = round(end - start, 3)
 
-                start = time.time()
-                model = train_model(training_data, obs)
-                end = time.time()
+            print(benchmark)
+            print(f"observables type: {obs}")
+            print(f"The average euc norm perc error is {round(euc_norm * 100, 2)}%")
+            print("time taken: ", comp_time)
+            # store and print results
+            result.append(round(euc_norm * 100, 2))
+            result.append(comp_time)
+            result.append("")
 
-                comp_time = round(end - start, 3)
-
-                # compute error
-                mse, perc_error, r_square, euc_norm_ign, euc_norm = compute_error(model, test_data)
-
-                print("time taken: ", comp_time)
-                print(f"The average percentage error is {perc_error * 100}%")
-                print(f"The average euc_ignore norm perc error is {euc_norm_ign * 100}%")
-                print(f"The average euc norm perc error is {euc_norm * 100}%")
-
-                # store and print results
-                result.append(mse)
-                result.append(perc_error)
-                result.append(r_square)
-                result.append(euc_norm_ign)
-                result.append(euc_norm)
-                result.append(comp_time)
-                result.append("")
-
-                print(obs, ": ", perc_error, " (error), ", comp_time, " (time)")
-
-            store_data(result)
+        store_data(result)

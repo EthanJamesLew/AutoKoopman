@@ -119,10 +119,6 @@ def get_trajectories(bench, iv, samp_period):
 
 
 def test_trajectories(bench, num_tests, samp_period):
-    perc_errors = []
-    mses = []
-    r_squares = []
-    euc_norms_ign = []
     euc_norms = []
     for j in range(num_tests):
         iv = get_init_states(bench, 1, j + 10000)[0]
@@ -130,25 +126,14 @@ def test_trajectories(bench, num_tests, samp_period):
             trajectory, true_trajectory = get_trajectories(bench, iv, samp_period)
             y_true = np.matrix.flatten(true_trajectory.states)
             y_pred = np.matrix.flatten(trajectory.states)
-            ind = abs(y_true) > 0.01
-            perc_error = mean_absolute_percentage_error(y_true[ind], y_pred[ind])
-            perc_errors.append(perc_error)
-            mse = mean_squared_error(y_true, y_pred)
-            mses.append(mse)
-            r_square = r2_score(y_true, y_pred)
-            r_squares.append(r_square)
-            if norm(y_true) > 0.01:
-                euc_norm_ign = norm(y_true - y_pred) / norm(y_true)
-                euc_norms_ign.append(euc_norm_ign)
             euc_norm = norm(y_true - y_pred) / norm(y_true)
             euc_norms.append(euc_norm)
 
         except:
             print("ERROR--solve_ivp failed (likely unstable model)")
-            perc_errors.append(np.infty)
+            euc_norms.append(np.infty)
 
-    return statistics.mean(mses), statistics.mean(perc_errors), statistics.mean(r_squares), statistics.mean(
-        euc_norms_ign), statistics.mean(euc_norms)
+    return statistics.mean(euc_norms)
 
 
 def make_input_step(duty, on_amplitude, off_amplitude, teval):
@@ -212,54 +197,48 @@ if __name__ == '__main__':
     benches = [bio2.Bio2(), fhn.FitzHughNagumo(), lalo20.LaubLoomis(), pendulum.PendulumWithInput(beta=0.05),
                prde20.ProdDestr(), robe21.RobBench(), spring.Spring(), trn_constants.TRNConstants()]
     obs_types = ['id', 'poly', 'rff', 'deep']
-    store_data_heads(["", ""] + ["mse", "perc_error", "r2_score", "euc_norm_ign", "euc_norm", "time(s)", ""] * 4)
-    for i in range(1):
-        store_data([f"Iteration {i + 1}"])
-        for benchmark in benches:
-            result = [benchmark.name, ""]
-            for obs in obs_types:
-                np.random.seed(0)
-                random.seed(0)
-                torch.manual_seed(0)
-                if obs == 'deep':
-                    opt = 'bopt'
-                else:
-                    opt = 'grid'
-                param_dict = {"train_size": 10, "samp_period": 0.1, "obs_type": obs, "opt": opt, "n_obs": 200,
-                              "grid_param_slices": 5, "n_splits": 5, "rank": (1, 200, 40)}
-                # generate training data
-                training_data = get_training_data(benchmark, param_dict)
-                start = time.time()
-                # learn model from data
-                experiment_results = auto_koopman(
-                    training_data,  # list of trajectories
-                    sampling_period=param_dict["samp_period"],  # sampling period of trajectory snapshots
-                    obs_type=param_dict["obs_type"],  # use Random Fourier Features Observables
-                    opt=param_dict["opt"],  # grid search to find best hyperparameters
-                    n_obs=param_dict["n_obs"],  # maximum number of observables to try
-                    max_opt_iter=200,  # maximum number of optimization iterations
-                    grid_param_slices=param_dict["grid_param_slices"],
-                    # for grid search, number of slices for each parameter
-                    n_splits=param_dict["n_splits"],  # k-folds validation for tuning, helps stabilize the scoring
-                    rank=param_dict["rank"]  # rank range (start, stop, step) DMD hyperparameter
-                )
-                end = time.time()
+    store_data_heads(["", ""] + ["euc_norm", "time(s)", ""] * len(obs_types))
 
-                mse, perc_error, r_square, euc_norm_ign, euc_norm = test_trajectories(benchmark, 10,
-                                                                                      param_dict["samp_period"])
+    for benchmark in benches:
+        result = [benchmark.name, ""]
+        for obs in obs_types:
+            np.random.seed(0)
+            random.seed(0)
+            torch.manual_seed(0)
+            if obs == 'deep':
+                opt = 'bopt'
+            else:
+                opt = 'grid'
+            param_dict = {"train_size": 10, "samp_period": 0.1, "obs_type": obs, "opt": opt, "n_obs": 200,
+                          "grid_param_slices": 5, "n_splits": 5, "rank": (1, 200, 40)}
+            # generate training data
+            training_data = get_training_data(benchmark, param_dict)
+            start = time.time()
+            # learn model from data
+            experiment_results = auto_koopman(
+                training_data,  # list of trajectories
+                sampling_period=param_dict["samp_period"],  # sampling period of trajectory snapshots
+                obs_type=param_dict["obs_type"],  # use Random Fourier Features Observables
+                opt=param_dict["opt"],  # grid search to find best hyperparameters
+                n_obs=param_dict["n_obs"],  # maximum number of observables to try
+                max_opt_iter=200,  # maximum number of optimization iterations
+                grid_param_slices=param_dict["grid_param_slices"],
+                # for grid search, number of slices for each parameter
+                n_splits=param_dict["n_splits"],  # k-folds validation for tuning, helps stabilize the scoring
+                rank=param_dict["rank"]  # rank range (start, stop, step) DMD hyperparameter
+            )
+            end = time.time()
 
-                comp_time = round(end - start, 3)
-                print("time taken: ", comp_time)
-                print(f"The average percentage error is {perc_error * 100}%")
-                print(f"The average euc_ignore norm perc error is {euc_norm_ign * 100}%")
-                print(f"The average euc norm perc error is {euc_norm * 100}%")
+            euc_norm = test_trajectories(benchmark, 10, param_dict["samp_period"])
+            comp_time = round(end - start, 3)
 
-                result.append(mse)
-                result.append(perc_error)
-                result.append(r_square)
-                result.append(euc_norm_ign)
-                result.append(euc_norm)
-                result.append(comp_time)
-                result.append("")
+            print(benchmark.name)
+            print(f"observables type: {obs}")
+            print(f"The average euc norm perc error is {round(euc_norm * 100, 2)}%")
+            print("time taken: ", comp_time)
+            # store and print results
+            result.append(round(euc_norm * 100, 2))
+            result.append(comp_time)
+            result.append("")
 
-            store_data(result)
+        store_data(result)

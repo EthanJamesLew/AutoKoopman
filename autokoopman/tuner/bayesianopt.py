@@ -118,11 +118,11 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
                 next(sampling)
                 return val
             except StopIteration:
-                return 1e10
+                return np.infty
             except Exception as exc:
                 print(f"Error:<{exc}>")
                 self.error_messages.append((param, exc))
-                return 1e10
+                return np.infty
 
         kern = GPy.kern.Matern52(
             len(bounds),

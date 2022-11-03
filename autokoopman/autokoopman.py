@@ -51,7 +51,7 @@ def get_scoring_func(score_name):
         )
 
 
-def get_parameter_space(obs_type, threshold_range, rank):
+def get_parameter_space(obs_type, threshold_range, rank, n_obs):
     """from the myriad of user suppled switches, select the right hyperparameter space"""
     if obs_type == "rff":
         return ParameterSpace(
@@ -61,6 +61,7 @@ def get_parameter_space(obs_type, threshold_range, rank):
                     "gamma", *threshold_range, distribution="loguniform"
                 ),
                 DiscreteParameter("rank", *rank),
+                DiscreteParameter("n_obs", *n_obs),
             ],
         )
     elif obs_type == "quadratic":
@@ -88,11 +89,11 @@ def get_parameter_space(obs_type, threshold_range, rank):
         )
 
 
-def get_estimator(obs_type, sampling_period, dim, obs, hyperparams):
+def get_estimator(obs_type, sampling_period, dim, hyperparams):
     """from the myriad of user suppled switches, select the right estimator"""
     if obs_type == "rff":
         observables = kobs.IdentityObservable() | kobs.RFFObservable(
-            dim, obs, hyperparams[0]
+            dim, hyperparams[2], hyperparams[0]
         )
         return KoopmanDiscEstimator(
             observables, sampling_period, dim, rank=hyperparams[1]
@@ -128,8 +129,8 @@ def auto_koopman(
     cost_func: Union[
         str, Callable[[TrajectoriesData, TrajectoriesData], float]
     ] = "total",
-    n_obs: int = 100,
-    rank: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
+    n_obs: Tuple[int, int, int] = (50, 201, 50),
+    rank: Optional[Tuple[int, int, int]] = None,
     grid_param_slices: int = 10,
     lengthscale: Tuple[float, float] = (1e-4, 1e1),
     enc_dim: Tuple[int, int, int] = (2, 64, 16),
@@ -179,7 +180,6 @@ def auto_koopman(
                 data,
                 obs_type="rff",
                 opt="grid",
-                n_obs=200,
                 max_opt_iter=200,
                 grid_param_slices=10,
                 n_splits=3,
@@ -188,8 +188,8 @@ def auto_koopman(
 
             # results = {'tuned_model': <StepDiscreteSystem Dimensions: 2 States: [X1, X2]>,
             # 'model_class': 'koopman-rff',
-            # 'hyperparameters': ['gamma', 'rank'],
-            # 'hyperparameter_values': (0.004641588833612782, 21),
+            # 'hyperparameters': ['gamma', 'rank', 'n_obs'],
+            # 'hyperparameter_values': (0.004641588833612782, 21, 200),
             # 'tuner_score': 0.14723275426562,
             # 'tuner': <autokoopman.tuner.gridsearch.GridSearchTuner at 0x7f0f92f95580>,
             # 'estimator': <autokoopman.estimator.koopman.KoopmanDiscEstimator at 0x7f0f92ff0610>}
@@ -321,7 +321,7 @@ def _edmd_model_map(
         rank = (2, n_obs + dim, 10)
 
     # get the hyperparameter space
-    pspace = get_parameter_space(obs_type, lengthscale, rank)
+    pspace = get_parameter_space(obs_type, lengthscale, rank, n_obs)
 
     class _ModelMap(HyperparameterMap):
         """SINDy with hyperparameters for polynomial library"""
@@ -331,7 +331,7 @@ def _edmd_model_map(
             super(_ModelMap, self).__init__(pspace)
 
         def get_model(self, hyperparams: Sequence):
-            return get_estimator(obs_type, sampling_period, dim, n_obs, hyperparams)
+            return get_estimator(obs_type, sampling_period, dim, hyperparams)
 
     # get the hyperparameter map
     return _ModelMap()

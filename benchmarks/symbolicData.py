@@ -7,7 +7,7 @@ from autokoopman import auto_koopman
 # for a complete example, let's create an example dataset using an included benchmark system
 from autokoopman.benchmark import bio2, fhn, lalo20, prde20, robe21, spring, pendulum, trn_constants
 from benchmarks.glop import Glop
-from seed import set_seed
+from benchmarks.seed import set_seed
 import random
 import copy
 

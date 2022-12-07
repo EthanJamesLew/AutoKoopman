@@ -13,6 +13,7 @@ import statistics
 
 from autokoopman import auto_koopman
 import autokoopman.core.trajectory as traj
+from benchmarks.seed import set_seed
 
 """For this script to run the measurement data needs to be downloaded from 
 https://drive.google.com/drive/folders/1blkHkK3tMG2lKaq3POWtxquYHYw6kf6i?usp=sharing 
@@ -167,9 +168,7 @@ if __name__ == '__main__':
         result = [benchmark, ""]
 
         for obs in obs_types:
-            np.random.seed(0)
-            random.seed(0)
-            torch.manual_seed(0)
+            set_seed()
 
             start = time.time()
             model = train_model(training_data, obs)

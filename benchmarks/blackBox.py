@@ -17,6 +17,8 @@ from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error, 
 from numpy.linalg import norm
 import statistics
 
+from benchmarks.seed import set_seed
+
 
 def get_train_data(filepath):
     dirname = os.path.dirname(__file__)
@@ -89,9 +91,8 @@ if __name__ == '__main__':
                                                                    trajectories_filepaths):
         result = [benchmark, ""]
         for obs in obs_types:
-            np.random.seed(0)
-            random.seed(0)
-            torch.manual_seed(0)
+            set_seed()
+
             training_data, dirname = get_train_data(train_data)
             start = time.time()
 

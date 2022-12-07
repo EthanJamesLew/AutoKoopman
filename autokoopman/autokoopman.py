@@ -29,7 +29,7 @@ __all__ = ["auto_koopman"]
 
 
 # valid string identifiers for the autokoopman magic
-obs_types = {"rff", "poly", "quadratic", "id", "deep"}
+obs_types = {"rff", "poly", "quadratic", "id", "deep", "kaf"}
 opt_types = {"grid", "monte-carlo", "bopt"}
 scoring_func_types = {"total", "end", "relative"}
 
@@ -204,6 +204,10 @@ def auto_koopman(
         modelmap = _deep_model_map(
             training_data, max_epochs, n_obs, enc_dim, n_layers, torch_device, verbose
         )
+    elif obs_type in {"kaf"}:
+        modelmap = _kaf_model_map(
+            training_data, rank, obs_type, n_obs, lengthscale, sampling_period
+        )
     else:
         modelmap = _edmd_model_map(
             training_data, rank, obs_type, n_obs, lengthscale, sampling_period
@@ -290,6 +294,62 @@ def _deep_model_map(
                 verbose=verbose,
                 display_progress=False,  # don't nest progress bars
             )
+
+    # get the hyperparameter map
+    return _ModelMap()
+
+def _kaf_model_map(
+    training_data, rank, obs_type, n_obs, lengthscale, sampling_period
+) -> HyperparameterMap:
+    """model map for KAF based methods
+
+    :param training_data:
+    :param rank: set of ranks to try (of DMD rank parameter)
+    :param obs_type:
+    :param n_obs: some obs type require a number of observables
+    :sampling_period:
+
+    :returns: hyperparameter map
+    """
+    from autokoopman.estimator.kaf import KAFEstimator
+    from GPy.kern import RBF
+
+    # system dimension
+    dim = len(training_data.state_names)
+
+    # infer rank range and step
+    if rank is not None:
+        if len(rank) == 2:
+            rank = (*rank, 1)
+        else:
+            rank = rank
+    else:
+        rank = (2, n_obs + dim, 10)
+
+    pspace = ParameterSpace(
+        "kaf",
+        [
+            ContinuousParameter(
+                "lengthscale", *lengthscale, distribution="loguniform"
+            ),
+            ContinuousParameter("eig", 1E-4, 1E0, distribution="loguniform"),
+            DiscreteParameter("rank", *rank),
+
+        ],
+    )
+
+    class _ModelMap(HyperparameterMap):
+        def __init__(self):
+            self.names = training_data.state_names
+            super(_ModelMap, self).__init__(pspace)
+
+        def get_model(self, hyperparams: Sequence):
+            return KAFEstimator(
+                dim,
+                kernel = RBF(dim, lengthscale=hyperparams[0]),
+                approx_rank = hyperparams[2],
+                eig_mult=hyperparams[1],
+            ) 
 
     # get the hyperparameter map
     return _ModelMap()

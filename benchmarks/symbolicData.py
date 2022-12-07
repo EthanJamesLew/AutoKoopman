@@ -7,6 +7,7 @@ from autokoopman import auto_koopman
 # for a complete example, let's create an example dataset using an included benchmark system
 from autokoopman.benchmark import bio2, fhn, lalo20, prde20, robe21, spring, pendulum, trn_constants
 from benchmarks.glop import Glop
+from seed import set_seed
 import random
 import copy
 
@@ -197,14 +198,13 @@ if __name__ == '__main__':
     benches = [bio2.Bio2(), fhn.FitzHughNagumo(), lalo20.LaubLoomis(), pendulum.PendulumWithInput(beta=0.05),
                prde20.ProdDestr(), robe21.RobBench(), spring.Spring(), trn_constants.TRNConstants()]
     obs_types = ['id', 'poly', 'rff', 'deep']
+    obs_types = ['deep']
     store_data_heads(["", ""] + ["euc_norm", "time(s)", ""] * len(obs_types))
 
     for benchmark in benches:
         result = [benchmark.name, ""]
         for obs in obs_types:
-            np.random.seed(0)
-            random.seed(0)
-            torch.manual_seed(0)
+            set_seed()
             if obs == 'deep':
                 opt = 'bopt'
             else:

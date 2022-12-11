@@ -10,6 +10,7 @@ from autokoopman.core.tuner import (
     DiscreteParameter,
     ContinuousParameter,
 )
+from autokoopman.core.format import hide_prints
 import autokoopman.core.tuner as atuner
 from typing import Callable
 
@@ -87,19 +88,7 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
         import GPy
         import os, sys
 
-        class hide_prints:
-            """ugly stuff because GPyOpt prints
-            TODO: switch to something more modern (not GPyOpt?)
-            """
-
-            def __enter__(self):
-                self._original_stdout = sys.stdout
-                sys.stdout = open(os.devnull, "w")
-
-            def __exit__(self, exc_type, exc_val, exc_tb):
-                sys.stdout.close()
-                sys.stdout = self._original_stdout
-
+        #TODO: switch to something more modern (not GPyOpt?)
         # get GPyOpt domain
         bounds, lengthscales, is_logs = self.make_bounds(self._parameter_model.parameter_space)
 

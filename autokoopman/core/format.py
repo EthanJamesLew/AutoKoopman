@@ -1,6 +1,9 @@
 """
 Utilties to format strings
 """
+import sys
+import os
+
 from typing import Sequence, Optional
 
 
@@ -29,3 +32,20 @@ def _clip_list(s: Optional[Sequence], nlength=20) -> str:
     if s is None:
         return "None"
     return f"[{', '.join([str(si) for si in s])}]"
+
+
+class hide_prints:
+    """context manager to suppress python print output
+
+    this was created to hide "ugly stuff" 
+    (e.g., GPyOpt prints)
+    """
+
+    def __enter__(self):
+        self._original_stdout = sys.stdout
+        sys.stdout = open(os.devnull, "w")
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        sys.stdout.close()
+        sys.stdout = self._original_stdout
+

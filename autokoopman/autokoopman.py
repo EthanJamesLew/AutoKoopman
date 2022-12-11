@@ -24,6 +24,7 @@ from autokoopman.tuner.gridsearch import GridSearchTuner
 from autokoopman.tuner.montecarlo import MonteCarloTuner
 from autokoopman.tuner.bayesianopt import BayesianOptTuner
 from autokoopman.core.observables import KoopmanObservable
+from autokoopman.core.format import hide_prints
 
 __all__ = ["auto_koopman"]
 
@@ -226,8 +227,9 @@ def auto_koopman(
         gt = BayesianOptTuner(modelmap, training_data, verbose=verbose)
     else:
         raise ValueError(f"could not match a tuner to the string {opt}")
-
-    res = gt.tune(nattempts=max_opt_iter, scoring_func=get_scoring_func(cost_func))
+    
+    with hide_prints():
+        res = gt.tune(nattempts=max_opt_iter, scoring_func=get_scoring_func(cost_func))
 
     # pack results into out custom output
     result = {
@@ -287,7 +289,8 @@ def _deep_model_map(
                 pred_loss_weight=1.0,
                 metric_loss_weight=0.1,
                 torch_device=torch_device,
-                verbose=verbose,
+                # turning this off because of review feedback
+                verbose=False,
                 display_progress=False,  # don't nest progress bars
             )
 

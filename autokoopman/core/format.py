@@ -3,6 +3,7 @@ Utilties to format strings
 """
 import sys
 import os
+import warnings
 
 from typing import Sequence, Optional
 
@@ -41,11 +42,21 @@ class hide_prints:
     (e.g., GPyOpt prints)
     """
 
-    def __enter__(self):
+    def __enter__(self, hide_warnings = True):
         self._original_stdout = sys.stdout
         sys.stdout = open(os.devnull, "w")
+        self.hw = hide_warnings
+
+        # TODO: it might make more sense to capture this
+        # as a log
+        if self.hw:
+            self.cw = warnings.catch_warnings()
+            self.cw.__enter__()
+            warnings.filterwarnings('ignore')
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         sys.stdout.close()
         sys.stdout = self._original_stdout
+        if self.hw:
+            self.cw.__exit__()
 

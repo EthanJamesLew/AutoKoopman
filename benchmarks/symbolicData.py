@@ -198,7 +198,6 @@ if __name__ == '__main__':
     benches = [bio2.Bio2(), fhn.FitzHughNagumo(), lalo20.LaubLoomis(), pendulum.PendulumWithInput(beta=0.05),
                prde20.ProdDestr(), robe21.RobBench(), spring.Spring(), trn_constants.TRNConstants()]
     obs_types = ['id', 'poly', 'rff', 'deep']
-    obs_types = ['deep']
     store_data_heads(["", ""] + ["euc_norm", "time(s)", ""] * len(obs_types))
 
     for benchmark in benches:

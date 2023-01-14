@@ -1,4 +1,11 @@
-# AutoKoopman
+bio2.py
+fhn.py
+lalo20.py
+pendulum.py
+prde20.py
+robe21.py
+spring.py
+trn_constants.py# AutoKoopman
 
 ![Conda CI Workflow](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml/badge.svg)
 

@@ -18,6 +18,7 @@ class CoupledVanderPol(asys.SymbolicContinuousSystem):
 [1] https://ths.rwth-aachen.de/research/projects/hypro/coupled-van-der-pol-oscillator/
 [2] R. H. Rand and P. J. Holmes. Bifurcation of periodic motions in two weakly coupled Van der Pol oscillators. Volume 15 of International Journal of Non-Linear Mechanics, pages 387–399, Pergamon Press Ltd., 1980.
  """
+
     def __init__(self, g=9.81):
         self.name = "coupledVanderPol"
         self.init_set_low = [1.25, 2.25, 1.25, 2.25]
@@ -25,8 +26,8 @@ class CoupledVanderPol(asys.SymbolicContinuousSystem):
         x1, y1, x2, y2 = sp.symbols("x1 y1 x2 y2")
         xdot = [
             y1,
-            (1.0 - x1 ^ 2) * y1 - x1 + (x2 - x1),
+            (1.0 - x1 ** 2) * y1 - x1 + (x2 - x1),
             y2,
-            (1.0 - x2 ^ 2) * y2 - x2 + (x1 - x2),
+            (1.0 - x2 ** 2) * y2 - x2 + (x1 - x2),
         ]
-        super(CoupledVanderPol, self).__init__((x1, y1, x2 ,y2), xdot)
+        super(CoupledVanderPol, self).__init__((x1, y1, x2, y2), xdot)

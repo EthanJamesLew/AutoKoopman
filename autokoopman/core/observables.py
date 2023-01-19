@@ -162,7 +162,7 @@ class PolynomialObservable(KoopmanObservable):
         self.poly.fit_transform(np.zeros((1, self.dimension)))
 
     def obs_fcn(self, X: np.ndarray) -> np.ndarray:
-        return self.poly.transform(np.atleast_2d(X))
+        return self.poly.transform(np.atleast_2d(X)).T
 
 
 class RFFObservable(KoopmanObservable):

@@ -55,6 +55,7 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
         self.dim = dim
         self.obs = observables
         self.rank = int(rank)
+        self._A, self._B = None, None
 
     def fit_next_step(
         self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
@@ -83,7 +84,7 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
             else:
                 return np.real(self._A @ obs.T).flatten()[: len(x)]
 
-        return ksys.StepDiscreteSystem(step_func, self.names)
+        return ksys.KoopmanStepDiscreteSystem(self._A, self._B, self.obs, self.names)#(step_func, self.names)
 
 
 class KoopmanContinuousEstimator(kest.GradientEstimator):
@@ -105,6 +106,7 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
         self.dim = dim
         self.obs = observables
         self.rank = int(rank)
+        self._A, self._B = None, None
 
     def fit_gradient(
         self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
@@ -133,4 +135,4 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
             else:
                 return np.real(self._A @ obs.T).flatten()[: len(x)]
 
-        return ksys.GradientContinuousSystem(grad_func, self.names)
+        return ksys.KoopmanGradientContinuousSystem(self._A, self._B, self.obs, self.names)#grad_func, self.names)

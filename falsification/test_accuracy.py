@@ -54,10 +54,8 @@ def get_init_states(bench, size):
     return init_states
 
 
-def get_trajectories(bench, iv, samp_period):
+def get_trajectories(model, bench, iv, samp_period):
     # get the model from the experiment results
-    model = experiment_results['tuned_model']
-
     if bench._input_vars:
         test_inp = np.sin(np.linspace(0, 10, 200))
 
@@ -91,12 +89,12 @@ def get_trajectories(bench, iv, samp_period):
     return trajectory, true_trajectory
 
 
-def test_trajectories(bench, num_tests, samp_period):
+def test_trajectories(model, bench, num_tests, samp_period):
     euc_norms = []
     for j in range(num_tests):
         iv = get_init_states(bench, 1)[0]
         try:
-            trajectory, true_trajectory = get_trajectories(bench, iv, samp_period)
+            trajectory, true_trajectory = get_trajectories(model, bench, iv, samp_period)
             y_true = np.matrix.flatten(true_trajectory.states)
             y_pred = np.matrix.flatten(trajectory.states)
             euc_norm = norm(y_true - y_pred) / norm(y_true)
@@ -141,19 +139,19 @@ def plot(trajectory, true_trajectory, var_1, var_2):
     plt.ylabel("$x_2$")
     plt.grid()
     plt.legend()
-    plt.title("Bio2 Test Trajectory Plot")
+    plt.title("Test Trajectory Plot")
     plt.show()
 
 
-def plot_trajectory(bench, var_1=0, var_2=-1, seed=100):
+def plot_trajectory(model, bench, var_1=0, var_2=-1):
     iv = get_init_states(bench, 1)[0]
-    trajectory, true_trajectory = get_trajectories(bench, iv, param_dict["samp_period"])
+    trajectory, true_trajectory = get_trajectories(model, bench, iv, param_dict["samp_period"])
     plot(trajectory, true_trajectory, var_1, var_2)
 
 
 if __name__ == '__main__':
     benches = [coupledVanderPol.CoupledVanderPol()]
-    obs_types = ['rff', 'deep']
+    obs_types = ['rff']
 
     for benchmark in benches:
         result = [benchmark.name, ""]
@@ -163,8 +161,8 @@ if __name__ == '__main__':
                 opt = 'bopt'
             else:
                 opt = 'grid'
-            param_dict = {"train_size": 10, "samp_period": 0.1, "obs_type": obs, "opt": opt, "n_obs": 100,
-                          "grid_param_slices": 5, "n_splits": 5, "rank": (1, 200, 40)}
+            param_dict = {"train_size": 2, "samp_period": 0.1, "obs_type": obs, "opt": opt, "n_obs": 100,
+                          "grid_param_slices": 5, "n_splits": 2, "rank": (1, 200, 40)}
             # generate training data
             training_data = get_training_data(benchmark, param_dict)
             start = time.time()
@@ -183,10 +181,15 @@ if __name__ == '__main__':
             )
             end = time.time()
 
-            euc_norm = test_trajectories(benchmark, 10, param_dict["samp_period"])
+            model = experiment_results['tuned_model']
+            # print(experiment_results['estimator'].obs.observables[1].w)
+
+            euc_norm = test_trajectories(model, benchmark, 10, param_dict["samp_period"])
             comp_time = round(end - start, 3)
 
             print(benchmark.name)
             print(f"observables type: {obs}")
             print(f"The average euc norm perc error is {round(euc_norm * 100, 2)}%")
             print("time taken: ", comp_time)
+
+            # plot_trajectory(model, benchmark, var_1=0, var_2=1)

@@ -329,6 +329,8 @@ class GradientContinuousSystem(ContinuousSystem):
         return self._names
 
 
+
+
 class StepDiscreteSystem(DiscreteSystem):
     def __init__(
         self,
@@ -353,4 +355,44 @@ class LinearContinuousSystem(ContinuousSystem):
 
 
 class KoopmanContinuousSystem(LinearContinuousSystem):
+    ...
+
+class KoopmanSystem:
+    """
+    mixin class for Koopman systems
+    """
+    def __init__(self, A, B, obs, names):
+        self._A = A
+        self._B = B
+        self._has_input = not np.any(np.array(B.shape) == 0)
+        self.obs = obs
+        self.dim = A.shape[0]
+
+        def evolv_func(t, x, i):
+            obs = (self.obs(x).flatten())[np.newaxis, :]
+            if self._has_input:
+                return np.real(
+                    self._A @ obs.T + self._B @ (i)[:, np.newaxis]
+                ).flatten()[: self.dim]
+            else:
+                return np.real(self._A @ obs.T).flatten()[: len(x)]
+
+        super().__init__(evolv_func, names)
+
+    @property
+    def A(self):
+        return self._A
+
+    @property
+    def B(self):
+        return self._B
+
+    @property
+    def obs_func(self):
+        return self.obs
+
+class KoopmanStepDiscreteSystem(KoopmanSystem, StepDiscreteSystem):
+    ...
+
+class KoopmanGradientContinuousSystem(KoopmanSystem, GradientContinuousSystem):
     ...

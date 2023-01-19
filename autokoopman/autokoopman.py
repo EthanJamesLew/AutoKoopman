@@ -87,6 +87,14 @@ def get_parameter_space(obs_type, threshold_range, rank):
                 DiscreteParameter("rank", *rank),
             ],
         )
+    elif isinstance(obs_type, KoopmanObservable):
+        # assume user has set everything else
+        return ParameterSpace(
+            "koopman-id",
+            [
+                DiscreteParameter("rank", *rank),
+            ],
+        )
 
 
 def get_estimator(obs_type, sampling_period, dim, obs, hyperparams):
@@ -112,6 +120,10 @@ def get_estimator(obs_type, sampling_period, dim, obs, hyperparams):
         observables = kobs.IdentityObservable()
         return KoopmanDiscEstimator(
             observables, sampling_period, dim, rank=hyperparams[0]
+        )
+    elif isinstance(obs_type, KoopmanObservable):
+        return KoopmanDiscEstimator(
+            obs_type, sampling_period, dim, rank=hyperparams[0]
         )
     else:
         raise ValueError(f"unknown observables type {obs_type}")

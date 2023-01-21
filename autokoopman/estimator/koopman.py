@@ -74,7 +74,6 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
         """
         packs the learned linear transform into a discrete linear system
         """
-
         def step_func(t, x, i):
             obs = (self.obs(x).flatten())[np.newaxis, :]
             if self._has_input:

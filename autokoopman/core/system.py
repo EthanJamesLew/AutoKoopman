@@ -12,12 +12,12 @@ from autokoopman.core.format import _clip_list
 class System(abc.ABC):
     @abc.abstractmethod
     def solve_ivp(
-        self,
-        initial_state: np.ndarray,
-        tspan: Optional[Tuple[float, float]] = None,
-        teval: Optional[np.ndarray] = None,
-        inputs: Optional[np.ndarray] = None,
-        sampling_period: float = 0.1,
+            self,
+            initial_state: np.ndarray,
+            tspan: Optional[Tuple[float, float]] = None,
+            teval: Optional[np.ndarray] = None,
+            inputs: Optional[np.ndarray] = None,
+            sampling_period: float = 0.1,
     ) -> Union[atraj.Trajectory, atraj.UniformTimeTrajectory]:
         """
         Solve the initial value (IV) problem
@@ -35,12 +35,12 @@ class System(abc.ABC):
         raise NotImplementedError
 
     def solve_ivps(
-        self,
-        initial_states: np.ndarray,
-        tspan: Optional[Tuple[float, float]] = None,
-        teval: Optional[np.ndarray] = None,
-        inputs: Optional[np.ndarray] = None,
-        sampling_period: float = 0.1,
+            self,
+            initial_states: np.ndarray,
+            tspan: Optional[Tuple[float, float]] = None,
+            teval: Optional[np.ndarray] = None,
+            inputs: Optional[np.ndarray] = None,
+            sampling_period: float = 0.1,
     ) -> Union[atraj.UniformTimeTrajectoriesData, atraj.TrajectoriesData]:
         ret = {}
         for idx, state in enumerate(initial_states):
@@ -73,12 +73,12 @@ class ContinuousSystem(System):
     """
 
     def solve_ivp(
-        self,
-        initial_state: np.ndarray,
-        tspan: Optional[Tuple[float, float]] = None,
-        teval: Optional[np.ndarray] = None,
-        inputs: Optional[np.ndarray] = None,
-        sampling_period: float = 0.1,
+            self,
+            initial_state: np.ndarray,
+            tspan: Optional[Tuple[float, float]] = None,
+            teval: Optional[np.ndarray] = None,
+            inputs: Optional[np.ndarray] = None,
+            sampling_period: float = 0.1,
     ) -> Union[atraj.Trajectory, atraj.UniformTimeTrajectory]:
         """
         Solve the initial value (IV) problem for Continuous Time Systems
@@ -134,7 +134,7 @@ class ContinuousSystem(System):
                 sol = [initial_state]
                 if len(teval) > 1:
                     for tcurrent, tnext, inpi in zip(
-                        teval[:-1], teval[1:], inputs[:-1]
+                            teval[:-1], teval[1:], inputs[:-1]
                     ):
                         sol_next = scint.solve_ivp(
                             self.gradient,
@@ -153,12 +153,12 @@ class ContinuousSystem(System):
                 raise RuntimeError("teval must be set if inputs is set")
 
     def solve_ivps(
-        self,
-        initial_states: np.ndarray,
-        tspan: Optional[Tuple[float, float]] = None,
-        teval: Optional[np.ndarray] = None,
-        inputs: Optional[np.ndarray] = None,
-        sampling_period: float = 0.1,
+            self,
+            initial_states: np.ndarray,
+            tspan: Optional[Tuple[float, float]] = None,
+            teval: Optional[np.ndarray] = None,
+            inputs: Optional[np.ndarray] = None,
+            sampling_period: float = 0.1,
     ) -> Union[atraj.UniformTimeTrajectoriesData, atraj.TrajectoriesData]:
         ret = {}
         if inputs is not None:
@@ -177,7 +177,7 @@ class ContinuousSystem(System):
 
     @abc.abstractmethod
     def gradient(
-        self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
+            self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
     ) -> np.ndarray:
         raise NotImplementedError
 
@@ -193,12 +193,12 @@ class DiscreteSystem(System):
     """
 
     def solve_ivp(
-        self,
-        initial_state: np.ndarray,
-        tspan: Optional[Tuple[float, float]] = None,
-        teval: Optional[np.ndarray] = None,
-        inputs: Optional[np.ndarray] = None,
-        sampling_period: float = 0.1,
+            self,
+            initial_state: np.ndarray,
+            tspan: Optional[Tuple[float, float]] = None,
+            teval: Optional[np.ndarray] = None,
+            inputs: Optional[np.ndarray] = None,
+            sampling_period: float = 0.1,
     ) -> Union[atraj.Trajectory, atraj.UniformTimeTrajectory]:
         """
         Solve the initial value (IV) problem for Discrete Time Systems
@@ -272,18 +272,18 @@ class DiscreteSystem(System):
 
     @abc.abstractmethod
     def step(
-        self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
+            self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
     ) -> np.ndarray:
         raise NotImplementedError
 
 
 class SymbolicContinuousSystem(ContinuousSystem):
     def __init__(
-        self,
-        variables: Sequence[sp.Symbol],
-        gradient_exprs: Sequence[sp.Expr],
-        input_variables: Optional[Sequence[sp.Symbol]] = None,
-        time_var=None,
+            self,
+            variables: Sequence[sp.Symbol],
+            gradient_exprs: Sequence[sp.Expr],
+            input_variables: Optional[Sequence[sp.Symbol]] = None,
+            time_var=None,
     ):
         if time_var is None:
             time_var = sp.symbols("_t0")
@@ -298,7 +298,7 @@ class SymbolicContinuousSystem(ContinuousSystem):
         self._fmat = sp.lambdify((self._variables,), self._mat)
 
     def gradient(
-        self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
+            self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
     ) -> np.ndarray:
         if sinput is None:
             return np.array(self._fmat(np.array([time, *state]))).flatten()
@@ -312,15 +312,15 @@ class SymbolicContinuousSystem(ContinuousSystem):
 
 class GradientContinuousSystem(ContinuousSystem):
     def __init__(
-        self,
-        gradient_func: Callable[[float, np.ndarray, Optional[np.ndarray]], np.ndarray],
-        names,
+            self,
+            gradient_func: Callable[[float, np.ndarray, Optional[np.ndarray]], np.ndarray],
+            names,
     ):
         self._names = names
         self._gradient_func = gradient_func
 
     def gradient(
-        self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
+            self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
     ) -> np.ndarray:
         return self._gradient_func(time, state, sinput)
 
@@ -329,19 +329,17 @@ class GradientContinuousSystem(ContinuousSystem):
         return self._names
 
 
-
-
 class StepDiscreteSystem(DiscreteSystem):
     def __init__(
-        self,
-        step_func: Callable[[float, np.ndarray, Optional[np.ndarray]], np.ndarray],
-        names,
+            self,
+            step_func: Callable[[float, np.ndarray, Optional[np.ndarray]], np.ndarray],
+            names,
     ):
         self._names = names
         self._step_func = step_func
 
     def step(
-        self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
+            self, time: float, state: np.ndarray, sinput: Optional[np.ndarray]
     ) -> np.ndarray:
         return self._step_func(time, state, sinput)
 
@@ -357,10 +355,12 @@ class LinearContinuousSystem(ContinuousSystem):
 class KoopmanContinuousSystem(LinearContinuousSystem):
     ...
 
+
 class KoopmanSystem:
     """
     mixin class for Koopman systems
     """
+
     def __init__(self, A, B, obs, names):
         self._A = A
         self._B = B
@@ -391,8 +391,10 @@ class KoopmanSystem:
     def obs_func(self):
         return self.obs
 
+
 class KoopmanStepDiscreteSystem(KoopmanSystem, StepDiscreteSystem):
     ...
+
 
 class KoopmanGradientContinuousSystem(KoopmanSystem, GradientContinuousSystem):
     ...

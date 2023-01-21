@@ -1,18 +1,17 @@
 import matplotlib.pyplot as plt
 from autokoopman import auto_koopman
 # for a complete example, let's create an example dataset using an included benchmark system
-from autokoopman.benchmark import coupledVanderPol
+from autokoopman.benchmark import vanderPol
 
 from numpy.linalg import norm
 import statistics
-import os
-import csv
 import time
 import sys
 
 import random
 import torch
 import numpy as np
+from scipy.io import savemat
 
 
 def set_seed(seed=0):
@@ -142,7 +141,6 @@ def plot(trajectory, true_trajectory, var_1, var_2):
     plt.title("Test Trajectory Plot")
     plt.show()
 
-
 def plot_trajectory(model, bench, var_1=0, var_2=-1):
     iv = get_init_states(bench, 1)[0]
     trajectory, true_trajectory = get_trajectories(model, bench, iv, param_dict["samp_period"])
@@ -150,7 +148,7 @@ def plot_trajectory(model, bench, var_1=0, var_2=-1):
 
 
 if __name__ == '__main__':
-    benches = [coupledVanderPol.CoupledVanderPol()]
+    benches = [vanderPol.VanderPol()]
     obs_types = ['rff']
 
     for benchmark in benches:
@@ -161,8 +159,8 @@ if __name__ == '__main__':
                 opt = 'bopt'
             else:
                 opt = 'grid'
-            param_dict = {"train_size": 2, "samp_period": 0.1, "obs_type": obs, "opt": opt, "n_obs": 100,
-                          "grid_param_slices": 5, "n_splits": 2, "rank": (1, 200, 40)}
+            param_dict = {"train_size": 1, "samp_period": 0.1, "obs_type": obs, "opt": opt, "n_obs": 100,
+                          "grid_param_slices": 5, "n_splits": None, "rank": (1, 200, 40)}
             # generate training data
             training_data = get_training_data(benchmark, param_dict)
             start = time.time()
@@ -182,14 +180,25 @@ if __name__ == '__main__':
             end = time.time()
 
             model = experiment_results['tuned_model']
-            # print(experiment_results['estimator'].obs.observables[1].w)
 
-            euc_norm = test_trajectories(model, benchmark, 10, param_dict["samp_period"])
-            comp_time = round(end - start, 3)
 
-            print(benchmark.name)
-            print(f"observables type: {obs}")
-            print(f"The average euc norm perc error is {round(euc_norm * 100, 2)}%")
-            print("time taken: ", comp_time)
+            # get evolution matrices
+            A, B = model.A, model.B
+            w = model.obs_func.observables[1].w
+            u = model.obs_func.observables[1].u
 
-            # plot_trajectory(model, benchmark, var_1=0, var_2=1)
+
+            koopman_model = {"A": A, "B": B, "w": w, "u": u}
+            savemat("autokoopman_model.mat", koopman_model)
+
+
+
+            # euc_norm = test_trajectories(model, benchmark, 10, param_dict["samp_period"])
+            # comp_time = round(end - start, 3)
+            #
+            # print(benchmark.name)
+            # print(f"observables type: {obs}")
+            # print(f"The average euc norm perc error is {round(euc_norm * 100, 2)}%")
+            # print("time taken: ", comp_time)
+
+            plot_trajectory(model, benchmark, var_1=0, var_2=1)

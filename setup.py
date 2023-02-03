@@ -5,11 +5,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="autokoopman",
-    version="0.1b",
-    # TODO: change this
+    version="0.1",
     author="Ethan Lew",
     author_email="ethanlew16@gmail.com",
-    description="Koopman Learning Library",
+    description="Automated Koopman Operator Linearization Library",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/EthanJamesLew/AutoKoopman",
@@ -17,6 +16,9 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GPL License",
         "Operating System :: OS Independent",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
+        "Intended Audience :: Science/Research",
+        "Topic :: Scientific/Engineering"
     ],
     package_dir={"": ".", "autokoopman": "autokoopman"},
     install_requires=[

@@ -1,7 +1,7 @@
 # TODO: update this
 __author__ = "Ethan Lew"
-__copyright__ = "Copyright 2022"
-__credits__ = ["Ethan Lew"]
+__copyright__ = "Copyright 2023"
+__credits__ = ["Ethan Lew", "Abdelrahman Hekal", "Kostiantyn Potomkin", "Niklas Kochdumper", "Brandon Hencey", "Stanley Bak", "Sergiy Bogomolov"]
 __license__ = "GPLv3"
 __version__ = "0.1"
 __maintainer__ = "Ethan Lew"

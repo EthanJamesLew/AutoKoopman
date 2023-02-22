@@ -135,8 +135,10 @@ class OnlineEstimator(TrajectoryEstimator):
         
         default behavior is to called update_single for each observation.
         """
-        assert len(X) == len(Y) == len(U), "X, Y, and U must be the same length"
-        for x, y, u in zip(X, Y, U):
+        if U is None:
+            U = [None]*X.shape[1]
+        assert X.shape[1] == Y.shape[1] == len(U), "X and Y must be the same length"
+        for x, y, u in zip(X.T, Y.T, U):
             self.update_single(x, y, u)
 
     def update(self,  X: atraj.TrajectoriesData):
@@ -144,7 +146,7 @@ class OnlineEstimator(TrajectoryEstimator):
         assert isinstance(
             X, atraj.UniformTimeTrajectoriesData
         ), "X must be uniform time"
-        self.update_batch(self.dynamics_from_trajs(X))
+        self.update_batch(*self.dynamics_from_trajs(X))
 
     def initialize(
         self, X: atraj.TrajectoriesData

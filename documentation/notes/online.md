@@ -8,11 +8,11 @@ From Modern Koopman theory for dynamical systems [[1]](#1):
 
 ## Available Projects
 
+* **[odmd](https://github.com/haozhg/odmd), part of [oml](https://github.com/haozhg/oml). Python. Implements [[2]](#2) .**
 * [Streaming-DMD](https://github.com/jaimeliew1/Streaming-DMD) Python, Implements J. Liew et al. [[9]](#9).
 * [StreamingTDMD.m](https://github.com/cwrowley/dmdtools/blob/master/matlab/StreamingTDMD.m) Matlab. Based on [[4]](#4) and [[10]](#10). 
 * [dmdstream](https://github.com/ndetullio/dmdstream) Python. Implements [[4]](#4).
 * [online_dmd](https://github.com/VArdulov/online_dmd). Python. Implements [[2]](#2).
-* [odmd](https://github.com/haozhg/odmd). Python. Implements [[2]](#2) .
 
 ## References
 

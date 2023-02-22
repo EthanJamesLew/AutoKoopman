@@ -28,6 +28,10 @@ class TrajectoryEstimator(abc.ABC):
         else:
             self.scaler = None
 
+    @staticmethod
+    def dynamics_from_trajs(X: atraj.UniformTimeTrajectoriesData):
+        return X.differentiate
+    
     @abc.abstractmethod
     def fit(self, X: atraj.TrajectoriesData) -> None:
         pass
@@ -50,11 +54,16 @@ class NextStepEstimator(TrajectoryEstimator):
     def __init__(self, normalize=True, feature_range=(-1, 1)) -> None:
         super().__init__(normalize=normalize, feature_range=feature_range)
         self.names = None
+    
+    @staticmethod
+    def dynamics_from_trajs(X: atraj.UniformTimeTrajectoriesData):
+        return X.next_step_matrices
 
     @abc.abstractmethod
     def fit_next_step(
         self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
     ) -> None:
+        assert len(X) == len(Y) == len(U), "X, Y, and U must be the same length"
         """an alternative fit method that uses a trajectories data structure"""
         pass
 
@@ -62,13 +71,14 @@ class NextStepEstimator(TrajectoryEstimator):
         assert isinstance(
             X, atraj.UniformTimeTrajectoriesData
         ), "X must be uniform time"
-        X_, Xp_, U_ = X.next_step_matrices
+        X_, Xp_, U_ = self.dynamics_from_trajs(X)
         if self.normalize:
             X_ = self.scaler.fit_transform(X_.T).T
             Xp_ = self.scaler.transform(Xp_.T).T
         self.fit_next_step(X_, Xp_, U_)
         self.sampling_period = X.sampling_period
         self.names = X.state_names
+
 
 
 class GradientEstimator(TrajectoryEstimator):
@@ -79,7 +89,6 @@ class GradientEstimator(TrajectoryEstimator):
     :param normalize: apply MinMax normalization to the fit data
     :param feature_range: range for MinMax scaler
     """
-
     def __init__(self, normalize=True, feature_range=(-1, 1)) -> None:
         super().__init__(normalize=normalize, feature_range=feature_range)
         self.names = None
@@ -95,10 +104,53 @@ class GradientEstimator(TrajectoryEstimator):
         assert isinstance(
             X, atraj.UniformTimeTrajectoriesData
         ), "X must be uniform time"
-        X_, Xp_, U_ = X.differentiate
+        X_, Xp_, U_ = self.dynamics_from_trajs(X)
         if self.normalize:
             X_ = self.scaler.fit_transform(X_.T).T
             Xp_ = self.scaler.transform(Xp_.T).T
         self.fit_gradient(X_, Xp_, U_)
         self.sampling_period = X.sampling_period
         self.names = X.state_names
+
+
+class OnlineEstimator(TrajectoryEstimator):
+    """abstract Estimator for streaming data, 
+    
+    online (streaming) estimators have a concept of initial fit and updates,
+    which are ideally more efficient than calling fit every update. Further,
+    cases are added for single observation (rank 1) update and batch updating.
+    Batch updating is also available for implementing windowing estimators. 
+    """
+    @abc.abstractmethod
+    def update_single(
+        self, x: np.ndarray, y: np.ndarray, u: Optional[np.ndarray] = None
+    ):
+        """update given a single observation (x, y, and u are 1D arrays)"""
+        pass
+
+    def update_batch(
+        self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
+    ):
+        """update given multiple observations (x, y, and u are 2D arrays)
+        
+        default behavior is to called update_single for each observation.
+        """
+        assert len(X) == len(Y) == len(U), "X, Y, and U must be the same length"
+        for x, y, u in zip(X, Y, U):
+            self.update_single(x, y, u)
+
+    def update(self,  X: atraj.TrajectoriesData):
+        """main update methods for TrajectoriesData"""
+        assert isinstance(
+            X, atraj.UniformTimeTrajectoriesData
+        ), "X must be uniform time"
+        self.update_batch(self.dynamics_from_trajs(X))
+
+    def initialize(
+        self, X: atraj.TrajectoriesData
+    ) -> None:
+        """online estimator initialization fit
+        
+        Default behavior is to call fit.
+        """
+        self.fit(X)

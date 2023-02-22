@@ -76,3 +76,4 @@ dependencies:
       - sympy==1.11.1
       - threadpoolctl==3.1.0
       - tqdm==4.64.1
+      - odmd==0.1.3

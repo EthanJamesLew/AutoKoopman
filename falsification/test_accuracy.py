@@ -40,7 +40,7 @@ def get_training_data(bench, param_dict):
                 sys.exit("Please set an input type for your benchmark")
         training_data = bench.solve_ivps(initial_states=init_states, inputs=steps, teval=bench.teval)
     else:
-        training_data = bench.solve_ivps(initial_states=init_states, tspan=[0.0, 10.0],
+        training_data = bench.solve_ivps(initial_states=init_states, tspan=[0.0, 7.0],
                                          sampling_period=param_dict["samp_period"])
 
     return training_data
@@ -159,8 +159,8 @@ if __name__ == '__main__':
                 opt = 'bopt'
             else:
                 opt = 'grid'
-            param_dict = {"train_size": 1, "samp_period": 0.1, "obs_type": obs, "opt": opt, "n_obs": 100,
-                          "grid_param_slices": 5, "n_splits": None, "rank": (1, 200, 40)}
+            param_dict = {"train_size": 1, "samp_period": 0.01, "obs_type": obs, "opt": opt, "n_obs": 100,
+                          "grid_param_slices": 5, "rank": (1, 20, 1)}
             # generate training data
             training_data = get_training_data(benchmark, param_dict)
             start = time.time()
@@ -174,24 +174,11 @@ if __name__ == '__main__':
                 max_opt_iter=200,  # maximum number of optimization iterations
                 grid_param_slices=param_dict["grid_param_slices"],
                 # for grid search, number of slices for each parameter
-                n_splits=param_dict["n_splits"],  # k-folds validation for tuning, helps stabilize the scoring
                 rank=param_dict["rank"]  # rank range (start, stop, step) DMD hyperparameter
             )
             end = time.time()
 
             model = experiment_results['tuned_model']
-
-
-            # get evolution matrices
-            A, B = model.A, model.B
-            w = model.obs_func.observables[1].w
-            u = model.obs_func.observables[1].u
-
-
-            koopman_model = {"A": A, "B": B, "w": w, "u": u}
-            savemat("autokoopman_model.mat", koopman_model)
-
-
 
             # euc_norm = test_trajectories(model, benchmark, 10, param_dict["samp_period"])
             # comp_time = round(end - start, 3)

@@ -365,7 +365,12 @@ def _sanitize_training_data(
     # convert the data to autokoopman trajectories
     if isinstance(training_data, TrajectoriesData):
         if not isinstance(training_data, UniformTimeTrajectoriesData):
+            print(f"resampling trajectories as they need to be uniform time (sampling period {sampling_period})")
             training_data = training_data.interp_uniform_time(sampling_period)
+        else:
+            if not np.isclose(training_data.sampling_period, sampling_period):
+                print(f"resampling trajectories because the sampling periods differ (original {training_data.sampling_period}, new {sampling_period})")
+                training_data = training_data.interp_uniform_time(sampling_period)
     else:
         # figure out how to add inputs
         training_iter = (

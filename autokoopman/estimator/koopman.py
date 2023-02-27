@@ -74,16 +74,7 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
         """
         packs the learned linear transform into a discrete linear system
         """
-        def step_func(t, x, i):
-            obs = (self.obs(x).flatten())[np.newaxis, :]
-            if self._has_input:
-                return np.real(
-                    self._A @ obs.T + self._B @ (i)[:, np.newaxis]
-                ).flatten()[: self.dim]
-            else:
-                return np.real(self._A @ obs.T).flatten()[: len(x)]
-
-        return ksys.KoopmanStepDiscreteSystem(self._A, self._B, self.obs, self.names)#(step_func, self.names)
+        return ksys.KoopmanStepDiscreteSystem(self._A, self._B, self.obs, self.names, self.dim)
 
 
 class KoopmanContinuousEstimator(kest.GradientEstimator):
@@ -124,14 +115,4 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
         """
         packs the learned linear transform into a continuous linear system
         """
-
-        def grad_func(t, x, i):
-            obs = (self.obs(x).flatten())[np.newaxis, :]
-            if self._has_input:
-                return np.real(
-                    self._A @ obs.T + self._B @ (i)[:, np.newaxis]
-                ).flatten()[: self.dim]
-            else:
-                return np.real(self._A @ obs.T).flatten()[: len(x)]
-
-        return ksys.KoopmanGradientContinuousSystem(self._A, self._B, self.obs, self.names)#grad_func, self.names)
+        return ksys.KoopmanGradientContinuousSystem(self._A, self._B, self.obs, self.names, self.dim)#grad_func, self.names)

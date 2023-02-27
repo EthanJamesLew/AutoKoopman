@@ -9,6 +9,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install sphinx sphinx_rtd_theme sphinx_mdinclude pip install pydata-sphinx-theme
+          pip install .
       - name: Sphinx build
         run: |
           sphinx-build documentation/sphinx/source _build

@@ -51,3 +51,12 @@ html_theme = "pydata_sphinx_theme"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = []
+
+
+# add this because of https://github.com/pydata/pydata-sphinx-theme/issues/1094
+html_theme_options = {
+   "logo": {
+      "image_light": "logo-light.png",
+      "image_dark": "logo-dark.png",
+   }
+}

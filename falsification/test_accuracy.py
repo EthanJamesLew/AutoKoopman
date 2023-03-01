@@ -141,6 +141,7 @@ def plot(trajectory, true_trajectory, var_1, var_2):
     plt.title("Test Trajectory Plot")
     plt.show()
 
+
 def plot_trajectory(model, bench, var_1=0, var_2=-1):
     iv = get_init_states(bench, 1)[0]
     trajectory, true_trajectory = get_trajectories(model, bench, iv, param_dict["samp_period"])
@@ -160,7 +161,7 @@ if __name__ == '__main__':
             else:
                 opt = 'grid'
             param_dict = {"train_size": 1, "samp_period": 0.01, "obs_type": obs, "opt": opt, "n_obs": 100,
-                          "grid_param_slices": 5, "rank": (1, 20, 1)}
+                          "grid_param_slices": 5, "rank": (0, 100)}
             # generate training data
             training_data = get_training_data(benchmark, param_dict)
             start = time.time()
@@ -180,12 +181,15 @@ if __name__ == '__main__':
 
             model = experiment_results['tuned_model']
 
-            # euc_norm = test_trajectories(model, benchmark, 10, param_dict["samp_period"])
-            # comp_time = round(end - start, 3)
-            #
-            # print(benchmark.name)
-            # print(f"observables type: {obs}")
-            # print(f"The average euc norm perc error is {round(euc_norm * 100, 2)}%")
-            # print("time taken: ", comp_time)
+            euc_norm = test_trajectories(model, benchmark, 10, param_dict["samp_period"])
+            comp_time = round(end - start, 3)
+
+            print(benchmark.name)
+            print(f"observables type: {obs}")
+            print(f"The average euc norm perc error is {round(euc_norm * 100, 2)}%")
+            print("time taken: ", comp_time)
+
+            print(experiment_results['hyperparameters'])
+            print(experiment_results['hyperparameter_values'])
 
             plot_trajectory(model, benchmark, var_1=0, var_2=1)

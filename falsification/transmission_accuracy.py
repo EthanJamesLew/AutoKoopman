@@ -19,7 +19,7 @@ from benchmarks.seed import set_seed
 https://drive.google.com/drive/folders/1blkHkK3tMG2lKaq3POWtxquYHYw6kf6i?usp=sharing 
 and the variable PATH below needs to be updated accordingly"""
 
-PATH = '/Users/b6062805/Documents/Koopman/RealDataModels'
+PATH = '/Users/b6062805/Documents/Koopman'
 
 
 def load_data(benchmark):
@@ -36,8 +36,7 @@ def load_data(benchmark):
             inputs = np.asarray(pd.read_csv(os.path.join(dirpath, 'input.csv')))
             time = np.asarray(pd.read_csv(os.path.join(dirpath, 'time.csv')))
             time = np.resize(time, (time.shape[0],))
-
-            data.append(traj.Trajectory(time[:-1], states[:-1, :], inputs))
+            data.append(traj.Trajectory(time, states, inputs))
             cnt += 1
         else:
             break
@@ -83,14 +82,17 @@ def train_model(data, obs_type):
         sampling_period=dt,
         obs_type=obs_type,
         opt=opt,
-        n_obs=200,
-        rank=(1, 20, 1),
+        n_obs=100,
+        rank=(0,200,4),
         grid_param_slices=5,
         max_opt_iter=200
     )
 
     # get the model from the experiment results
     model = experiment_results['tuned_model']
+
+    print(experiment_results['hyperparameters'])
+    print(experiment_results['hyperparameter_values'])
 
     return model
 
@@ -148,8 +150,8 @@ def store_data_heads(row, filename='real_data'):
 if __name__ == '__main__':
 
     # initialization
-    benchmarks = ['ElectricCircuit', 'F1tenthCar', 'Robot']
-    obs_types = ['id', 'poly', 'rff', 'deep']
+    benchmarks = ['modelTransmissionModels']
+    obs_types = ['rff']
     store_data_heads(["", ""] + ["euc_norm", "time(s)", ""] * len(obs_types))
 
     for benchmark in benchmarks:
@@ -162,8 +164,7 @@ if __name__ == '__main__':
         data = load_data(benchmark)
 
         # split into training and validation set
-        n_test = min(10, np.floor(0.4 * len(data)).astype(int))
-        training_data, test_data = split_data(data, n_test)
+        training_data, test_data = split_data(data, 10)
 
         # loop over the different observable types
         result = [benchmark, ""]
@@ -183,9 +184,6 @@ if __name__ == '__main__':
             print(f"observables type: {obs}")
             print(f"The average euc norm perc error is {round(euc_norm * 100, 2)}%")
             print("time taken: ", comp_time)
-            # store and print results
-            result.append(round(euc_norm * 100, 2))
-            result.append(comp_time)
-            result.append("")
 
-        store_data(result)
+
+

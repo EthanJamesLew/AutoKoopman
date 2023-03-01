@@ -15,6 +15,19 @@ import autokoopman.core.trajectory as atraj
 
 
 class TrajectoryEstimator(abc.ABC):
+    """
+    Trajectory based estimator base class
+
+    :param normalize: apply MinMax normalization to the fit data
+    :param feature_range: range for MinMax scaler
+    """
+    def __init__(self, normalize=True, feature_range=(-1, 1)) -> None:
+        self.normalize = normalize
+        if self.normalize:
+            self.scaler = MinMaxScaler(feature_range=feature_range)
+        else:
+            self.scaler = None
+
     @abc.abstractmethod
     def fit(self, X: atraj.TrajectoriesData) -> None:
         pass
@@ -29,14 +42,13 @@ class NextStepEstimator(TrajectoryEstimator):
     """Estimator of discrete time dynamical systems
 
     Requires that the data be uniform time
+
+    :param normalize: apply MinMax normalization to the fit data
+    :param feature_range: range for MinMax scaler
     """
 
     def __init__(self, normalize=True, feature_range=(-1, 1)) -> None:
-        self.normalize = normalize
-        if self.normalize:
-            self.scaler = MinMaxScaler(feature_range=feature_range)
-        else:
-            self.scaler = None
+        super().__init__(normalize=normalize, feature_range=feature_range)
         self.names = None
 
     @abc.abstractmethod
@@ -63,14 +75,13 @@ class GradientEstimator(TrajectoryEstimator):
     """Estimator of discrete time dynamical systems
 
     Requires that the data be uniform time
+    
+    :param normalize: apply MinMax normalization to the fit data
+    :param feature_range: range for MinMax scaler
     """
 
     def __init__(self, normalize=True, feature_range=(-1, 1)) -> None:
-        self.normalize = normalize
-        if self.normalize:
-            self.scaler = MinMaxScaler(feature_range=feature_range)
-        else:
-            self.scaler = None
+        super().__init__(normalize=normalize, feature_range=feature_range)
         self.names = None
 
     @abc.abstractmethod

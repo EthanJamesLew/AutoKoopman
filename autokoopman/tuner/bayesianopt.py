@@ -33,8 +33,9 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
                     if isinstance(coord, ContinuousParameter)
                     else "discrete",
                     "domain": (
-                        np.log(coord._interval[0]) if g_log else coord._interval[0], 
-                        np.log(coord._interval[1]) if g_log else coord._interval[1]),
+                        np.log(coord._interval[0]) if g_log else coord._interval[0],
+                        np.log(coord._interval[1]) if g_log else coord._interval[1],
+                    ),
                 }
                 g_len = coord._interval[1] - coord._interval[0]
             elif isinstance(coord, DiscreteParameter):
@@ -88,9 +89,11 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
         import GPy
         import os, sys
 
-        #TODO: switch to something more modern (not GPyOpt?)
+        # TODO: switch to something more modern (not GPyOpt?)
         # get GPyOpt domain
-        bounds, lengthscales, is_logs = self.make_bounds(self._parameter_model.parameter_space)
+        bounds, lengthscales, is_logs = self.make_bounds(
+            self._parameter_model.parameter_space
+        )
 
         # create the sampler and send it the parameters
         sampling = self.tune_sampling(nattempts, scoring_func)
@@ -102,7 +105,9 @@ class BayesianOptTuner(atuner.HyperparameterTuner):
             """
             try:
                 param_v = tuple(param.flatten())
-                param = [(p if not il else np.exp(p)) for il, p in zip(is_logs, param_v)]
+                param = [
+                    (p if not il else np.exp(p)) for il, p in zip(is_logs, param_v)
+                ]
                 val = sampling.send(param)
                 next(sampling)
                 return val

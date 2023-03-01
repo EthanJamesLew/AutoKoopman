@@ -38,11 +38,11 @@ def _clip_list(s: Optional[Sequence], nlength=20) -> str:
 class hide_prints:
     """context manager to suppress python print output
 
-    this was created to hide "ugly stuff" 
+    this was created to hide "ugly stuff"
     (e.g., GPyOpt prints)
     """
 
-    def __enter__(self, hide_warnings = True):
+    def __enter__(self, hide_warnings=True):
         self._original_stdout = sys.stdout
         sys.stdout = open(os.devnull, "w")
         self.hw = hide_warnings
@@ -52,11 +52,10 @@ class hide_prints:
         if self.hw:
             self.cw = warnings.catch_warnings()
             self.cw.__enter__()
-            warnings.filterwarnings('ignore')
+            warnings.filterwarnings("ignore")
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         sys.stdout.close()
         sys.stdout = self._original_stdout
         if self.hw:
             self.cw.__exit__()
-

@@ -50,8 +50,8 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
         See https://epubs.siam.org/doi/pdf/10.1137/16M1062296 for more details
     """
 
-    def __init__(self, observables, sampling_period, dim, rank):
-        super().__init__()
+    def __init__(self, observables, sampling_period, dim, rank, **kwargs):
+        super().__init__(**kwargs)
         self.dim = dim
         self.obs = observables
         self.rank = int(rank)
@@ -74,7 +74,9 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
         """
         packs the learned linear transform into a discrete linear system
         """
-        return ksys.KoopmanStepDiscreteSystem(self._A, self._B, self.obs, self.names, self.dim)
+        return ksys.KoopmanStepDiscreteSystem(
+            self._A, self._B, self.obs, self.names, self.dim, self.scaler
+        )
 
 
 class KoopmanContinuousEstimator(kest.GradientEstimator):
@@ -91,8 +93,8 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
 
     """
 
-    def __init__(self, observables, dim, rank):
-        super().__init__()
+    def __init__(self, observables, dim, rank, **kwargs):
+        super().__init__(**kwargs)
         self.dim = dim
         self.obs = observables
         self.rank = int(rank)
@@ -115,4 +117,6 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
         """
         packs the learned linear transform into a continuous linear system
         """
-        return ksys.KoopmanGradientContinuousSystem(self._A, self._B, self.obs, self.names, self.dim)#grad_func, self.names)
+        return ksys.KoopmanGradientContinuousSystem(
+            self._A, self._B, self.obs, self.names, self.dim, self.scaler
+        )

@@ -6,6 +6,8 @@ Model has:
 import abc
 from typing import Optional
 
+from sklearn.preprocessing import MinMaxScaler
+
 import numpy as np
 
 import autokoopman.core.system as asys
@@ -29,7 +31,12 @@ class NextStepEstimator(TrajectoryEstimator):
     Requires that the data be uniform time
     """
 
-    def __init__(self) -> None:
+    def __init__(self, normalize=True, feature_range=(-1, 1)) -> None:
+        self.normalize = normalize
+        if self.normalize:
+            self.scaler = MinMaxScaler(feature_range=feature_range)
+        else:
+            self.scaler = None
         self.names = None
 
     @abc.abstractmethod
@@ -43,7 +50,11 @@ class NextStepEstimator(TrajectoryEstimator):
         assert isinstance(
             X, atraj.UniformTimeTrajectoriesData
         ), "X must be uniform time"
-        self.fit_next_step(*X.next_step_matrices)
+        X_, Xp_, U_ = X.next_step_matrices
+        if self.normalize:
+            X_ = self.scaler.fit_transform(X_.T).T
+            Xp_ = self.scaler.transform(Xp_.T).T
+        self.fit_next_step(X_, Xp_, U_)
         self.sampling_period = X.sampling_period
         self.names = X.state_names
 
@@ -53,6 +64,14 @@ class GradientEstimator(TrajectoryEstimator):
 
     Requires that the data be uniform time
     """
+
+    def __init__(self, normalize=True, feature_range=(-1, 1)) -> None:
+        self.normalize = normalize
+        if self.normalize:
+            self.scaler = MinMaxScaler(feature_range=feature_range)
+        else:
+            self.scaler = None
+        self.names = None
 
     @abc.abstractmethod
     def fit_gradient(
@@ -65,6 +84,10 @@ class GradientEstimator(TrajectoryEstimator):
         assert isinstance(
             X, atraj.UniformTimeTrajectoriesData
         ), "X must be uniform time"
-        self.fit_gradient(*X.differentiate)
+        X_, Xp_, U_ = X.differentiate
+        if self.normalize:
+            X_ = self.scaler.fit_transform(X_.T).T
+            Xp_ = self.scaler.transform(Xp_.T).T
+        self.fit_gradient(X_, Xp_, U_)
         self.sampling_period = X.sampling_period
         self.names = X.state_names

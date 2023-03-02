@@ -10,14 +10,16 @@ import numpy as np
 import pytest
 
 
-auto_config = tuple(itertools.product(obs_types, opt_types, scoring_func_types))
+auto_config = tuple(
+    itertools.product(obs_types, opt_types, scoring_func_types, {True, False})
+)
 
 
 @pytest.mark.parametrize(
-    "obs, opt, cost",
+    "obs, opt, cost, normalize",
     auto_config,
 )
-def test_autokoopman(obs, opt, cost):
+def test_autokoopman(obs, opt, cost, normalize):
     # for a complete example, let's create an example dataset using an included benchmark system
     import autokoopman.benchmark.fhn as fhn
 
@@ -52,4 +54,5 @@ def test_autokoopman(obs, opt, cost):
         rank=(10, 12, 1),
         max_epochs=1,
         torch_device="cpu",
+        normalize=normalize,
     )

@@ -188,7 +188,7 @@ class HyperparameterTuner(abc.ABC):
                 (np.min(v.times), np.max(v.times)),
                 inputs=v.inputs,
                 teval=v.times,
-                **_kwargs
+                **_kwargs,
             )
             preds[k] = sivp_interp
         return TrajectoriesData(preds)

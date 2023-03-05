@@ -1,7 +1,10 @@
-
+[![PyPI version](https://badge.fury.io/py/AutoKoopman.svg)](https://pypi.org/project/autokoopman/)
+[![license](https://img.shields.io/github/license/EthanJamesLew/AutoKoopman)](LICENSE)
 [![Conda CI Workflow](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml/badge.svg)](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml)
 [![Sphinx Workflow](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/documentation.yml/badge.svg)](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/documentation.yml)
 [![Jupyter Workflow](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/notebook.yml/badge.svg)](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/notebook.yml)
+
+![](https://raw.githubusercontent.com/EthanJamesLew/AutoKoopman/enhancement/v-0.30-tweaks/documentation/img/brand/logo-full.svg)
 
 # AutoKoopman
 
@@ -109,7 +112,7 @@ plt.plot(*true_trajectory.states.T)
 
 The library architecture has a modular design, allowing users to implement custom modules and plug them into the learning pipeline with ease.
 
-![Library Architecture](./documentation/img/autokoopman_objects.png)
+![Library Architecture](https://github.com/EthanJamesLew/AutoKoopman/raw/enhancement/v-0.30-tweaks/documentation/img/autokoopman_objects.png)
 *AutoKoopman Class Structure in the Training Pipeline*. A user can implement any of the classes to extend AutoKoopman (e.g., custom observables, a custom tuner, a new system id estimator).
 
 ## Documentation

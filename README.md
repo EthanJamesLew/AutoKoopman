@@ -6,22 +6,39 @@
 # AutoKoopman
 
 ## Overview
-AutoKoopman is a python library for the use of Koopman operator methods for data-driven dynamical systems analysis and control. The library
-has convenient functions to learn systems using a few lines of code. It has a variety of linearization methods under
-shared class interfaces. These methods are pluggable into hyperparameter optimizers which can automate the process of model
-optimization.
+
+AutoKoopman is a high-level system identification tool that automatically optimizes all hyper-parameters to estimate accurate system models with globally linearized representations. Implemented as a python library under shared class interfaces, AutoKoopman uses a collection of Koopman-based algorithms centered on conventional dynamic mode decomposition and deep learning. Koopman theory relies on embedding system states to *observables*; AutoKoopman provides major types of static observables.
+
+The library supports
+* Discrete-Time and Continuous-Time System Identification
+  * Extended Dynamic Mode Decomposition (EDMD) [[Williams et al.]](#1)
+  * Deep Koopman [[Li et al.]](#2)
+  * SINDy [[Brunton et al.]](#3)
+* Static Observables
+  * Random Fourier Features [[Bak et al.]](#4)
+  * Polynomial
+  * Neural Network [[Li et al.]](#2)
+* System Identification with Input and Control
+  * Koopman with Input and Control (KIC) [[Proctor et al.]](#5)
+* Online (Streaming) System Identification
+  * Online DMD [[Zhang et al.]](#6)
+* Hyperparameter Optimization
+  * Random Search
+  * Grid Search
+  * Bayesian Optimization
 
 ## Use Cases
-A systems engineer / researcher who wishes to leverage data-driven dynamical systems techniques. The user may
-have measurements of their system with no prior model.
-* System Prediction - the user can simulate a model learned from their measurements. They use popular techniques like DMD and SINDy out of the box, and implement their own methods to plug into the provided analysis infrastructure (e.g. hyperparameter optimization, visualization).
-* System Linearization - the user can get a linear representation of their system in its original states or koopman observables. They can use this linear form to perform tasks like controller synthesis and system reachability.
+The library is intended for a systems engineer / researcher who wishes to leverage data-driven dynamical systems techniques. The user may have measurements of their system with no prior model.
+
+* **Prediction:** Predict the evolution of a system over long time horizons 
+* **Control:** Synthesize control signals that achieve desired closed-loop behaviors and are optimal with respect to some objective.
+* **Verification:** Prove or falsify the safety requirements of a system.
 
 ## Installation
 
-The module requires python 3.8 or higher. With pip installed, run
+The module is published on [PyPI](https://pypi.org/project/autokoopman/). It requires python 3.8 or higher. With pip installed, run
 ```shell
-pip install .
+pip install autokoopman
 ```
 at the repo root. Run
 ```shell
@@ -31,7 +48,7 @@ to ensure that the module can be imported.
 
 ## Examples
 
-### Complete Example
+### A Complete Example
 AutoKoopman has a convenience function `auto_koopman` that can learn dynamical systems from data in one call, given
 training data of trajectories (list of arrays),
 ```python
@@ -40,6 +57,8 @@ import numpy as np
 
 # this is the convenience function
 from autokoopman import auto_koopman
+
+np.random.seed(20)
 
 # for a complete example, let's create an example dataset using an included benchmark system
 import autokoopman.benchmark.fhn as fhn
@@ -86,7 +105,28 @@ plt.plot(*trajectory.states.T)
 plt.plot(*true_trajectory.states.T)
 ```
 
+## Architecture
+
+The library architecture has a modular design, allowing users to implement custom modules and plug them into the learning pipeline with ease.
+
+![Library Architecture](./documentation/img/autokoopman_objects.png)
+*AutoKoopman Class Structure in the Training Pipeline*. A user can implement any of the classes to extend AutoKoopman (e.g., custom observables, a custom tuner, a new system id estimator).
 
 ## Documentation
 
-[AutoKoopman Documentation](https://ethanjameslew.github.io/AutoKoopman/)
+See the
+[AutoKoopman Documentation](https://ethanjameslew.github.io/AutoKoopman/).
+
+## References  
+
+<a id="1">[1]</a> Williams, M. O., Kevrekidis, I. G., & Rowley, C. W. (2015). A data–driven approximation of the koopman operator: Extending dynamic mode decomposition. Journal of Nonlinear Science, 25, 1307-1346.
+
+ <a id="2">[2]</a> Li, Y., He, H., Wu, J., Katabi, D., & Torralba, A. (2019). Learning compositional koopman operators for model-based control. arXiv preprint arXiv:1910.08264.
+
+  <a id="3">[3]</a> Brunton, S. L., Proctor, J. L., & Kutz, J. N. (2016). Discovering governing equations from data by sparse identification of nonlinear dynamical systems. Proceedings of the national academy of sciences, 113(15), 3932-3937.
+
+  <a id="4">[4]</a> Bak, S., Bogomolov, S., Hencey, B., Kochdumper, N., Lew, E., & Potomkin, K. (2022, August). Reachability of Koopman linearized systems using random fourier feature observables and polynomial zonotope refinement. In Computer Aided Verification: 34th International Conference, CAV 2022, Haifa, Israel, August 7–10, 2022, Proceedings, Part I (pp. 490-510). Cham: Springer International Publishing.
+
+  <a id="5">[5]</a> Proctor, J. L., Brunton, S. L., & Kutz, J. N. (2018). Generalizing Koopman theory to allow for inputs and control. SIAM Journal on Applied Dynamical Systems, 17(1), 909-930.
+
+  <a id="6">[6]</a> Zhang, H., Rowley, C. W., Deem, E. A., & Cattafesta, L. N. (2019). Online dynamic mode decomposition for time-varying systems. SIAM Journal on Applied Dynamical Systems, 18(3), 1586-1609.

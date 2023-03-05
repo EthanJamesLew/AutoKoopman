@@ -21,6 +21,7 @@ class TrajectoryEstimator(abc.ABC):
     :param normalize: apply MinMax normalization to the fit data
     :param feature_range: range for MinMax scaler
     """
+
     def __init__(self, normalize=True, feature_range=(-1, 1)) -> None:
         self.normalize = normalize
         if self.normalize:
@@ -31,7 +32,7 @@ class TrajectoryEstimator(abc.ABC):
     @staticmethod
     def dynamics_from_trajs(X: atraj.UniformTimeTrajectoriesData):
         return X.differentiate
-    
+
     @abc.abstractmethod
     def fit(self, X: atraj.TrajectoriesData) -> None:
         pass
@@ -54,7 +55,7 @@ class NextStepEstimator(TrajectoryEstimator):
     def __init__(self, normalize=True, feature_range=(-1, 1)) -> None:
         super().__init__(normalize=normalize, feature_range=feature_range)
         self.names = None
-    
+
     @staticmethod
     def dynamics_from_trajs(X: atraj.UniformTimeTrajectoriesData):
         return X.next_step_matrices
@@ -80,15 +81,15 @@ class NextStepEstimator(TrajectoryEstimator):
         self.names = X.state_names
 
 
-
 class GradientEstimator(TrajectoryEstimator):
     """Estimator of discrete time dynamical systems
 
     Requires that the data be uniform time
-    
+
     :param normalize: apply MinMax normalization to the fit data
     :param feature_range: range for MinMax scaler
     """
+
     def __init__(self, normalize=True, feature_range=(-1, 1)) -> None:
         super().__init__(normalize=normalize, feature_range=feature_range)
         self.names = None
@@ -114,13 +115,14 @@ class GradientEstimator(TrajectoryEstimator):
 
 
 class OnlineEstimator(TrajectoryEstimator):
-    """abstract Estimator for streaming data, 
-    
+    """abstract Estimator for streaming data,
+
     online (streaming) estimators have a concept of initial fit and updates,
     which are ideally more efficient than calling fit every update. Further,
     cases are added for single observation (rank 1) update and batch updating.
-    Batch updating is also available for implementing windowing estimators. 
+    Batch updating is also available for implementing windowing estimators.
     """
+
     @abc.abstractmethod
     def update_single(
         self, x: np.ndarray, y: np.ndarray, u: Optional[np.ndarray] = None
@@ -132,29 +134,27 @@ class OnlineEstimator(TrajectoryEstimator):
         self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
     ):
         """update given multiple observations (x, y, and u are 2D arrays)
-        
+
         default behavior is to called update_single for each observation.
         """
         if U is None:
-            U = [None]*X.shape[1]
+            U = [None] * X.shape[1]
         else:
             U = U.T
         assert X.shape[1] == Y.shape[1] == len(U), "X and Y must be the same length"
         for x, y, u in zip(X.T, Y.T, U):
             self.update_single(x, y, u)
 
-    def update(self,  X: atraj.TrajectoriesData):
+    def update(self, X: atraj.TrajectoriesData):
         """main update methods for TrajectoriesData"""
         assert isinstance(
             X, atraj.UniformTimeTrajectoriesData
         ), "X must be uniform time"
         self.update_batch(*self.dynamics_from_trajs(X))
 
-    def initialize(
-        self, X: atraj.TrajectoriesData
-    ) -> None:
+    def initialize(self, X: atraj.TrajectoriesData) -> None:
         """online estimator initialization fit
-        
+
         Default behavior is to call fit.
         """
         self.fit(X)

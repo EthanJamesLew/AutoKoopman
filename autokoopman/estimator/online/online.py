@@ -7,14 +7,15 @@ class OnlineInputDMD:
 
     This is a variation on Zhang et al. with extensions for KIC
     """
-    def __init__(self, n: int, m: Optional[int], weighting = 0.9) -> None:
+
+    def __init__(self, n: int, m: Optional[int], weighting=0.9) -> None:
         self.n = n
         self.m = m if m is not None else 0
 
         self.weighting = weighting
         self.timestep = 0
-        self.A = np.zeros((self.n, self.n+self.m))
-        self._P = np.zeros((self.n+self.m, self.n+self.m))
+        self.A = np.zeros((self.n, self.n + self.m))
+        self._P = np.zeros((self.n + self.m, self.n + self.m))
         self._initialize()
         self.ready = False
 
@@ -22,20 +23,28 @@ class OnlineInputDMD:
         epsilon = 1e-15
         alpha = 1.0 / epsilon
         self.A = np.random.randn(self.n, self.n)
-        self._P = alpha * np.identity(self.n) 
+        self._P = alpha * np.identity(self.n)
 
-    def initialize(self, Xp: np.ndarray, Yp: np.ndarray, Up: Optional[np.ndarray]) -> None:
+    def initialize(
+        self, Xp: np.ndarray, Yp: np.ndarray, Up: Optional[np.ndarray]
+    ) -> None:
         assert Xp is not None and Yp is not None
-        Xp, Yp, Up = np.array(Xp), np.array(Yp), np.array(Up) if Up is not None else None
+        Xp, Yp, Up = (
+            np.array(Xp),
+            np.array(Yp),
+            np.array(Up) if Up is not None else None,
+        )
         assert Xp.shape == Yp.shape
         assert Xp.shape[0] == self.n
-        
+
         if Up is not None:
             assert Up.shape[0] == self.m
 
         # necessary condition for over-constrained initialization
         p = Xp.shape[1]
-        assert (p >= self.n and np.linalg.matrix_rank(Xp) == self.n), "WARNING: initialization is underconstrained"
+        assert (
+            p >= self.n and np.linalg.matrix_rank(Xp) == self.n
+        ), "WARNING: initialization is underconstrained"
 
         # for KIC -- treat inputs as state
         if self.m > 0:
@@ -51,7 +60,6 @@ class OnlineInputDMD:
 
         if self.timestep >= 2 * self.n:
             self.ready = True
-
 
     def update(self, x: np.ndarray, y: np.ndarray, u: Optional[np.ndarray]) -> None:
         assert x is not None and y is not None

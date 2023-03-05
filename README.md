@@ -1,6 +1,8 @@
-# AutoKoopman
 
-![Conda CI Workflow](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml/badge.svg)
+[![Conda CI Workflow](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml/badge.svg)](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml)
+[![Docs](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/documentation.yml/badge.svg)](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/documentation.yaml)
+
+# AutoKoopman
 
 ## Overview
 AutoKoopman is a python library for the use of Koopman operator methods for data-driven dynamical systems analysis and control. The library

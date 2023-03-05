@@ -6,8 +6,6 @@ import autokoopman.core.system as ksys
 
 import numpy as np
 
-from odmd import OnlineDMD
-
 
 class OnlineKoopmanEstimator(kest.GradientEstimator, kest.OnlineEstimator):
     """online EDMD with optional inputs"""

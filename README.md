@@ -1,6 +1,7 @@
 
 [![Conda CI Workflow](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml/badge.svg)](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml)
-[![Docs](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/documentation.yml/badge.svg)](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/documentation.yaml)
+[![Sphinx Workflow](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/documentation.yml/badge.svg)](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/documentation.yml)
+[![Jupyter Workflow](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/notebook.yml/badge.svg)](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/notebook.yml)
 
 # AutoKoopman
 

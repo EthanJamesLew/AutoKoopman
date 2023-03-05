@@ -1,4 +1,4 @@
-name: Docs
+name: Sphinx Build
 on: [push, pull_request, workflow_dispatch]
 jobs:
   docs:

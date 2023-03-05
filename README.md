@@ -110,7 +110,7 @@ plt.plot(*true_trajectory.states.T)
 
 The library architecture has a modular design, allowing users to implement custom modules and plug them into the learning pipeline with ease.
 
-![Library Architecture](./documentation/img/autokoopman_objects.png)
+![Library Architecture](https://github.com/EthanJamesLew/AutoKoopman/raw/enhancement/v-0.30-tweaks/documentation/img/autokoopman_objects.png)
 *AutoKoopman Class Structure in the Training Pipeline*. A user can implement any of the classes to extend AutoKoopman (e.g., custom observables, a custom tuner, a new system id estimator).
 
 ## Documentation

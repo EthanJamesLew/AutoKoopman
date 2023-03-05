@@ -137,6 +137,8 @@ class OnlineEstimator(TrajectoryEstimator):
         """
         if U is None:
             U = [None]*X.shape[1]
+        else:
+            U = U.T
         assert X.shape[1] == Y.shape[1] == len(U), "X and Y must be the same length"
         for x, y, u in zip(X.T, Y.T, U):
             self.update_single(x, y, u)

@@ -374,7 +374,7 @@ class KoopmanSystem:
             if self._has_input:
                 return np.real(
                     self._A @ obs.T + self._B @ (i)[:, np.newaxis]
-                ).flatten()[: self.dim]
+                ).flatten()[: len(x)]
             else:
                 return np.real(self._A @ obs.T).flatten()[: len(x)]
 
@@ -383,9 +383,7 @@ class KoopmanSystem:
             obs = (self.obs(x).flatten())[np.newaxis, :]
             if self._has_input:
                 return self.scaler.inverse_transform(
-                    np.real(self._A @ obs.T + self._B @ (i)[:, np.newaxis])[
-                        : self.dim
-                    ].T
+                    np.real(self._A @ obs.T + self._B @ (i)[:, np.newaxis])[: len(x)].T
                 ).flatten()
             else:
                 return self.scaler.inverse_transform(

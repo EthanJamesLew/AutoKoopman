@@ -56,7 +56,7 @@ html_static_path = []
 # add this because of https://github.com/pydata/pydata-sphinx-theme/issues/1094
 html_theme_options = {
    "logo": {
-      "image_light": "logo-light.png",
-      "image_dark": "logo-dark.png",
+      "image_light": "https://raw.githubusercontent.com/EthanJamesLew/AutoKoopman/enhancement/v-0.30-tweaks/documentation/img/brand/logo-small.svg",
+      "image_dark": "https://raw.githubusercontent.com/EthanJamesLew/AutoKoopman/enhancement/v-0.30-tweaks/documentation/img/brand/logo-small.svg",
    }
 }

@@ -14,10 +14,12 @@ from autokoopman.core.trajectory import (
 from autokoopman.core.tuner import (
     HyperparameterTuner,
     HyperparameterMap,
+    TrajectoryScoring,
+)
+from autokoopman.core.hyperparameter import (
     ParameterSpace,
     ContinuousParameter,
     DiscreteParameter,
-    TrajectoryScoring,
 )
 from autokoopman.estimator.koopman import KoopmanDiscEstimator
 from autokoopman.tuner.gridsearch import GridSearchTuner

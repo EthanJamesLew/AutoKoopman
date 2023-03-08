@@ -39,6 +39,10 @@ class Parameter:
     def name(self):
         return self._name
 
+    @name.setter
+    def name(self, new_name):
+        self._name = new_name
+
     def __repr__(self):
         return f"<{self.__class__.__name__} Name: {self.name}>"
 
@@ -100,12 +104,27 @@ class DiscreteParameter(FiniteParameter):
 class ParameterSpace(Parameter):
     """an interval hull"""
 
+    @classmethod
+    def from_parameter_spaces(cls, name: str, spaces: Sequence["ParameterSpace"]):
+        import copy
+
+        coords = []
+        for space in spaces:
+            for p in space:
+                pi = copy.deepcopy(p)
+                pi.name = f"{name}-{pi.name}"
+                coords.append(pi)
+        return cls(name, coords)
+
     def __init__(self, name: str, coords: Sequence[Parameter]):
         super(ParameterSpace, self).__init__(name)
         self._coords = coords
         self._cdict = {c.name: c for c in self._coords}
 
     def is_member(self, item) -> bool:
+        assert (
+            len(item) == self.dimension
+        ), f"item must be a sequence have have the same number of elements as the ParameterSpace dimension"
         return all([itemi in coordi for itemi, coordi in zip(item, self._coords)])
 
     def random(self):

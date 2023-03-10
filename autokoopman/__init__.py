@@ -11,10 +11,15 @@ __credits__ = [
     "Sergiy Bogomolov",
 ]
 __license__ = "GPLv3"
-__version__ = "0.21"
 __maintainer__ = "Ethan Lew"
 __email__ = "ethanlew16@gmail.com"
 __status__ = "Prototype"
+
+# we auto-manage versions
+from ._version import get_versions
+
+__version__ = get_versions()["version"]
+del get_versions
 
 from autokoopman.autokoopman import auto_koopman
 
@@ -32,4 +37,5 @@ from autokoopman.core.trajectory import (
 )
 
 from . import _version
-__version__ = _version.get_versions()['version']
+
+__version__ = _version.get_versions()["version"]

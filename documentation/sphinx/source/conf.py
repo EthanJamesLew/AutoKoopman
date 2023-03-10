@@ -22,7 +22,9 @@ copyright = "2022, Ethan Lew"
 author = "Ethan Lew"
 
 # The full version, including alpha/beta/rc tags
-release = "0.1b"
+import autokoopman
+release = autokoopman.__version__
+version = autokoopman.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -55,6 +57,7 @@ html_static_path = []
 
 # add this because of https://github.com/pydata/pydata-sphinx-theme/issues/1094
 html_theme_options = {
+   "github_url": "https://github.com/EthanJamesLew/AutoKoopman",
    "logo": {
       "image_light": "https://raw.githubusercontent.com/EthanJamesLew/AutoKoopman/enhancement/v-0.30-tweaks/documentation/img/brand/logo-small.svg",
       "image_dark": "https://raw.githubusercontent.com/EthanJamesLew/AutoKoopman/enhancement/v-0.30-tweaks/documentation/img/brand/logo-small.svg",

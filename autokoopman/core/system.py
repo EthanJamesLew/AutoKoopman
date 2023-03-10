@@ -354,3 +354,62 @@ class LinearContinuousSystem(ContinuousSystem):
 
 class KoopmanContinuousSystem(LinearContinuousSystem):
     ...
+
+
+class KoopmanSystem:
+    """
+    mixin class for Koopman systems
+    """
+
+    def __init__(self, A, B, obs, names, dim=None, scaler=None):
+        self._A = A
+        self._B = B
+        self._has_input = B is not None and not np.any(np.array(B.shape) == 0)
+        self.obs = obs
+        self.scaler = scaler
+        self.dim = A.shape[0] if dim is None else dim
+
+        def evolv_func(t, x, i):
+            obs = (self.obs(x).flatten())[np.newaxis, :]
+            if self._has_input:
+                return np.real(
+                    self._A @ obs.T + self._B @ (i)[:, np.newaxis]
+                ).flatten()[: self.dim]
+            else:
+                return np.real(self._A @ obs.T).flatten()[: len(x)]
+
+        def evolv_func_scale(t, x, i):
+            x = self.scaler.transform(np.atleast_2d(x)).flatten()
+            obs = (self.obs(x).flatten())[np.newaxis, :]
+            if self._has_input:
+                return self.scaler.inverse_transform(
+                    np.real(self._A @ obs.T + self._B @ (i)[:, np.newaxis])[
+                        : self.dim
+                    ].T
+                ).flatten()
+            else:
+                return self.scaler.inverse_transform(
+                    np.real(self._A @ obs.T)[: len(x)].T
+                ).flatten()
+
+        super().__init__(evolv_func if self.scaler is None else evolv_func_scale, names)
+
+    @property
+    def A(self):
+        return self._A
+
+    @property
+    def B(self):
+        return self._B
+
+    @property
+    def obs_func(self):
+        return self.obs
+
+
+class KoopmanStepDiscreteSystem(KoopmanSystem, StepDiscreteSystem):
+    ...
+
+
+class KoopmanGradientContinuousSystem(KoopmanSystem, GradientContinuousSystem):
+    ...

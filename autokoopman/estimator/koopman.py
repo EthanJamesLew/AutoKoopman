@@ -50,11 +50,12 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
         See https://epubs.siam.org/doi/pdf/10.1137/16M1062296 for more details
     """
 
-    def __init__(self, observables, sampling_period, dim, rank):
-        super().__init__()
+    def __init__(self, observables, sampling_period, dim, rank, **kwargs):
+        super().__init__(**kwargs)
         self.dim = dim
         self.obs = observables
         self.rank = int(rank)
+        self._A, self._B = None, None
 
     def fit_next_step(
         self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
@@ -73,17 +74,9 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
         """
         packs the learned linear transform into a discrete linear system
         """
-
-        def step_func(t, x, i):
-            obs = (self.obs(x).flatten())[np.newaxis, :]
-            if self._has_input:
-                return np.real(
-                    self._A @ obs.T + self._B @ (i)[:, np.newaxis]
-                ).flatten()[: self.dim]
-            else:
-                return np.real(self._A @ obs.T).flatten()[: len(x)]
-
-        return ksys.StepDiscreteSystem(step_func, self.names)
+        return ksys.KoopmanStepDiscreteSystem(
+            self._A, self._B, self.obs, self.names, self.dim, self.scaler
+        )
 
 
 class KoopmanContinuousEstimator(kest.GradientEstimator):
@@ -100,11 +93,12 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
 
     """
 
-    def __init__(self, observables, dim, rank):
-        super().__init__()
+    def __init__(self, observables, dim, rank, **kwargs):
+        super().__init__(**kwargs)
         self.dim = dim
         self.obs = observables
         self.rank = int(rank)
+        self._A, self._B = None, None
 
     def fit_gradient(
         self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
@@ -123,14 +117,6 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
         """
         packs the learned linear transform into a continuous linear system
         """
-
-        def grad_func(t, x, i):
-            obs = (self.obs(x).flatten())[np.newaxis, :]
-            if self._has_input:
-                return np.real(
-                    self._A @ obs.T + self._B @ (i)[:, np.newaxis]
-                ).flatten()[: self.dim]
-            else:
-                return np.real(self._A @ obs.T).flatten()[: len(x)]
-
-        return ksys.GradientContinuousSystem(grad_func, self.names)
+        return ksys.KoopmanGradientContinuousSystem(
+            self._A, self._B, self.obs, self.names, self.dim, self.scaler
+        )

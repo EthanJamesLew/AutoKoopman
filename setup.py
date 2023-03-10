@@ -1,11 +1,13 @@
 import setuptools
+import versioneer
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="autokoopman",
-    version="0.21",
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     description="Automated Koopman Operator Linearization Library",
     long_description=long_description,
     long_description_content_type="text/markdown",

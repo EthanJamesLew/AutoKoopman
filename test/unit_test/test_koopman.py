@@ -1,7 +1,14 @@
 import numpy as np
+import pytest
+
+koop_config = ((True,), (False,))
 
 
-def test_discrete_koopman():
+@pytest.mark.parametrize(
+    "normalize",
+    koop_config,
+)
+def test_discrete_koopman(normalize):
     """tests the discrete time Koopman estimator"""
     from autokoopman.benchmark.pendulum import PendulumWithInput
     from autokoopman.core.trajectory import TrajectoriesData
@@ -23,7 +30,11 @@ def test_discrete_koopman():
     sols = TrajectoriesData(trajs)
     sols = sols.interp_uniform_time(1 / 20.0)
     disc = KoopmanDiscEstimator(
-        IdentityObservable() | RFFObservable(2, 100, 0.001), 0.1, 2, 100
+        IdentityObservable() | RFFObservable(2, 100, 0.001),
+        0.1,
+        2,
+        100,
+        normalize=normalize,
     )
     disc.fit(sols)
     new_inputs = inputs.copy()
@@ -43,7 +54,11 @@ def test_discrete_koopman():
     )
 
 
-def test_cont_koopman():
+@pytest.mark.parametrize(
+    "normalize",
+    koop_config,
+)
+def test_cont_koopman(normalize):
     """tests the continuous time Koopman estimator"""
     from autokoopman.benchmark.pendulum import PendulumWithInput
     from autokoopman.core.trajectory import TrajectoriesData
@@ -65,7 +80,7 @@ def test_cont_koopman():
     sols = TrajectoriesData(trajs)
     sols = sols.interp_uniform_time(1 / 20.0)
     cont = KoopmanContinuousEstimator(
-        IdentityObservable() | RFFObservable(2, 100, 0.001), 2, 100
+        IdentityObservable() | RFFObservable(2, 100, 0.001), 2, 100, normalize=normalize
     )
     cont.fit(sols)
     new_inputs = inputs.copy()

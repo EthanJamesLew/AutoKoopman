@@ -87,31 +87,43 @@ def get_parameter_space(obs_type, threshold_range, rank):
                 DiscreteParameter("rank", *rank),
             ],
         )
+    elif isinstance(obs_type, KoopmanObservable):
+        # assume user has set everything else
+        return ParameterSpace(
+            "koopman-id",
+            [
+                DiscreteParameter("rank", *rank),
+            ],
+        )
 
 
-def get_estimator(obs_type, sampling_period, dim, obs, hyperparams):
+def get_estimator(obs_type, sampling_period, dim, obs, hyperparams, normalize):
     """from the myriad of user suppled switches, select the right estimator"""
     if obs_type == "rff":
         observables = kobs.IdentityObservable() | kobs.RFFObservable(
             dim, obs, hyperparams[0]
         )
         return KoopmanDiscEstimator(
-            observables, sampling_period, dim, rank=hyperparams[1]
+            observables, sampling_period, dim, rank=hyperparams[1], normalize=normalize
         )
     elif obs_type == "quadratic":
         observables = kobs.IdentityObservable() | kobs.QuadraticObservable(dim)
         return KoopmanDiscEstimator(
-            observables, sampling_period, dim, rank=hyperparams[0]
+            observables, sampling_period, dim, rank=hyperparams[0], normalize=normalize
         )
     elif obs_type == "poly":
         observables = kobs.PolynomialObservable(dim, hyperparams[0])
         return KoopmanDiscEstimator(
-            observables, sampling_period, dim, rank=hyperparams[1]
+            observables, sampling_period, dim, rank=hyperparams[1], normalize=normalize
         )
     elif obs_type == "id":
         observables = kobs.IdentityObservable()
         return KoopmanDiscEstimator(
-            observables, sampling_period, dim, rank=hyperparams[0]
+            observables, sampling_period, dim, rank=hyperparams[0], normalize=normalize
+        )
+    elif isinstance(obs_type, KoopmanObservable):
+        return KoopmanDiscEstimator(
+            obs_type, sampling_period, dim, rank=hyperparams[0], normalize=normalize
         )
     else:
         raise ValueError(f"unknown observables type {obs_type}")
@@ -121,6 +133,7 @@ def auto_koopman(
     training_data: Union[TrajectoriesData, Sequence[np.ndarray]],
     inputs_training_data: Optional[Sequence[np.ndarray]] = None,
     sampling_period: Optional[float] = None,
+    normalize: bool = True,
     opt: Union[str, HyperparameterTuner] = "monte-carlo",
     max_opt_iter: int = 100,
     max_epochs: int = 500,
@@ -146,6 +159,7 @@ def auto_koopman(
     :param training_data: training trajectories data from which to learn the system
     :param inputs_training_data: optional input trajectories data from which to learn the system (this isn't needed if the training data has inputs already)
     :param sampling_period: (for discrete time system) sampling period of training data
+    :param normalize: normalize the states of the training trajectories
     :param opt: hyperparameter optimizer {"grid", "monte-carlo", "bopt"}
     :param max_opt_iter: maximum iterations for the tuner to use
     :param max_epochs: maximum number of training epochs
@@ -203,11 +217,24 @@ def auto_koopman(
     # get the hyperparameter map
     if obs_type in {"deep"}:
         modelmap = _deep_model_map(
-            training_data, max_epochs, n_obs, enc_dim, n_layers, torch_device, verbose
+            training_data,
+            max_epochs,
+            n_obs,
+            enc_dim,
+            n_layers,
+            torch_device,
+            verbose,
+            normalize,
         )
     else:
         modelmap = _edmd_model_map(
-            training_data, rank, obs_type, n_obs, lengthscale, sampling_period
+            training_data,
+            rank,
+            obs_type,
+            n_obs,
+            lengthscale,
+            sampling_period,
+            normalize,
         )
 
     # setup the tuner
@@ -227,7 +254,7 @@ def auto_koopman(
         gt = BayesianOptTuner(modelmap, training_data, verbose=verbose)
     else:
         raise ValueError(f"could not match a tuner to the string {opt}")
-    
+
     with hide_prints():
         res = gt.tune(nattempts=max_opt_iter, scoring_func=get_scoring_func(cost_func))
 
@@ -254,6 +281,7 @@ def _deep_model_map(
     nlayers,
     torch_device,
     verbose,
+    normalize,
 ) -> HyperparameterMap:
     import autokoopman.estimator.deepkoopman as dk
 
@@ -299,7 +327,7 @@ def _deep_model_map(
 
 
 def _edmd_model_map(
-    training_data, rank, obs_type, n_obs, lengthscale, sampling_period
+    training_data, rank, obs_type, n_obs, lengthscale, sampling_period, normalize
 ) -> HyperparameterMap:
     """model map for eDMD based methods
 
@@ -334,7 +362,9 @@ def _edmd_model_map(
             super(_ModelMap, self).__init__(pspace)
 
         def get_model(self, hyperparams: Sequence):
-            return get_estimator(obs_type, sampling_period, dim, n_obs, hyperparams)
+            return get_estimator(
+                obs_type, sampling_period, dim, n_obs, hyperparams, normalize
+            )
 
     # get the hyperparameter map
     return _ModelMap()
@@ -365,7 +395,16 @@ def _sanitize_training_data(
     # convert the data to autokoopman trajectories
     if isinstance(training_data, TrajectoriesData):
         if not isinstance(training_data, UniformTimeTrajectoriesData):
+            print(
+                f"resampling trajectories as they need to be uniform time (sampling period {sampling_period})"
+            )
             training_data = training_data.interp_uniform_time(sampling_period)
+        else:
+            if not np.isclose(training_data.sampling_period, sampling_period):
+                print(
+                    f"resampling trajectories because the sampling periods differ (original {training_data.sampling_period}, new {sampling_period})"
+                )
+                training_data = training_data.interp_uniform_time(sampling_period)
     else:
         # figure out how to add inputs
         training_iter = (

@@ -1,4 +1,4 @@
-[![PyPI version](https://badge.fury.io/py/AutoKoopman.svg)](https://pypi.org/project/autokoopman/)
+[![PyPI version](https://badge.fury.io/py/autokoopman.svg)](https://badge.fury.io/py/autokoopman)
 [![license](https://img.shields.io/github/license/EthanJamesLew/AutoKoopman)](LICENSE)
 [![Conda CI Workflow](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml/badge.svg)](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml)
 [![Sphinx Workflow](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/documentation.yml/badge.svg)](https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/documentation.yml)

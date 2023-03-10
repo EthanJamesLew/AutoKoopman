@@ -1,1 +1,2 @@
 autokoopman/_version.py export-subst
+*.ipynb linguist-detectable=false

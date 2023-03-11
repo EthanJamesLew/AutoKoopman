@@ -1,3 +1,11 @@
+"""
+MonteCarloTuner: Monte Carlo hyperparameter tuner for AutoKoopman.
+
+The `MonteCarloTuner` class implements a Monte Carlo algorithm to randomly 
+sample the hyperparameter space and find the optimal set of hyperparameters 
+for a given AutoKoopman algorithm.
+"""
+
 import autokoopman.core.tuner as atuner
 from autokoopman.core.trajectory import TrajectoriesData
 from autokoopman.core.tuner import TuneResults, TrajectoryScoring

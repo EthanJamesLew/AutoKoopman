@@ -21,6 +21,7 @@ class TrajectoryEstimator(abc.ABC):
     :param normalize: apply MinMax normalization to the fit data
     :param feature_range: range for MinMax scaler
     """
+
     def __init__(self, normalize=True, feature_range=(-1, 1)) -> None:
         self.normalize = normalize
         if self.normalize:
@@ -75,7 +76,7 @@ class GradientEstimator(TrajectoryEstimator):
     """Estimator of discrete time dynamical systems
 
     Requires that the data be uniform time
-    
+
     :param normalize: apply MinMax normalization to the fit data
     :param feature_range: range for MinMax scaler
     """

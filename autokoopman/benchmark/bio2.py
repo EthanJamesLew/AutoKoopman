@@ -5,7 +5,7 @@ import autokoopman.core.system as asys
 
 class Bio2(asys.SymbolicContinuousSystem):
     r"""
-    Spring pendulum
+    Biological System 2
         A nine-dimensional continuous model which is adapted from a biological system given in [1].
 
         Initial set:

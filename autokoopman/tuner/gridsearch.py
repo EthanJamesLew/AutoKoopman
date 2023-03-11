@@ -1,3 +1,10 @@
+"""
+GridSearchTuner: Grid search hyperparameter tuner for AutoKoopman.
+
+The `GridSearchTuner` class implements a grid search algorithm to exhaustively 
+search the hyperparameter space and find the optimal set of hyperparameters 
+for a given AutoKoopman algorithm.
+"""
 import numpy as np
 
 from autokoopman.core.trajectory import TrajectoriesData

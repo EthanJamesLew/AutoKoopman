@@ -5,6 +5,8 @@ from autokoopman.core.tuner import (
     TuneResults,
     TrajectoryScoring,
     HyperparameterMap,
+)
+from autokoopman.core.hyperparameter import (
     ParameterSpace,
     FiniteParameter,
     DiscreteParameter,

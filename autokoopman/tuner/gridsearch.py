@@ -5,9 +5,12 @@ from autokoopman.core.tuner import (
     TuneResults,
     TrajectoryScoring,
     HyperparameterMap,
+)
+from autokoopman.core.hyperparameter import (
     ParameterSpace,
 )
 import autokoopman.core.tuner as atuner
+import autokoopman.core.hyperparameter as ahyp
 import itertools
 from typing import Callable
 
@@ -17,7 +20,7 @@ class GridSearchTuner(atuner.HyperparameterTuner):
     def make_grid(space: ParameterSpace, n_samps):
         parameters = []
         for coord in space:
-            if isinstance(coord, atuner.ContinuousParameter):
+            if isinstance(coord, ahyp.ContinuousParameter):
                 if coord.distribution == "loguniform":
                     elems = np.logspace(
                         np.log10(coord._interval[0]),
@@ -29,7 +32,7 @@ class GridSearchTuner(atuner.HyperparameterTuner):
                     parameters.append(
                         np.linspace(coord._interval[0], coord._interval[1], num=n_samps)
                     )
-            elif isinstance(coord, atuner.FiniteParameter):
+            elif isinstance(coord, ahyp.FiniteParameter):
                 parameters.append(list(coord.elements))
         return parameters
 

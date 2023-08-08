@@ -361,12 +361,12 @@ class KoopmanSystem:
     """
     mixin class for Koopman systems
     """
-    def __init__(self, A, B, obs, names):
+    def __init__(self, A, B, obs, names, dim=None):
         self._A = A
         self._B = B
-        self._has_input = not np.any(np.array(B.shape) == 0)
+        self._has_input = B is not None and not np.any(np.array(B.shape) == 0)
         self.obs = obs
-        self.dim = A.shape[0]
+        self.dim = A.shape[0] if dim is None else dim
 
         def evolv_func(t, x, i):
             obs = (self.obs(x).flatten())[np.newaxis, :]

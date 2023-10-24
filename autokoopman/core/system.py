@@ -399,6 +399,10 @@ class KoopmanSystem:
         return self._A
 
     @property
+    def koopman_operator(self):
+        return self._A
+
+    @property
     def B(self):
         return self._B
 

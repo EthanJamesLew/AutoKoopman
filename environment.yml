@@ -1,7 +1,7 @@
 name: autokoopman
 channels:
   - conda-forge
-  - defaults
+  - nodefaults
 dependencies:
   - blas=1.0=openblas
   - ca-certificates=2023.08.22=hca03da5_0

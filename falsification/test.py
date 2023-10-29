@@ -70,8 +70,6 @@ if __name__ == '__main__':
 
     params = experiment_results['hyperparameters']
     paramVals = experiment_results['hyperparameter_values']
-    score = experiment_results['tuner_score']
 
-    print(score)
     print(params)
     print(paramVals)

@@ -178,18 +178,13 @@ class HyperparameterTuner(abc.ABC):
         preds = {}
         # get the predictions
         for k, v in holdout_data._trajs.items():
-            # ugh, this is a hack--sampling period is meaningful if the system is discrete
-            # TODO: make the behavior of sampling period less problematic
-            _kwargs = {}
-            if hasattr(v, "sampling_period"):
-                _kwargs["sampling_period"] = v.sampling_period
             sivp_interp = trained_model.model.solve_ivp(
                 v.states[0],
                 (np.min(v.times), np.max(v.times)),
                 inputs=v.inputs,
                 teval=v.times,
-                **_kwargs,
             )
+            # sivp_interp = sivp_interp.interp1d(v.times)
             preds[k] = sivp_interp
         return TrajectoriesData(preds)
 

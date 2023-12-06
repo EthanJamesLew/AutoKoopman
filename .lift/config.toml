@@ -1,0 +1,3 @@
+ignoreFiles = '''
+autokoopman/_version.py
+'''

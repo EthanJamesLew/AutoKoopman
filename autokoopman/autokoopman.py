@@ -75,7 +75,7 @@ def get_parameter_space(obs_type, threshold_range, rank):
         return ParameterSpace(
             "koopman-polynomial",
             [
-                DiscreteParameter("degree", 1, 5),
+                DiscreteParameter("degree", 1, 3),
                 DiscreteParameter("rank", *rank),
             ],
         )
@@ -133,7 +133,7 @@ def auto_koopman(
     training_data: Union[TrajectoriesData, Sequence[np.ndarray]],
     inputs_training_data: Optional[Sequence[np.ndarray]] = None,
     sampling_period: Optional[float] = None,
-    normalize: bool = True,
+    normalize: bool = False,
     opt: Union[str, HyperparameterTuner] = "monte-carlo",
     max_opt_iter: int = 100,
     max_epochs: int = 500,

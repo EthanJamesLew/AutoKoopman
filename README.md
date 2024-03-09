@@ -120,6 +120,20 @@ The library architecture has a modular design, allowing users to implement custo
 See the
 [AutoKoopman Documentation](https://ethanjameslew.github.io/AutoKoopman/).
 
+## Citing AutoKoopman
+
+Bibtex:
+```
+@inproceedings{lew2023autokoopman,
+  title={Autokoopman: A toolbox for automated system identification via koopman operator linearization},
+  author={Lew, Ethan and Hekal, Abdelrahman and Potomkin, Kostiantyn and Kochdumper, Niklas and Hencey, Brandon and Bak, Stanley and Bogomolov, Sergiy},
+  booktitle={International Symposium on Automated Technology for Verification and Analysis},
+  pages={237--250},
+  year={2023},
+  organization={Springer}
+}
+```
+
 ## References  
 
 <a id="1">[1]</a> Williams, M. O., Kevrekidis, I. G., & Rowley, C. W. (2015). A data–driven approximation of the koopman operator: Extending dynamic mode decomposition. Journal of Nonlinear Science, 25, 1307-1346.

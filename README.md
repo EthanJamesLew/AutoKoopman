@@ -122,6 +122,12 @@ See the
 
 ## Citing AutoKoopman
 
+AutoKoopman has been published as a tool paper at ATVA 2023. The preprint can be found [here](https://www.researchgate.net/profile/Ethan-Lew/publication/374805680_AutoKoopman_A_Toolbox_for_Automated_System_Identification_via_Koopman_Operator_Linearization/links/6537cf9f1d6e8a70704c7f31/AutoKoopman-A-Toolbox-for-Automated-System-Identification-via-Koopman-Operator-Linearization.pdf).
+
+If you cite AutoKoopman, please cite
+
+Lew, E., Hekal, A., Potomkin, K., Kochdumper, N., Hencey, B., Bak, S., & Bogomolov, S. (2023, October). Autokoopman: A toolbox for automated system identification via koopman operator linearization. In International Symposium on Automated Technology for Verification and Analysis (pp. 237-250). Cham: Springer Nature Switzerland.
+
 Bibtex:
 ```
 @inproceedings{lew2023autokoopman,

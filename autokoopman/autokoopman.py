@@ -1,7 +1,7 @@
 """
 Main AutoKoopman Function (Convenience Function)
 """
-from typing import Callable, Union, Sequence, Optional, Tuple
+from typing import Callable, Dict, Hashable, Union, Sequence, Optional, Tuple
 
 import numpy as np
 
@@ -33,10 +33,10 @@ __all__ = ["auto_koopman"]
 # valid string identifiers for the autokoopman magic
 obs_types = {"rff", "poly", "quadratic", "id", "deep"}
 opt_types = {"grid", "monte-carlo", "bopt"}
-scoring_func_types = {"total", "end", "relative"}
+scoring_func_types = {"total", "end", "relative", "weighted"}
 
 
-def get_scoring_func(score_name):
+def get_scoring_func(score_name, scoring_weights):
     """resolve scoring function from name or callable type"""
     # if callable, just return it
     if callable(score_name):
@@ -47,6 +47,10 @@ def get_scoring_func(score_name):
         return TrajectoryScoring.end_point_score
     elif score_name == "relative":
         return TrajectoryScoring.relative_score
+    elif score_name == "weighted":
+        return lambda true, pred: TrajectoryScoring.weighted_score(
+            true, pred, scoring_weights
+        )
     else:
         raise ValueError(
             f"Scoring function name {score_name} is not in available list (names are {scoring_func_types})"
@@ -153,6 +157,9 @@ def auto_koopman(
     cost_func: Union[
         str, Callable[[TrajectoriesData, TrajectoriesData], float]
     ] = "total",
+    scoring_weights: Optional[
+        Union[Sequence[np.ndarray], Dict[Hashable, np.ndarray]]
+    ] = None,
     n_obs: int = 100,
     rank: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
     grid_param_slices: int = 10,
@@ -222,8 +229,18 @@ def auto_koopman(
             # 'estimator': <autokoopman.estimator.koopman.KoopmanDiscEstimator at 0x7f0f92ff0610>}
     """
 
-    training_data, sampling_period = _sanitize_training_data(
-        training_data, inputs_training_data, sampling_period, opt, obs_type
+    if cost_func == "weighted":
+        assert (
+            scoring_weights is not None
+        ), f"weighted scoring requires scoring weights (currently None)"
+
+    training_data, sampling_period, scoring_weights = _sanitize_training_data(
+        training_data,
+        inputs_training_data,
+        sampling_period,
+        opt,
+        obs_type,
+        scoring_weights,
     )
 
     # get the hyperparameter map
@@ -271,7 +288,10 @@ def auto_koopman(
         raise ValueError(f"could not match a tuner to the string {opt}")
 
     with hide_prints():
-        res = gt.tune(nattempts=max_opt_iter, scoring_func=get_scoring_func(cost_func))
+        res = gt.tune(
+            nattempts=max_opt_iter,
+            scoring_func=get_scoring_func(cost_func, scoring_weights),
+        )
 
     # pack results into out custom output
     result = {
@@ -400,7 +420,7 @@ def _edmd_model_map(
 
 
 def _sanitize_training_data(
-    training_data, inputs_training_data, sampling_period, opt, obs_type
+    training_data, inputs_training_data, sampling_period, opt, obs_type, scoring_weights
 ):
     """auto_koopman input sanitization"""
 
@@ -458,4 +478,4 @@ def _sanitize_training_data(
                 }
             )
 
-    return training_data, sampling_period
+    return training_data, sampling_period, scoring_weights

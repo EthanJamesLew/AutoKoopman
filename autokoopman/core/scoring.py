@@ -13,7 +13,14 @@ class TrajectoryScoring:
         prediction_data: TrajectoriesData,
         weights: Dict[Hashable, np.ndarray],
     ):
-        raise NotImplementedError("weighted scoring not yet implemented")
+        assert (
+            weights.keys() == true_data.keys() == prediction_data.keys()
+        ), f"Datasets keys (true={true_data.keys()}, prediction={prediction_data.keys()}) and Weights keys ({weights.keys()}) must correspond!"
+        errors = (prediction_data - true_data).norm()
+        end_errors = np.array(
+            [weights[n] * s.states.flatten() for n, s in errors._trajs.items()]
+        )
+        return np.sum(np.concatenate(end_errors, axis=0))
 
     @staticmethod
     def end_point_score(true_data: TrajectoriesData, prediction_data: TrajectoriesData):
@@ -25,7 +32,6 @@ class TrajectoryScoring:
     def total_score(true_data: TrajectoriesData, prediction_data: TrajectoriesData):
         errors = (prediction_data - true_data).norm()
         end_errors = np.array([s.states.flatten() for s in errors])
-
         return np.mean(np.concatenate(end_errors, axis=0))
 
     @staticmethod

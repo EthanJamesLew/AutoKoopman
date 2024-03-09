@@ -27,17 +27,28 @@ def test_autokoopman(obs, opt, cost, normalize):
     np.random.seed(0)
 
     # given issue #29, let's make these differently sized
+    sp = 0.1
     ivs = np.random.uniform(low=-2.0, high=2.0, size=(20, 2))
+    t_ends = [np.random.random() + 1.0 for idx in range(len(ivs))]
+    lengths = [int(t_end // sp) for t_end in t_ends]
     training_data = UniformTimeTrajectoriesData(
         {
             idx: fhn.solve_ivp(
                 initial_state=iv,
-                tspan=[0.0, np.random.random() + 1.0],
-                sampling_period=0.1,
+                tspan=[0.0, t_ends[idx]],
+                sampling_period=sp,
             )
             for idx, iv in enumerate(ivs)
         }
     )
+
+    # produce scoring weights if the cost is weighted
+    if cost == "weighted":
+        scoring_weights = {
+            idx: np.ones((length,)) * 0.01 for idx, length in enumerate(lengths)
+        }
+    else:
+        scoring_weights = None
 
     # learn model from data
     # make the run as short as possible but still be meaningful for catching errors
@@ -47,6 +58,7 @@ def test_autokoopman(obs, opt, cost, normalize):
         obs_type=obs,
         opt=opt,
         cost_func=cost,
+        scoring_weights=scoring_weights,
         n_obs=20,
         max_opt_iter=2,
         grid_param_slices=2,

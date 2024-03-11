@@ -1,5 +1,5 @@
 import sympy as sp  # type: ignore
-from numpy import cos, sin
+from sympy import cos, sin
 
 import autokoopman.core.system as asys
 

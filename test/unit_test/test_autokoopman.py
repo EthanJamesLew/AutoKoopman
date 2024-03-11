@@ -119,7 +119,7 @@ def test_autokoopman_np(obs, opt, cost, normalize):
     # make the run as short as possible but still be meaningful for catching errors
     experiment_results = auto_koopman(
         training_data_np,
-        sampling_period=0.1,
+        sampling_period=sp,
         obs_type=obs,
         opt=opt,
         cost_func=cost,

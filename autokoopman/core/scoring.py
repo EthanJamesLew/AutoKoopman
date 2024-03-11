@@ -13,9 +13,8 @@ class TrajectoryScoring:
         prediction_data: TrajectoriesData,
         weights: Dict[Hashable, np.ndarray],
     ):
-        assert (
-            weights.keys() == true_data.keys() == prediction_data.keys()
-        ), f"Datasets keys (true={true_data.keys()}, prediction={prediction_data.keys()}) and Weights keys ({weights.keys()}) must correspond!"
+        assert true_data.traj_names.issubset(set(weights.keys())) and prediction_data.traj_names.issubset(set(weights.keys())), f"Datasets trajectory names (true={true_data.traj_names}, prediction={prediction_data.traj_names}) and Weights keys ({weights.keys()}) must correspond!"
+
         errors = (prediction_data - true_data).norm()
         end_errors = np.array(
             [weights[n] * s.states.flatten() for n, s in errors._trajs.items()]

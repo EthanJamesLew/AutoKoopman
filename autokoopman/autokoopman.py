@@ -443,6 +443,7 @@ def _sanitize_training_data(
 
     # convert the data to autokoopman trajectories
     if isinstance(training_data, TrajectoriesData):
+        assert scoring_weights is None, f"scoring weights must be None as interpolation is occuring"
         if not isinstance(training_data, UniformTimeTrajectoriesData):
             print(
                 f"resampling trajectories as they need to be uniform time (sampling period {sampling_period})"
@@ -455,6 +456,11 @@ def _sanitize_training_data(
                 )
                 training_data = training_data.interp_uniform_time(sampling_period)
     else:
+        if isinstance(training_data, dict):
+            assert isinstance(scoring_weights, dict), "training data has unordered keys, so scoring weights must be a dictionary with matching keys"
+        else:
+            scoring_weights = {idx: weights for idx, weights in enumerate(scoring_weights)}
+
         # figure out how to add inputs
         training_iter = (
             training_data.items() if isinstance(training_data, dict) else enumerate(training_data)

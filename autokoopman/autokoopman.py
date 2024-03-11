@@ -457,7 +457,7 @@ def _sanitize_training_data(
     else:
         # figure out how to add inputs
         training_iter = (
-            training_data.items() if isinstance(training_data, dict) else training_data
+            training_data.items() if isinstance(training_data, dict) else enumerate(training_data)
         )
         if inputs_training_data is not None:
             training_iter = [(n, x, inputs_training_data[n]) for n, x in training_iter]

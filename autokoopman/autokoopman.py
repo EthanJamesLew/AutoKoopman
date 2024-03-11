@@ -287,11 +287,17 @@ def auto_koopman(
     else:
         raise ValueError(f"could not match a tuner to the string {opt}")
 
-    with hide_prints():
+    if verbose:
         res = gt.tune(
             nattempts=max_opt_iter,
             scoring_func=get_scoring_func(cost_func, scoring_weights),
         )
+    else:
+        with hide_prints():
+            res = gt.tune(
+                nattempts=max_opt_iter,
+                scoring_func=get_scoring_func(cost_func, scoring_weights),
+            )
 
     # pack results into out custom output
     result = {

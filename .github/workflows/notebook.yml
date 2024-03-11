@@ -20,12 +20,11 @@ jobs:
         echo $CONDA/bin >> $GITHUB_PATH
     - name: Install dependencies
       run: |
-         conda env update --solver classic --file environment.yml --name base
+        conda env update --file environment.yml --name base
     - name: Test with pytest
       run: |
         pip install .
         conda install pytest
-        pip install nbmake==0.5
+        pip install nbmake==1.5.3
         pytest --nbmake "./notebooks/"
-        pytest
 

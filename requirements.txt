@@ -5,5 +5,5 @@ pydata-sphinx-theme==0.7.2
 sphinx_mdinclude==0.5.1
 gpy==1.10.0
 gpyopt==1.2.6
-torch==1.12.1
-pysindy==1.7.2
+torch==2.2.1
+scikit-learn==1.4.1.post1

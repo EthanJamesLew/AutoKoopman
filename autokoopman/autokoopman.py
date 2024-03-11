@@ -449,14 +449,15 @@ def _sanitize_training_data(
 
     # convert the data to autokoopman trajectories
     if isinstance(training_data, TrajectoriesData):
-        assert scoring_weights is None, f"scoring weights must be None as interpolation is occuring"
         if not isinstance(training_data, UniformTimeTrajectoriesData):
+            assert scoring_weights is None, f"scoring weights must be None as interpolation is occuring"
             print(
                 f"resampling trajectories as they need to be uniform time (sampling period {sampling_period})"
             )
             training_data = training_data.interp_uniform_time(sampling_period)
         else:
             if not np.isclose(training_data.sampling_period, sampling_period):
+                assert scoring_weights is None, f"scoring weights must be None as interpolation is occuring"
                 print(
                     f"resampling trajectories because the sampling periods differ (original {training_data.sampling_period}, new {sampling_period})"
                 )

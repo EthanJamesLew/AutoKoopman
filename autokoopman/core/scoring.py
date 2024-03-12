@@ -1,6 +1,7 @@
 """Scoring Metrics for Evaluation
 """
 import numpy as np
+from numpy.linalg import norm
 
 from typing import Dict, Hashable
 from autokoopman.core.trajectory import TrajectoriesData
@@ -13,11 +14,24 @@ class TrajectoryScoring:
         prediction_data: TrajectoriesData,
         weights: Dict[Hashable, np.ndarray],
     ):
-        assert true_data.traj_names.issubset(set(weights.keys())) and prediction_data.traj_names.issubset(set(weights.keys())), f"Datasets trajectory names (true={true_data.traj_names}, prediction={prediction_data.traj_names}) and Weights keys ({weights.keys()}) must correspond!"
+        assert true_data.traj_names.issubset(
+            set(weights.keys())
+        ) and prediction_data.traj_names.issubset(
+            set(weights.keys())
+        ), f"Datasets trajectory names (true={true_data.traj_names}, prediction={prediction_data.traj_names}) and Weights keys ({weights.keys()}) must correspond!"
 
-        errors = (prediction_data - true_data).norm()
+        # finalize the shapes weights
+        w_iter = weights.items() if isinstance(weights, dict) else enumerate(weights)
+        weights_f = {}
+        for k, w in w_iter:
+            w = np.array(w)
+            if len(w.shape) == 1:
+                w = np.tile(np.atleast_2d(w).T, reps=(1, len(true_data.state_names)))
+            weights_f[k] = w
+
+        absdiff = (prediction_data - true_data).abs()
         end_errors = np.array(
-            [weights[n] * s.states.flatten() for n, s in errors._trajs.items()]
+            [norm(weights_f[n] * s.states, axis=1) for n, s in absdiff._trajs.items()]
         )
         return np.sum(np.concatenate(end_errors, axis=0))
 

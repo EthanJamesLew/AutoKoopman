@@ -21,9 +21,8 @@ class TrajectoryScoring:
         ), f"Datasets trajectory names (true={true_data.traj_names}, prediction={prediction_data.traj_names}) and Weights keys ({weights.keys()}) must correspond!"
 
         # finalize the shapes weights
-        w_iter = weights.items() if isinstance(weights, dict) else enumerate(weights)
         weights_f = {}
-        for k, w in w_iter:
+        for k, w in weights.items():
             w = np.array(w)
             if len(w.shape) == 1:
                 w = np.tile(np.atleast_2d(w).T, reps=(1, len(true_data.state_names)))

@@ -210,6 +210,16 @@ class Trajectory:
             threshold=self._threshold,
         )
 
+    def abs(self) -> "Trajectory":
+        return Trajectory(
+            self.times,
+            np.abs(self.states),
+            None,
+            state_names=self.names,
+            input_names=None,
+            threshold=self._threshold,
+        )
+
 
 class UniformTimeTrajectory(Trajectory):
     """uniform time is a trajectory advanced by a sampling period"""
@@ -490,6 +500,9 @@ class TrajectoriesData:
 
     def norm(self):
         return TrajectoriesData({k: v.norm() for k, v in self._trajs.items()})
+
+    def abs(self):
+        return TrajectoriesData({k: v.abs() for k, v in self._trajs.items()})
 
 
 class UniformTimeTrajectoriesData(TrajectoriesData):

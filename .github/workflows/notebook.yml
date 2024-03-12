@@ -25,7 +25,6 @@ jobs:
       run: |
         pip install .
         conda install pytest
-        pip install nbmake==0.5
+        pip install nbmake==1.5.3
         pytest --nbmake "./notebooks/"
-        pytest
 

@@ -1,7 +1,7 @@
 """
 Main AutoKoopman Function (Convenience Function)
 """
-from typing import Callable, Union, Sequence, Optional, Tuple
+from typing import Callable, Dict, Hashable, Union, Sequence, Optional, Tuple
 
 import numpy as np
 
@@ -20,6 +20,7 @@ from autokoopman.core.tuner import (
     TrajectoryScoring,
 )
 from autokoopman.estimator.koopman import KoopmanDiscEstimator
+from autokoopman.estimator.koopman import KoopmanContinuousEstimator
 from autokoopman.tuner.gridsearch import GridSearchTuner
 from autokoopman.tuner.montecarlo import MonteCarloTuner
 from autokoopman.tuner.bayesianopt import BayesianOptTuner
@@ -32,10 +33,10 @@ __all__ = ["auto_koopman"]
 # valid string identifiers for the autokoopman magic
 obs_types = {"rff", "poly", "quadratic", "id", "deep"}
 opt_types = {"grid", "monte-carlo", "bopt"}
-scoring_func_types = {"total", "end", "relative"}
+scoring_func_types = {"total", "end", "relative", "weighted"}
 
 
-def get_scoring_func(score_name):
+def get_scoring_func(score_name, scoring_weights):
     """resolve scoring function from name or callable type"""
     # if callable, just return it
     if callable(score_name):
@@ -46,6 +47,10 @@ def get_scoring_func(score_name):
         return TrajectoryScoring.end_point_score
     elif score_name == "relative":
         return TrajectoryScoring.relative_score
+    elif score_name == "weighted":
+        return lambda true, pred: TrajectoryScoring.weighted_score(
+            true, pred, scoring_weights
+        )
     else:
         raise ValueError(
             f"Scoring function name {score_name} is not in available list (names are {scoring_func_types})"
@@ -97,32 +102,41 @@ def get_parameter_space(obs_type, threshold_range, rank):
         )
 
 
-def get_estimator(obs_type, sampling_period, dim, obs, hyperparams, normalize):
+def get_estimator(
+    obs_type, learn_continuous, sampling_period, dim, obs, hyperparams, normalize
+):
     """from the myriad of user suppled switches, select the right estimator"""
+
+    def inst_estimator(*args, **kwargs):
+        if learn_continuous:
+            return KoopmanContinuousEstimator(args[0], *args[2:], **kwargs)
+        else:
+            return KoopmanDiscEstimator(*args, **kwargs)
+
     if obs_type == "rff":
         observables = kobs.IdentityObservable() | kobs.RFFObservable(
             dim, obs, hyperparams[0]
         )
-        return KoopmanDiscEstimator(
+        return inst_estimator(
             observables, sampling_period, dim, rank=hyperparams[1], normalize=normalize
         )
     elif obs_type == "quadratic":
         observables = kobs.IdentityObservable() | kobs.QuadraticObservable(dim)
-        return KoopmanDiscEstimator(
+        return inst_estimator(
             observables, sampling_period, dim, rank=hyperparams[0], normalize=normalize
         )
     elif obs_type == "poly":
         observables = kobs.PolynomialObservable(dim, hyperparams[0])
-        return KoopmanDiscEstimator(
+        return inst_estimator(
             observables, sampling_period, dim, rank=hyperparams[1], normalize=normalize
         )
     elif obs_type == "id":
         observables = kobs.IdentityObservable()
-        return KoopmanDiscEstimator(
+        return inst_estimator(
             observables, sampling_period, dim, rank=hyperparams[0], normalize=normalize
         )
     elif isinstance(obs_type, KoopmanObservable):
-        return KoopmanDiscEstimator(
+        return inst_estimator(
             obs_type, sampling_period, dim, rank=hyperparams[0], normalize=normalize
         )
     else:
@@ -132,6 +146,7 @@ def get_estimator(obs_type, sampling_period, dim, obs, hyperparams, normalize):
 def auto_koopman(
     training_data: Union[TrajectoriesData, Sequence[np.ndarray]],
     inputs_training_data: Optional[Sequence[np.ndarray]] = None,
+    learn_continuous: bool = False,
     sampling_period: Optional[float] = None,
     normalize: bool = False,
     opt: Union[str, HyperparameterTuner] = "monte-carlo",
@@ -142,6 +157,9 @@ def auto_koopman(
     cost_func: Union[
         str, Callable[[TrajectoriesData, TrajectoriesData], float]
     ] = "total",
+    scoring_weights: Optional[
+        Union[Sequence[np.ndarray], Dict[Hashable, np.ndarray]]
+    ] = None,
     n_obs: int = 100,
     rank: Optional[Union[Tuple[int, int], Tuple[int, int, int]]] = None,
     grid_param_slices: int = 10,
@@ -158,6 +176,7 @@ def auto_koopman(
 
     :param training_data: training trajectories data from which to learn the system
     :param inputs_training_data: optional input trajectories data from which to learn the system (this isn't needed if the training data has inputs already)
+    :param learn_continuous: whether to learn a continuous time or discrete time Koopman estimator
     :param sampling_period: (for discrete time system) sampling period of training data
     :param normalize: normalize the states of the training trajectories
     :param opt: hyperparameter optimizer {"grid", "monte-carlo", "bopt"}
@@ -165,7 +184,7 @@ def auto_koopman(
     :param max_epochs: maximum number of training epochs
     :param n_splits: (for optimizers) if set, switches to k-folds bootstrap validation for the hyperparameter tuning. This is useful for things like RFF tuning where the results have noise.
     :param obs_type: (for koopman) koopman observables to use {"rff", "quadratic", "poly", "id", "deep"}
-    :param cost_func: cost function to use for hyperparameter optimization
+    :param cost_func: cost function to use for hyperparameter optimization {"total", "end", "relative"}
     :param  n_obs: (for koopman) number of observables to use (if applicable)
     :param rank: (for koopman) rank range (start, stop) or (start, stop, step)
     :param grid_param_slices: (for grid tuner) resolution to slice continuous valued parameters into
@@ -210,12 +229,24 @@ def auto_koopman(
             # 'estimator': <autokoopman.estimator.koopman.KoopmanDiscEstimator at 0x7f0f92ff0610>}
     """
 
-    training_data, sampling_period = _sanitize_training_data(
-        training_data, inputs_training_data, sampling_period, opt, obs_type
+    if cost_func == "weighted":
+        assert (
+            scoring_weights is not None
+        ), f"weighted scoring requires scoring weights (currently None)"
+
+    training_data, sampling_period, scoring_weights = _sanitize_training_data(
+        training_data,
+        inputs_training_data,
+        sampling_period,
+        opt,
+        obs_type,
+        scoring_weights,
     )
 
     # get the hyperparameter map
     if obs_type in {"deep"}:
+        if learn_continuous:
+            raise ValueError("deep learning is only for discrete systems")
         modelmap = _deep_model_map(
             training_data,
             max_epochs,
@@ -229,6 +260,7 @@ def auto_koopman(
     else:
         modelmap = _edmd_model_map(
             training_data,
+            learn_continuous,
             rank,
             obs_type,
             n_obs,
@@ -255,8 +287,17 @@ def auto_koopman(
     else:
         raise ValueError(f"could not match a tuner to the string {opt}")
 
-    with hide_prints():
-        res = gt.tune(nattempts=max_opt_iter, scoring_func=get_scoring_func(cost_func))
+    if verbose:
+        res = gt.tune(
+            nattempts=max_opt_iter,
+            scoring_func=get_scoring_func(cost_func, scoring_weights),
+        )
+    else:
+        with hide_prints():
+            res = gt.tune(
+                nattempts=max_opt_iter,
+                scoring_func=get_scoring_func(cost_func, scoring_weights),
+            )
 
     # pack results into out custom output
     result = {
@@ -327,11 +368,19 @@ def _deep_model_map(
 
 
 def _edmd_model_map(
-    training_data, rank, obs_type, n_obs, lengthscale, sampling_period, normalize
+    training_data,
+    learn_continuous,
+    rank,
+    obs_type,
+    n_obs,
+    lengthscale,
+    sampling_period,
+    normalize,
 ) -> HyperparameterMap:
     """model map for eDMD based methods
 
-    :param training_data:
+    :param training_data: trajectories training dataset
+    :param learn_continuous: whether to learn continuous time or discrete time Koopman estimator
     :param rank: set of ranks to try (of DMD rank parameter)
     :param obs_type:
     :param n_obs: some obs type require a number of observables
@@ -363,7 +412,13 @@ def _edmd_model_map(
 
         def get_model(self, hyperparams: Sequence):
             return get_estimator(
-                obs_type, sampling_period, dim, n_obs, hyperparams, normalize
+                obs_type,
+                learn_continuous,
+                sampling_period,
+                dim,
+                n_obs,
+                hyperparams,
+                normalize,
             )
 
     # get the hyperparameter map
@@ -371,7 +426,7 @@ def _edmd_model_map(
 
 
 def _sanitize_training_data(
-    training_data, inputs_training_data, sampling_period, opt, obs_type
+    training_data, inputs_training_data, sampling_period, opt, obs_type, scoring_weights
 ):
     """auto_koopman input sanitization"""
 
@@ -395,20 +450,27 @@ def _sanitize_training_data(
     # convert the data to autokoopman trajectories
     if isinstance(training_data, TrajectoriesData):
         if not isinstance(training_data, UniformTimeTrajectoriesData):
+            assert scoring_weights is None, f"scoring weights must be None as interpolation is occuring"
             print(
                 f"resampling trajectories as they need to be uniform time (sampling period {sampling_period})"
             )
             training_data = training_data.interp_uniform_time(sampling_period)
         else:
             if not np.isclose(training_data.sampling_period, sampling_period):
+                assert scoring_weights is None, f"scoring weights must be None as interpolation is occuring"
                 print(
                     f"resampling trajectories because the sampling periods differ (original {training_data.sampling_period}, new {sampling_period})"
                 )
                 training_data = training_data.interp_uniform_time(sampling_period)
     else:
+        if isinstance(training_data, dict):
+            assert isinstance(scoring_weights, dict), "training data has unordered keys, so scoring weights must be a dictionary with matching keys"
+        else:
+            scoring_weights = {idx: weights for idx, weights in enumerate(scoring_weights)}
+
         # figure out how to add inputs
         training_iter = (
-            training_data.items() if isinstance(training_data, dict) else training_data
+            training_data.items() if isinstance(training_data, dict) else enumerate(training_data)
         )
         if inputs_training_data is not None:
             training_iter = [(n, x, inputs_training_data[n]) for n, x in training_iter]
@@ -429,4 +491,4 @@ def _sanitize_training_data(
                 }
             )
 
-    return training_data, sampling_period
+    return training_data, sampling_period, scoring_weights

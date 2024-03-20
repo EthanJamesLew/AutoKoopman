@@ -601,8 +601,7 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
         """
         return self.n_step_matrices(1, None)[:-1]
 
-    @property
-    def next_step_matrices_weighted(
+    def next_step_matrices_weights(
         self, weights, nstep=1
     ) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray]]:
         r"""
@@ -627,7 +626,7 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
         if weights is None:
             W = None
         else:
-            W = np.hstack([weights[idx].flatten() for idx, _ in items])
+            W = np.hstack([weights[idx].flatten()[1:] for idx, _ in items])
 
         return X, Xp, U, W
 
@@ -650,7 +649,6 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
 
         return X, Xp, U
 
-    @property
     def differentiate_weights(
         self, weights
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -672,6 +670,6 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
             U = None
 
         # collect weights
-        W = np.hstack([weights[idx].flatten() for idx, _ in items])
+        W = np.hstack([weights[idx].flatten()[:-1] for idx, _ in items])
 
         return X, Xp, U, W

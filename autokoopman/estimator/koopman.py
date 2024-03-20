@@ -33,13 +33,14 @@ def dmdc(X, Xp, U, r):
 def wdmdc(X, Xp, U, r, W):
     """Weighted Dynamic Mode Decomposition with Control (wDMDC)"""
     # we allow weights to be either in diag or full representation
-    W = np.diag(W) if len(np.array(W).shape) == 1 else W
+    W = np.diag(W) if len(np.array(W).shape) == 2 else W
 
     if U is not None:
         Y = np.hstack((X, U)).T
     else:
         Y = X.T
     Yp = Xp.T
+    Y, Yp = W * Y, W * Yp
     state_size = Yp.shape[0]
 
     # compute Atilde
@@ -47,8 +48,7 @@ def wdmdc(X, Xp, U, r, W):
     U, Sigma, V = U[:, :r], np.diag(Sigma)[:r, :r], V.conj().T[:, :r]
 
     # get the transformation
-    Q = Sigma @ U.conj().T @ W @ U @ Sigma
-    Atilde = W @ Yp @ V @ np.linalg.pinv(Q) @ U.conj().T
+    Atilde = Yp @ V @ np.linalg.inv(Sigma) @ U.conj().T
     return Atilde[:, :state_size], Atilde[:, state_size:]
 
 
@@ -74,7 +74,7 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
     """
 
     def __init__(self, observables, sampling_period, dim, rank, weights=None, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(weights=weights, **kwargs)
         self.dim = dim
         self.obs = observables
         self.rank = int(rank)
@@ -127,7 +127,7 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
     """
 
     def __init__(self, observables, dim, rank, weights, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(weights=weights, **kwargs)
         self.dim = dim
         self.obs = observables
         self.rank = int(rank)

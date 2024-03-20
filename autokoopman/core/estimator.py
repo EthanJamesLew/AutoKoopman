@@ -51,7 +51,7 @@ class NextStepEstimator(TrajectoryEstimator):
     def __init__(self, normalize=True, feature_range=(-1, 1), weights=None) -> None:
         super().__init__(normalize=normalize, feature_range=feature_range)
         self.names = None
-        self.weights = None
+        self.weights = weights
 
     @abc.abstractmethod
     def fit_next_step(

@@ -120,7 +120,7 @@ def get_estimator(
                 args[0], *args[2:], weights=weights, **kwargs
             )
         else:
-            return KoopmanDiscEstimator(*args, **kwargs)
+            return KoopmanDiscEstimator(*args, weights=weights, **kwargs)
 
     if obs_type == "rff":
         observables = kobs.IdentityObservable() | kobs.RFFObservable(
@@ -499,7 +499,7 @@ def _sanitize_training_data(
                 scoring_weights, dict
             ), "training data has unordered keys, so scoring weights must be a dictionary with matching keys"
         else:
-            if scoring_weights is not None:
+            if scoring_weights is not None and not isinstance(scoring_weights, dict):
                 scoring_weights = {
                     idx: weights for idx, weights in enumerate(scoring_weights)
                 }
@@ -509,7 +509,7 @@ def _sanitize_training_data(
                 learning_weights, dict
             ), "training data has unordered keys, so learning weights must be a dictionary with matching keys"
         else:
-            if learning_weights is not None:
+            if learning_weights is not None and not isinstance(learning_weights, dict):
                 learning_weights = {
                     idx: weights for idx, weights in enumerate(learning_weights)
                 }

@@ -103,13 +103,22 @@ def get_parameter_space(obs_type, threshold_range, rank):
 
 
 def get_estimator(
-    obs_type, learn_continuous, sampling_period, dim, obs, hyperparams, normalize
+    obs_type,
+    learn_continuous,
+    sampling_period,
+    dim,
+    obs,
+    hyperparams,
+    normalize,
+    weights,
 ):
     """from the myriad of user suppled switches, select the right estimator"""
 
     def inst_estimator(*args, **kwargs):
         if learn_continuous:
-            return KoopmanContinuousEstimator(args[0], *args[2:], **kwargs)
+            return KoopmanContinuousEstimator(
+                args[0], *args[2:], weights=weights, **kwargs
+            )
         else:
             return KoopmanDiscEstimator(*args, **kwargs)
 
@@ -158,6 +167,9 @@ def auto_koopman(
         str, Callable[[TrajectoriesData, TrajectoriesData], float]
     ] = "total",
     scoring_weights: Optional[
+        Union[Sequence[np.ndarray], Dict[Hashable, np.ndarray]]
+    ] = None,
+    learning_weights: Optional[
         Union[Sequence[np.ndarray], Dict[Hashable, np.ndarray]]
     ] = None,
     n_obs: int = 100,
@@ -234,13 +246,19 @@ def auto_koopman(
             scoring_weights is not None
         ), f"weighted scoring requires scoring weights (currently None)"
 
-    training_data, sampling_period, scoring_weights = _sanitize_training_data(
+    (
+        training_data,
+        sampling_period,
+        scoring_weights,
+        learning_weights,
+    ) = _sanitize_training_data(
         training_data,
         inputs_training_data,
         sampling_period,
         opt,
         obs_type,
         scoring_weights,
+        learning_weights,
     )
 
     # get the hyperparameter map
@@ -267,6 +285,7 @@ def auto_koopman(
             lengthscale,
             sampling_period,
             normalize,
+            learning_weights,
         )
 
     # setup the tuner
@@ -376,6 +395,7 @@ def _edmd_model_map(
     lengthscale,
     sampling_period,
     normalize,
+    weights,
 ) -> HyperparameterMap:
     """model map for eDMD based methods
 
@@ -419,6 +439,7 @@ def _edmd_model_map(
                 n_obs,
                 hyperparams,
                 normalize,
+                weights,
             )
 
     # get the hyperparameter map
@@ -426,7 +447,13 @@ def _edmd_model_map(
 
 
 def _sanitize_training_data(
-    training_data, inputs_training_data, sampling_period, opt, obs_type, scoring_weights
+    training_data,
+    inputs_training_data,
+    sampling_period,
+    opt,
+    obs_type,
+    scoring_weights,
+    learning_weights,
 ):
     """auto_koopman input sanitization"""
 
@@ -450,27 +477,48 @@ def _sanitize_training_data(
     # convert the data to autokoopman trajectories
     if isinstance(training_data, TrajectoriesData):
         if not isinstance(training_data, UniformTimeTrajectoriesData):
-            assert scoring_weights is None, f"scoring weights must be None as interpolation is occuring"
+            assert (
+                scoring_weights is None and learning_weights is None
+            ), f"weights must be None as interpolation is occuring"
             print(
                 f"resampling trajectories as they need to be uniform time (sampling period {sampling_period})"
             )
             training_data = training_data.interp_uniform_time(sampling_period)
         else:
             if not np.isclose(training_data.sampling_period, sampling_period):
-                assert scoring_weights is None, f"scoring weights must be None as interpolation is occuring"
+                assert (
+                    scoring_weights is None and learning_weights is None
+                ), f"weights must be None as interpolation is occuring"
                 print(
                     f"resampling trajectories because the sampling periods differ (original {training_data.sampling_period}, new {sampling_period})"
                 )
                 training_data = training_data.interp_uniform_time(sampling_period)
     else:
-        if isinstance(training_data, dict):
-            assert isinstance(scoring_weights, dict), "training data has unordered keys, so scoring weights must be a dictionary with matching keys"
+        if isinstance(training_data, dict) and scoring_weights is not None:
+            assert isinstance(
+                scoring_weights, dict
+            ), "training data has unordered keys, so scoring weights must be a dictionary with matching keys"
         else:
-            scoring_weights = {idx: weights for idx, weights in enumerate(scoring_weights)}
+            if scoring_weights is not None:
+                scoring_weights = {
+                    idx: weights for idx, weights in enumerate(scoring_weights)
+                }
+
+        if isinstance(training_data, dict) and learning_weights is not None:
+            assert isinstance(
+                learning_weights, dict
+            ), "training data has unordered keys, so learning weights must be a dictionary with matching keys"
+        else:
+            if learning_weights is not None:
+                learning_weights = {
+                    idx: weights for idx, weights in enumerate(learning_weights)
+                }
 
         # figure out how to add inputs
         training_iter = (
-            training_data.items() if isinstance(training_data, dict) else enumerate(training_data)
+            training_data.items()
+            if isinstance(training_data, dict)
+            else enumerate(training_data)
         )
         if inputs_training_data is not None:
             training_iter = [(n, x, inputs_training_data[n]) for n, x in training_iter]
@@ -491,4 +539,4 @@ def _sanitize_training_data(
                 }
             )
 
-    return training_data, sampling_period, scoring_weights
+    return training_data, sampling_period, scoring_weights, learning_weights

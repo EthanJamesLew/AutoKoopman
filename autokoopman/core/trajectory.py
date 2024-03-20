@@ -573,9 +573,7 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
         return cls({k: v.to_uniform_time_traj() for k, v in traj_data._trajs.items()})
 
     @property
-    def next_step_matrices(
-        self, nstep=1
-    ) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray]]:
+    def next_step_matrices(self) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray]]:
         r"""
         Next Step Snapshot Matrices
             Return the two "snapshot matrices" :math:`\mathbf X, \mathbf X'` of observations :math:`\{x_1, x_2, ..., x_n \}`,
@@ -601,23 +599,37 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
             Brunton, S. L., & Kutz, J. N. (2022). Data-driven science and engineering: Machine learning,
             dynamical systems, and control. Cambridge University Press. pp 236-7
         """
-        return self.n_step_matrices(1)
+        return self.n_step_matrices(1, None)[:-1]
+
+    @property
+    def next_step_matrices_weighted(
+        self, weights, nstep=1
+    ) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray]]:
+        r"""
+        Weighted Next Step Snapshot Matrices
+        """
+        return self.n_step_matrices(1, weights)
 
     def n_step_matrices(
-        self, nstep
+        self, nstep, weights
     ) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray]]:
-        X = np.vstack([x.states[:-nstep:nstep, :] for _, x in self._trajs.items()]).T
+        items = self._trajs.items()
+        X = np.vstack([x.states[:-nstep:nstep, :] for _, x in items]).T
 
-        Xp = np.vstack([x.states[nstep::nstep, :] for _, x in self._trajs.items()]).T
+        Xp = np.vstack([x.states[nstep::nstep, :] for _, x in items]).T
 
         if self.input_names is not None:
-            U = np.vstack(
-                [u.inputs[:-nstep:nstep, :] for _, u in self._trajs.items()]
-            ).T
+            U = np.vstack([u.inputs[:-nstep:nstep, :] for _, u in items]).T
         else:
             U = None
 
-        return X, Xp, U
+        # collect weights
+        if weights is None:
+            W = None
+        else:
+            W = np.hstack([weights[idx].flatten() for idx, _ in items])
+
+        return X, Xp, U, W
 
     @property
     def differentiate(self) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
@@ -637,3 +649,29 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
             U = None
 
         return X, Xp, U
+
+    @property
+    def differentiate_weights(
+        self, weights
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        r"""
+        Numerical Differentiation with Weights -- Current State, Gradient State Estimate, Input, weight
+        """
+        items = list(self._trajs.items())
+
+        X = np.vstack([x.states[:-1, :] for _, x in items]).T
+
+        # finite difference
+        Xp = np.vstack([x.states[1:, :] for _, x in items]).T
+        Xp -= X
+        Xp /= self.sampling_period
+
+        if self.input_names is not None:
+            U = np.vstack([u.inputs[:-1, :] for _, u in items]).T
+        else:
+            U = None
+
+        # collect weights
+        W = np.hstack([weights[idx].flatten() for idx, _ in items])
+
+        return X, Xp, U, W

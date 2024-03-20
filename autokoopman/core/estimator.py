@@ -21,6 +21,7 @@ class TrajectoryEstimator(abc.ABC):
     :param normalize: apply MinMax normalization to the fit data
     :param feature_range: range for MinMax scaler
     """
+
     def __init__(self, normalize=True, feature_range=(-1, 1)) -> None:
         self.normalize = normalize
         if self.normalize:
@@ -47,13 +48,18 @@ class NextStepEstimator(TrajectoryEstimator):
     :param feature_range: range for MinMax scaler
     """
 
-    def __init__(self, normalize=True, feature_range=(-1, 1)) -> None:
+    def __init__(self, normalize=True, feature_range=(-1, 1), weights=None) -> None:
         super().__init__(normalize=normalize, feature_range=feature_range)
         self.names = None
+        self.weights = None
 
     @abc.abstractmethod
     def fit_next_step(
-        self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
+        self,
+        X: np.ndarray,
+        Y: np.ndarray,
+        U: Optional[np.ndarray] = None,
+        weights: Optional[np.ndarray] = None,
     ) -> None:
         """an alternative fit method that uses a trajectories data structure"""
         pass
@@ -62,11 +68,15 @@ class NextStepEstimator(TrajectoryEstimator):
         assert isinstance(
             X, atraj.UniformTimeTrajectoriesData
         ), "X must be uniform time"
-        X_, Xp_, U_ = X.next_step_matrices
+        if self.weights is None:
+            X_, Xp_, U_ = X.next_step_matrices
+            W = None
+        else:
+            X_, Xp_, U_, W = X.next_step_matrices_weights(self.weights)
         if self.normalize:
             X_ = self.scaler.fit_transform(X_.T).T
             Xp_ = self.scaler.transform(Xp_.T).T
-        self.fit_next_step(X_, Xp_, U_)
+        self.fit_next_step(X_, Xp_, U_, W)
         self.sampling_period = X.sampling_period
         self.names = X.state_names
 
@@ -75,18 +85,23 @@ class GradientEstimator(TrajectoryEstimator):
     """Estimator of discrete time dynamical systems
 
     Requires that the data be uniform time
-    
+
     :param normalize: apply MinMax normalization to the fit data
     :param feature_range: range for MinMax scaler
     """
 
-    def __init__(self, normalize=True, feature_range=(-1, 1)) -> None:
+    def __init__(self, normalize=True, feature_range=(-1, 1), weights=None) -> None:
         super().__init__(normalize=normalize, feature_range=feature_range)
         self.names = None
+        self.weights = None
 
     @abc.abstractmethod
     def fit_gradient(
-        self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
+        self,
+        X: np.ndarray,
+        Y: np.ndarray,
+        U: Optional[np.ndarray] = None,
+        weights: Optional[np.ndarray] = None,
     ) -> None:
         """an alternative fit method that uses a trajectories data structure"""
         pass
@@ -95,10 +110,14 @@ class GradientEstimator(TrajectoryEstimator):
         assert isinstance(
             X, atraj.UniformTimeTrajectoriesData
         ), "X must be uniform time"
-        X_, Xp_, U_ = X.differentiate
+        if self.weights is None:
+            X_, Xp_, U_ = X.differentiate
+            W = None
+        else:
+            X_, Xp_, U_, W = X.differentiate_weights(self.weights)
         if self.normalize:
             X_ = self.scaler.fit_transform(X_.T).T
             Xp_ = self.scaler.transform(Xp_.T).T
-        self.fit_gradient(X_, Xp_, U_)
+        self.fit_gradient(X_, Xp_, U_, W)
         self.sampling_period = X.sampling_period
         self.names = X.state_names

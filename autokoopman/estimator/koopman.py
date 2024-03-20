@@ -30,6 +30,28 @@ def dmdc(X, Xp, U, r):
     return Atilde[:, :state_size], Atilde[:, state_size:]
 
 
+def wdmdc(X, Xp, U, r, W):
+    """Weighted Dynamic Mode Decomposition with Control (wDMDC)"""
+    # we allow weights to be either in diag or full representation
+    W = np.diag(W) if len(np.array(W).shape) == 1 else W
+
+    if U is not None:
+        Y = np.hstack((X, U)).T
+    else:
+        Y = X.T
+    Yp = Xp.T
+    state_size = Yp.shape[0]
+
+    # compute Atilde
+    U, Sigma, V = np.linalg.svd(Y, False)
+    U, Sigma, V = U[:, :r], np.diag(Sigma)[:r, :r], V.conj().T[:, :r]
+
+    # get the transformation
+    Q = Sigma @ U.conj().T @ W @ U @ Sigma
+    Atilde = W @ Yp @ V @ np.linalg.pinv(Q) @ U.conj().T
+    return Atilde[:, :state_size], Atilde[:, state_size:]
+
+
 class KoopmanDiscEstimator(kest.NextStepEstimator):
     """Koopman Discrete Estimator
 
@@ -43,6 +65,7 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
     :param sampling_period: sampling period of the uniform time, discrete system
     :param dim: dimension of the system state
     :param rank: rank of the DMDc
+    :param weights: observation weights (optional)
 
     References
         Proctor, J. L., Brunton, S. L., & Kutz, J. N. (2018). Generalizing Koopman theory to allow for inputs and control. SIAM Journal on Applied Dynamical Systems, 17(1), 909-930.
@@ -50,7 +73,7 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
         See https://epubs.siam.org/doi/pdf/10.1137/16M1062296 for more details
     """
 
-    def __init__(self, observables, sampling_period, dim, rank, **kwargs):
+    def __init__(self, observables, sampling_period, dim, rank, weights=None, **kwargs):
         super().__init__(**kwargs)
         self.dim = dim
         self.obs = observables
@@ -58,7 +81,11 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
         self._A, self._B = None, None
 
     def fit_next_step(
-        self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
+        self,
+        X: np.ndarray,
+        Y: np.ndarray,
+        U: Optional[np.ndarray] = None,
+        weights: Optional[np.ndarray] = None,
     ) -> None:
         """fits the discrete system model
 
@@ -66,7 +93,12 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
         """
         G = np.array([self.obs(xi).flatten() for xi in X.T])
         Gp = np.array([self.obs(xi).flatten() for xi in Y.T])
-        self._A, self._B = dmdc(G, Gp, U.T if U is not None else U, self.rank)
+        if weights is None:
+            self._A, self._B = dmdc(G, Gp, U.T if U is not None else U, self.rank)
+        else:
+            self._A, self._B = wdmdc(
+                G, Gp, U.T if U is not None else U, self.rank, weights
+            )
         self._has_input = U is not None
 
     @property
@@ -85,6 +117,7 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
     :param observables: function that returns the observables of the system state
     :param dim: dimension of the system state
     :param rank: rank of the DMDc
+    :param weights: observation weights (optional)
 
     References
         Proctor, J. L., Brunton, S. L., & Kutz, J. N. (2018). Generalizing Koopman theory to allow for inputs and control. SIAM Journal on Applied Dynamical Systems, 17(1), 909-930.
@@ -93,7 +126,7 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
 
     """
 
-    def __init__(self, observables, dim, rank, **kwargs):
+    def __init__(self, observables, dim, rank, weights, **kwargs):
         super().__init__(**kwargs)
         self.dim = dim
         self.obs = observables
@@ -101,7 +134,11 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
         self._A, self._B = None, None
 
     def fit_gradient(
-        self, X: np.ndarray, Y: np.ndarray, U: Optional[np.ndarray] = None
+        self,
+        X: np.ndarray,
+        Y: np.ndarray,
+        U: Optional[np.ndarray] = None,
+        weights: Optional[np.ndarray] = None,
     ) -> None:
         """fits the gradient system model
 
@@ -109,7 +146,12 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
         """
         G = np.array([self.obs(xi).flatten() for xi in X.T])
         Gp = np.array([self.obs(xi).flatten() for xi in Y.T])
-        self._A, self._B = dmdc(G, Gp, U.T if U is not None else U, self.rank)
+        if weights is None:
+            self._A, self._B = dmdc(G, Gp, U.T if U is not None else U, self.rank)
+        else:
+            self._A, self._B = wdmdc(
+                G, Gp, U.T if U is not None else U, self.rank, weights
+            )
         self._has_input = U is not None
 
     @property

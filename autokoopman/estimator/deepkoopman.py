@@ -329,7 +329,7 @@ class DeepKoopman(kest.TrajectoryEstimator):
             for step_size in range(1, self.rollout_steps + 1):
                 # upload to GPU and normalize the data
                 # NOTE: this is expensive :(
-                X, Xn, U = trajs.n_step_matrices(step_size)
+                X, Xn, U, _ = trajs.n_step_matrices(step_size)
                 X = torch.tensor(X.T, dtype=torch.float32).to(self.device)
                 Xn = torch.tensor(Xn.T, dtype=torch.float32).to(self.device)
                 U = (

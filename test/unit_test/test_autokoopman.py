@@ -30,7 +30,6 @@ def test_autokoopman(obs, opt, cost, normalize):
     sp = 0.1
     ivs = np.random.uniform(low=-2.0, high=2.0, size=(20, 2))
     t_ends = [np.random.random() + 1.0 for idx in range(len(ivs))]
-    lengths = [int(t_end // sp) for t_end in t_ends]
     training_data = UniformTimeTrajectoriesData(
         {
             idx: fhn.solve_ivp(
@@ -45,7 +44,7 @@ def test_autokoopman(obs, opt, cost, normalize):
     # produce scoring weights if the cost is weighted
     if cost == "weighted":
         scoring_weights = {
-            idx: np.ones((length,)) * 0.01 for idx, length in enumerate(lengths)
+            idx: np.ones(len(traj.states)) * 0.01 for idx, traj in training_data._trajs.items() 
         }
     else:
         scoring_weights = None
@@ -86,8 +85,7 @@ def test_autokoopman_np(obs, opt, cost, normalize):
     # given issue #29, let's make these differently sized
     sp = 0.1
     ivs = np.random.uniform(low=-2.0, high=2.0, size=(20, 2))
-    t_ends = [np.random.random() + 1.0 for idx in range(len(ivs))]
-    lengths = [int(t_end // sp) for t_end in t_ends]
+    t_ends = [1.5 for idx in range(len(ivs))]
     training_data = UniformTimeTrajectoriesData(
         {
             idx: fhn.solve_ivp(
@@ -102,7 +100,7 @@ def test_autokoopman_np(obs, opt, cost, normalize):
     # produce scoring weights if the cost is weighted
     if cost == "weighted":
         scoring_weights = {
-            idx: np.ones((length,)) * 0.01 for idx, length in enumerate(lengths)
+            idx: np.ones((len(t.states),)) * 0.01 for idx, t in training_data._trajs.items()
         }
     else:
         scoring_weights = None
@@ -110,7 +108,7 @@ def test_autokoopman_np(obs, opt, cost, normalize):
     # put into numpy arrays for testing
     training_data_np = []
     scoring_weights_np = []
-    for name in training_data.traj_names:
+    for name in range(len(ivs)):
         training_data_np.append(training_data[name].states)
         if scoring_weights is not None:
             scoring_weights_np.append(scoring_weights[name])

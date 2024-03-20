@@ -610,7 +610,7 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
         return self.n_step_matrices(1, weights)
 
     def n_step_matrices(
-        self, nstep, weights
+        self, nstep, weights=None
     ) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray]]:
         items = self._trajs.items()
         X = np.vstack([x.states[:-nstep:nstep, :] for _, x in items]).T

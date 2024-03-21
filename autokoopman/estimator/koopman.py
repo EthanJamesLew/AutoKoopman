@@ -126,7 +126,7 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
 
     """
 
-    def __init__(self, observables, dim, rank, weights, **kwargs):
+    def __init__(self, observables, dim, rank, weights=None, **kwargs):
         super().__init__(weights=weights, **kwargs)
         self.dim = dim
         self.obs = observables

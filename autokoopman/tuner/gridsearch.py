@@ -66,5 +66,6 @@ class GridSearchTuner(atuner.HyperparameterTuner):
                 break
             except Exception as exc:
                 print(f"Error: {exc}")
+                raise exc
                 self.error_messages.append((param, exc))
         return self.best_result

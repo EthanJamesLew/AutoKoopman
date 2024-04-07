@@ -626,7 +626,7 @@ class UniformTimeTrajectoriesData(TrajectoriesData):
         if weights is None:
             W = None
         else:
-            W = np.hstack([weights[idx].flatten()[1:] for idx, _ in items])
+            W = np.vstack([weights[idx][:-nstep:nstep, :] for idx, _ in items])
 
         return X, Xp, U, W
 

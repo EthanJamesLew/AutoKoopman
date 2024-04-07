@@ -52,6 +52,32 @@ def wdmdc(X, Xp, U, r, W):
     return Atilde[:, :state_size], Atilde[:, state_size:]
 
 
+def swdmdc(X, Xp, U, r, Js, W):
+    """State Weighted Dynamic Mode Decomposition with Control (wDMDC)"""
+    assert len(W.shape) == 2, "weights must be 2D for snapshot x state"
+
+    if U is not None:
+        Y = np.hstack((X, U)).T
+    else:
+        Y = X.T
+    Yp = Xp.T
+
+    # compute observables weights from state weights
+    Wy = np.vstack([(np.abs(J) @ np.atleast_2d(w).T).T for J, w in zip(Js, W)])
+
+    # apply weights element-wise
+    Y, Yp = Wy.T * Y, Wy.T * Yp
+    state_size = Yp.shape[0]
+
+    # compute Atilde
+    U, Sigma, V = np.linalg.svd(Y, False)
+    U, Sigma, V = U[:, :r], np.diag(Sigma)[:r, :r], V.conj().T[:, :r]
+
+    # get the transformation
+    Atilde = Yp @ V @ np.linalg.inv(Sigma) @ U.conj().T
+    return Atilde[:, :state_size], Atilde[:, state_size:]
+
+
 class KoopmanDiscEstimator(kest.NextStepEstimator):
     """Koopman Discrete Estimator
 
@@ -96,9 +122,20 @@ class KoopmanDiscEstimator(kest.NextStepEstimator):
         if weights is None:
             self._A, self._B = dmdc(G, Gp, U.T if U is not None else U, self.rank)
         else:
-            self._A, self._B = wdmdc(
-                G, Gp, U.T if U is not None else U, self.rank, weights
-            )
+            # TODO: change this condition to be more accurate
+            if False:  # len(weights[0].shape) == 1:
+                self._A, self._B = wdmdc(
+                    G, Gp, U.T if U is not None else U, self.rank, weights
+                )
+            else:
+                self._A, self._B = swdmdc(
+                    G,
+                    Gp,
+                    U.T if U is not None else U,
+                    self.rank,
+                    [self.obs.obs_grad(xi) for xi in X.T],
+                    weights,
+                )
         self._has_input = U is not None
 
     @property

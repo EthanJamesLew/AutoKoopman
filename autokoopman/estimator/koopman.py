@@ -54,27 +54,43 @@ def wdmdc(X, Xp, U, r, W):
 
 def swdmdc(X, Xp, U, r, Js, W):
     """State Weighted Dynamic Mode Decomposition with Control (wDMDC)"""
+    from sklearn.preprocessing import normalize
+    import cvxpy as cp
     assert len(W.shape) == 2, "weights must be 2D for snapshot x state"
 
     if U is not None:
-        Y = np.hstack((X, U)).T
+        Y = np.hstack((X, U))
     else:
-        Y = X.T
-    Yp = Xp.T
+        Y = X
+    Yp = Xp
+    state_size = Yp.shape[1]
 
-    # compute observables weights from state weights
-    Wy = np.vstack([(np.abs(J) @ np.atleast_2d(w).T).T for J, w in zip(Js, W)])
+    n_snap, n_obs = X.shape
+    _, n_states = Js[0].shape
 
-    # apply weights element-wise
-    Y, Yp = Wy.T * Y, Wy.T * Yp
-    state_size = Yp.shape[0]
+    # so the objective isn't numerically unstable
+    sf = (1.0 / n_snap)
 
-    # compute Atilde
-    U, Sigma, V = np.linalg.svd(Y, False)
-    U, Sigma, V = U[:, :r], np.diag(Sigma)[:r, :r], V.conj().T[:, :r]
+    # koopman operator
+    K = cp.Variable((n_obs, n_obs))
+
+    # SW-eDMD objective
+    objective = cp.Minimize(sum([ 
+        cp.sum_squares(sf * cp.multiply((np.abs(J) @ w)[:n_obs], (xpi[:n_obs] - K @ xi[:n_obs]))) for J, w, xpi, xi in zip(Js, W, Xp, X)
+    ]))
+
+    # unconstrained problem
+    constraints = None
+
+    # SW-eDMD problem
+    prob = cp.Problem(objective, constraints)
+
+    # solve for the SW-eDMD Koopman operator
+    result = prob.solve()
+    # TODO: check the result
 
     # get the transformation
-    Atilde = Yp @ V @ np.linalg.inv(Sigma) @ U.conj().T
+    Atilde = K.value 
     return Atilde[:, :state_size], Atilde[:, state_size:]
 
 

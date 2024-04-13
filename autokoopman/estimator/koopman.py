@@ -54,7 +54,6 @@ def wdmdc(X, Xp, U, r, W):
 
 def swdmdc(X, Xp, U, r, Js, W):
     """State Weighted Dynamic Mode Decomposition with Control (wDMDC)"""
-    from sklearn.preprocessing import normalize
     import cvxpy as cp
     assert len(W.shape) == 2, "weights must be 2D for snapshot x state"
 

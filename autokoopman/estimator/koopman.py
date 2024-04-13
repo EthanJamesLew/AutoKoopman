@@ -55,6 +55,8 @@ def wdmdc(X, Xp, U, r, W):
 def swdmdc(X, Xp, U, r, Js, W):
     """State Weighted Dynamic Mode Decomposition with Control (wDMDC)"""
     import cvxpy as cp
+    import warnings
+    
     assert len(W.shape) == 2, "weights must be 2D for snapshot x state"
 
     if U is not None:
@@ -76,7 +78,8 @@ def swdmdc(X, Xp, U, r, Js, W):
     # SW-eDMD objective
     weights_obj = np.vstack([(np.abs(J) @ w)[:n_obs] for J, w in zip(Js, W)]).T 
     P = sf * cp.multiply(weights_obj, Xp[:, :n_obs].T - K @ X[:, :n_obs].T)
-    objective = cp.Minimize(cp.sum_squares(P))
+    # add regularization 
+    objective = cp.Minimize(cp.sum_squares(P) + 1E-4 * 1.0 / (n_obs**2) * cp.norm(K, "fro"))
 
     # unconstrained problem
     constraints = None
@@ -85,8 +88,14 @@ def swdmdc(X, Xp, U, r, Js, W):
     prob = cp.Problem(objective, constraints)
 
     # solve for the SW-eDMD Koopman operator
-    result = prob.solve()
-    # TODO: check the result
+    _ = prob.solve(solver=cp.CLARABEL)
+    #_ = prob.solve(solver=cp.ECOS)
+    
+    # backup case
+    if K.value is None:
+        # give a warning about the optimization failure
+        warnings.warn("SW-eDMD (cvxpy) Optimization failed to converge. Switching to unweighted DMDc.")
+        return dmdc(X, Xp, U, r) 
 
     # get the transformation
     Atilde = K.value 

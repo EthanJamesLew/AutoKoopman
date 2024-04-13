@@ -74,9 +74,9 @@ def swdmdc(X, Xp, U, r, Js, W):
     K = cp.Variable((n_obs, n_obs))
 
     # SW-eDMD objective
-    objective = cp.Minimize(sum([ 
-        cp.sum_squares(sf * cp.multiply((np.abs(J) @ w)[:n_obs], (xpi[:n_obs] - K @ xi[:n_obs]))) for J, w, xpi, xi in zip(Js, W, Xp, X)
-    ]))
+    weights_obj = np.vstack([(np.abs(J) @ w)[:n_obs] for J, w in zip(Js, W)]).T 
+    P = sf * cp.multiply(weights_obj, Xp[:, :n_obs].T - K @ X[:, :n_obs].T)
+    objective = cp.Minimize(cp.sum_squares(P))
 
     # unconstrained problem
     constraints = None

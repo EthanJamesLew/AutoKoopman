@@ -26,7 +26,11 @@ def dmdc(X, Xp, U, r):
     U, Sigma, V = U[:, :r], np.diag(Sigma)[:r, :r], V.conj().T[:, :r]
 
     # get the transformation
-    Atilde = Yp @ V @ np.linalg.inv(Sigma) @ U.conj().T
+    try:
+        Atilde = Yp @ V @ np.linalg.inv(Sigma) @ U.conj().T
+    except:
+        Atilde = Yp @ V @ np.linalg.pinv(Sigma) @ U.conj().T
+
     return Atilde[:, :state_size], Atilde[:, state_size:]
 
 
@@ -48,7 +52,10 @@ def wdmdc(X, Xp, U, r, W):
     U, Sigma, V = U[:, :r], np.diag(Sigma)[:r, :r], V.conj().T[:, :r]
 
     # get the transformation
-    Atilde = Yp @ V @ np.linalg.inv(Sigma) @ U.conj().T
+    try:
+        Atilde = Yp @ V @ np.linalg.inv(Sigma) @ U.conj().T
+    except:
+        Atilde = Yp @ V @ np.linalg.pinv(Sigma) @ U.conj().T
     return Atilde[:, :state_size], Atilde[:, state_size:]
 
 

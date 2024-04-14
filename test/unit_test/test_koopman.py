@@ -12,7 +12,8 @@ def test_discrete_koopman(normalize):
     """tests the discrete time Koopman estimator"""
     from autokoopman.benchmark.pendulum import PendulumWithInput
     from autokoopman.core.trajectory import TrajectoriesData
-    from autokoopman.core.observables import IdentityObservable, RFFObservable
+    from autokoopman.observable.observables import IdentityObservable
+    from autokoopman.observable.rff import RFFObservable
     from autokoopman.estimator.koopman import KoopmanDiscEstimator
     import random
 
@@ -62,7 +63,8 @@ def test_cont_koopman(normalize):
     """tests the continuous time Koopman estimator"""
     from autokoopman.benchmark.pendulum import PendulumWithInput
     from autokoopman.core.trajectory import TrajectoriesData
-    from autokoopman.core.observables import IdentityObservable, RFFObservable
+    from autokoopman.observable.observables import IdentityObservable
+    from autokoopman.observable.rff import RFFObservable
     from autokoopman.estimator.koopman import KoopmanContinuousEstimator
     import random
 

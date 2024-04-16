@@ -16,3 +16,4 @@ dependencies:
     - torch==2.2.1
     - sphinx_mdinclude==0.5.1
     - cvxpy==1.4.2
+    - sympy==1.12

@@ -210,9 +210,20 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
         if weights is None:
             self._A, self._B = dmdc(G, Gp, U.T if U is not None else U, self.rank)
         else:
-            self._A, self._B = wdmdc(
-                G, Gp, U.T if U is not None else U, self.rank, weights
-            )
+            # TODO: change this condition to be more accurate
+            if False:  # len(weights[0].shape) == 1:
+                self._A, self._B = wdmdc(
+                    G, Gp, U.T if U is not None else U, self.rank, weights
+                )
+            else:
+                self._A, self._B = swdmdc(
+                    G,
+                    Gp,
+                    U.T if U is not None else U,
+                    self.rank,
+                    [self.obs.obs_grad(xi) for xi in X.T],
+                    weights,
+                )
         self._has_input = U is not None
 
     @property

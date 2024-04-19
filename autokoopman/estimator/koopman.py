@@ -85,7 +85,7 @@ def swdmdc(X, Xp, U, r, Js, W):
     K = cp.Variable((n_obs, n_obs + n_inps))
 
     # SW-eDMD objective
-    weights_obj = np.vstack([(np.abs(J) @ w) for J, w in zip(Js, W)]).T 
+    weights_obj = np.vstack([(np.clip(np.abs(J), 0.0, 1.0) @ w) for J, w in zip(Js, W)]).T 
     P = sf * cp.multiply(weights_obj, Yp.T - K @ Y.T)
     # add regularization 
     objective = cp.Minimize(cp.sum_squares(P) + 1E-4 * 1.0 / (n_obs**2) * cp.norm(K, "fro"))
@@ -97,15 +97,15 @@ def swdmdc(X, Xp, U, r, Js, W):
     prob = cp.Problem(objective, constraints)
 
     # solve for the SW-eDMD Koopman operator
-    _ = prob.solve(solver=cp.CLARABEL)
-    #_ = prob.solve(solver=cp.ECOS)
-    
-    # backup case
-    if K.value is None:
-        # give a warning about the optimization failure
+    try:
+        _ = prob.solve(solver=cp.CLARABEL)
+        #_ = prob.solve(solver=cp.ECOS)
+        if K.value is None:
+            raise Exception("SW-eDMD (cvxpy) Optimization failed to converge.")
+    except:
         warnings.warn("SW-eDMD (cvxpy) Optimization failed to converge. Switching to unweighted DMDc.")
-        return dmdc(X, Xp, U, r) 
-
+        return dmdc(X, Xp, U, r)
+    
     # get the transformation
     Atilde = K.value 
     return Atilde[:, :state_size], Atilde[:, state_size:]

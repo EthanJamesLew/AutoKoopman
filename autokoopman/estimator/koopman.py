@@ -74,18 +74,19 @@ def swdmdc(X, Xp, U, r, Js, W):
     Yp = Xp
     state_size = Yp.shape[1]
 
-    n_snap, n_obs = X.shape
+    n_snap, n_obs = Yp.shape
+    n_inps = U.shape[1] if U is not None else 0
     _, n_states = Js[0].shape
 
     # so the objective isn't numerically unstable
     sf = (1.0 / n_snap)
 
     # koopman operator
-    K = cp.Variable((n_obs, n_obs))
+    K = cp.Variable((n_obs, n_obs + n_inps))
 
     # SW-eDMD objective
-    weights_obj = np.vstack([(np.abs(J) @ w)[:n_obs] for J, w in zip(Js, W)]).T 
-    P = sf * cp.multiply(weights_obj, Yp[:, :n_obs].T - K @ Y[:, :n_obs].T)
+    weights_obj = np.vstack([(np.abs(J) @ w) for J, w in zip(Js, W)]).T 
+    P = sf * cp.multiply(weights_obj, Yp.T - K @ Y.T)
     # add regularization 
     objective = cp.Minimize(cp.sum_squares(P) + 1E-4 * 1.0 / (n_obs**2) * cp.norm(K, "fro"))
 

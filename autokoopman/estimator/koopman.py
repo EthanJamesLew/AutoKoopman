@@ -52,6 +52,7 @@ def wdmdc(X, Xp, U, r, W):
     U, Sigma, V = U[:, :r], np.diag(Sigma)[:r, :r], V.conj().T[:, :r]
 
     # get the transformation
+    # get the transformation
     try:
         Atilde = Yp @ V @ np.linalg.inv(Sigma) @ U.conj().T
     except:
@@ -84,7 +85,7 @@ def swdmdc(X, Xp, U, r, Js, W):
 
     # SW-eDMD objective
     weights_obj = np.vstack([(np.abs(J) @ w)[:n_obs] for J, w in zip(Js, W)]).T 
-    P = sf * cp.multiply(weights_obj, Xp[:, :n_obs].T - K @ X[:, :n_obs].T)
+    P = sf * cp.multiply(weights_obj, Yp[:, :n_obs].T - K @ Y[:, :n_obs].T)
     # add regularization 
     objective = cp.Minimize(cp.sum_squares(P) + 1E-4 * 1.0 / (n_obs**2) * cp.norm(K, "fro"))
 
@@ -217,20 +218,9 @@ class KoopmanContinuousEstimator(kest.GradientEstimator):
         if weights is None:
             self._A, self._B = dmdc(G, Gp, U.T if U is not None else U, self.rank)
         else:
-            # TODO: change this condition to be more accurate
-            if False:  # len(weights[0].shape) == 1:
-                self._A, self._B = wdmdc(
-                    G, Gp, U.T if U is not None else U, self.rank, weights
-                )
-            else:
-                self._A, self._B = swdmdc(
-                    G,
-                    Gp,
-                    U.T if U is not None else U,
-                    self.rank,
-                    [self.obs.obs_grad(xi) for xi in X.T],
-                    weights,
-                )
+            self._A, self._B = wdmdc(
+                G, Gp, U.T if U is not None else U, self.rank, weights
+            )
         self._has_input = U is not None
 
     @property

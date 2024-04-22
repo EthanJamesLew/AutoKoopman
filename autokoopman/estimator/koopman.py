@@ -81,14 +81,21 @@ def swdmdc(X, Xp, U, r, Js, W):
     # so the objective isn't numerically unstable
     sf = (1.0 / n_snap)
 
+    # check that rank is less than the number of observations
+    if r > n_obs:
+        warnings.warn("Rank must be less than the number of observations. Reducing rank to n_obs.")
+        r = n_obs
+    
     # koopman operator
-    K = cp.Variable((n_obs, n_obs + n_inps))
+    # Variables for the low-rank approximation
+    K_U = cp.Variable((n_obs, r))
+    K_V = cp.Variable((r, n_obs + n_inps))
 
     # SW-eDMD objective
-    weights_obj = np.vstack([(np.clip(np.abs(J), 0.0, 1.0) @ w) for J, w in zip(Js, W)]).T 
-    P = sf * cp.multiply(weights_obj, Yp.T - K @ Y.T)
+    weights_obj = np.vstack([(np.abs(J) @ w) for J, w in zip(Js, W)]).T 
+    P = sf * cp.multiply(weights_obj, Yp.T - (K_U @ K_V) @ Y.T)
     # add regularization 
-    objective = cp.Minimize(cp.sum_squares(P) + 1E-4 * 1.0 / (n_obs**2) * cp.norm(K, "fro"))
+    objective = cp.Minimize(cp.sum_squares(P) + 1E-4 * 1.0 / (n_obs**2) * cp.norm(K_U @ K_V, "fro"))
 
     # unconstrained problem
     constraints = None
@@ -100,14 +107,14 @@ def swdmdc(X, Xp, U, r, Js, W):
     try:
         _ = prob.solve(solver=cp.CLARABEL)
         #_ = prob.solve(solver=cp.ECOS)
-        if K.value is None:
+        if K_U.value is None or K_V.value is None:
             raise Exception("SW-eDMD (cvxpy) Optimization failed to converge.")
     except:
         warnings.warn("SW-eDMD (cvxpy) Optimization failed to converge. Switching to unweighted DMDc.")
         return dmdc(X, Xp, U, r)
     
     # get the transformation
-    Atilde = K.value 
+    Atilde = K_U.value @ K_V.value 
     return Atilde[:, :state_size], Atilde[:, state_size:]
 
 

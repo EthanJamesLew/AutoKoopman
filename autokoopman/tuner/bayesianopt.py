@@ -1,3 +1,12 @@
+"""
+BayesianOpt: Bayesian optimization hyperparameter tuner for AutoKoopman.
+
+The BayesianOpt package provides a hyperparameter tuning tool based on Bayesian 
+optimization for the AutoKoopman package. The `BayesianOptTuner` class 
+implements a Bayesian optimization algorithm using the `GPy` library to 
+efficiently search the hyperparameter space and find the optimal set of 
+hyperparameters for a given AutoKoopman algorithm.
+"""
 import numpy as np
 
 from autokoopman.core.trajectory import TrajectoriesData

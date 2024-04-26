@@ -26,7 +26,11 @@ def dmdc(X, Xp, U, r):
     U, Sigma, V = U[:, :r], np.diag(Sigma)[:r, :r], V.conj().T[:, :r]
 
     # get the transformation
-    Atilde = Yp @ V @ np.linalg.inv(Sigma) @ U.conj().T
+    try:
+        Atilde = Yp @ V @ np.linalg.inv(Sigma) @ U.conj().T
+    except:
+        Atilde = Yp @ V @ np.linalg.pinv(Sigma) @ U.conj().T
+
     return Atilde[:, :state_size], Atilde[:, state_size:]
 
 
@@ -48,33 +52,69 @@ def wdmdc(X, Xp, U, r, W):
     U, Sigma, V = U[:, :r], np.diag(Sigma)[:r, :r], V.conj().T[:, :r]
 
     # get the transformation
-    Atilde = Yp @ V @ np.linalg.inv(Sigma) @ U.conj().T
+    # get the transformation
+    try:
+        Atilde = Yp @ V @ np.linalg.inv(Sigma) @ U.conj().T
+    except:
+        Atilde = Yp @ V @ np.linalg.pinv(Sigma) @ U.conj().T
     return Atilde[:, :state_size], Atilde[:, state_size:]
 
 
 def swdmdc(X, Xp, U, r, Js, W):
     """State Weighted Dynamic Mode Decomposition with Control (wDMDC)"""
+    import cvxpy as cp
+    import warnings
+    
     assert len(W.shape) == 2, "weights must be 2D for snapshot x state"
 
     if U is not None:
-        Y = np.hstack((X, U)).T
+        Y = np.hstack((X, U))
     else:
-        Y = X.T
-    Yp = Xp.T
+        Y = X
+    Yp = Xp
+    state_size = Yp.shape[1]
 
-    # compute observables weights from state weights
-    Wy = np.vstack([(np.abs(J) @ np.atleast_2d(w).T).T for J, w in zip(Js, W)])
+    n_snap, n_obs = Yp.shape
+    n_inps = U.shape[1] if U is not None else 0
+    _, n_states = Js[0].shape
 
-    # apply weights element-wise
-    Y, Yp = Wy.T * Y, Wy.T * Yp
-    state_size = Yp.shape[0]
+    # so the objective isn't numerically unstable
+    sf = (1.0 / n_snap)
 
-    # compute Atilde
-    U, Sigma, V = np.linalg.svd(Y, False)
-    U, Sigma, V = U[:, :r], np.diag(Sigma)[:r, :r], V.conj().T[:, :r]
+    # check that rank is less than the number of observations
+    if r > n_obs:
+        warnings.warn("Rank must be less than the number of observations. Reducing rank to n_obs.")
+        r = n_obs
+    
+    # koopman operator
+    # Variables for the low-rank approximation
+    K_U = cp.Variable((n_obs, r))
+    K_V = cp.Variable((r, n_obs + n_inps))
 
+    # SW-eDMD objective
+    weights_obj = np.vstack([(np.abs(J) @ w) for J, w in zip(Js, W)]).T 
+    P = sf * cp.multiply(weights_obj, Yp.T - (K_U @ K_V) @ Y.T)
+    # add regularization 
+    objective = cp.Minimize(cp.sum_squares(P) + 1E-4 * 1.0 / (n_obs**2) * cp.norm(K_U @ K_V, "fro"))
+
+    # unconstrained problem
+    constraints = None
+
+    # SW-eDMD problem
+    prob = cp.Problem(objective, constraints)
+
+    # solve for the SW-eDMD Koopman operator
+    try:
+        _ = prob.solve(solver=cp.CLARABEL)
+        #_ = prob.solve(solver=cp.ECOS)
+        if K_U.value is None or K_V.value is None:
+            raise Exception("SW-eDMD (cvxpy) Optimization failed to converge.")
+    except:
+        warnings.warn("SW-eDMD (cvxpy) Optimization failed to converge. Switching to unweighted DMDc.")
+        return dmdc(X, Xp, U, r)
+    
     # get the transformation
-    Atilde = Yp @ V @ np.linalg.inv(Sigma) @ U.conj().T
+    Atilde = K_U.value @ K_V.value 
     return Atilde[:, :state_size], Atilde[:, state_size:]
 
 

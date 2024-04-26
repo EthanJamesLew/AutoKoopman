@@ -7,3 +7,4 @@ gpy==1.10.0
 gpyopt==1.2.6
 torch==2.2.1
 scikit-learn==1.4.1.post1
+cvxpy==1.4.2

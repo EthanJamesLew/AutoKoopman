@@ -5,7 +5,7 @@ from typing import Callable, Dict, Hashable, Union, Sequence, Optional, Tuple
 
 import numpy as np
 
-import autokoopman.core.observables as kobs
+import autokoopman.observable as kobs
 from autokoopman.core.trajectory import (
     TrajectoriesData,
     UniformTimeTrajectoriesData,
@@ -24,7 +24,7 @@ from autokoopman.estimator.koopman import KoopmanContinuousEstimator
 from autokoopman.tuner.gridsearch import GridSearchTuner
 from autokoopman.tuner.montecarlo import MonteCarloTuner
 from autokoopman.tuner.bayesianopt import BayesianOptTuner
-from autokoopman.core.observables import KoopmanObservable
+from autokoopman.observable.observables import KoopmanObservable
 from autokoopman.core.format import hide_prints
 
 __all__ = ["auto_koopman"]

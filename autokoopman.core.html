@@ -1,0 +1,1571 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>autokoopman.core package &#8212; AutoKoopman 0.30.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="_static/documentation_options.js?v=6c63cdba"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'autokoopman.core';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="autokoopman.estimator package" href="autokoopman.estimator.html" />
+    <link rel="prev" title="autokoopman.benchmark package" href="autokoopman.benchmark.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/EthanJamesLew/AutoKoopman/enhancement/v-0.30-tweaks/documentation/img/brand/logo-small.svg" class="logo__image only-light" alt="AutoKoopman 0.30.7 documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/EthanJamesLew/AutoKoopman/enhancement/v-0.30-tweaks/documentation/img/brand/logo-small.svg" class="logo__image only-dark" alt="AutoKoopman 0.30.7 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="modules.html">
+                        autokoopman
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/EthanJamesLew/AutoKoopman" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="modules.html">
+                        autokoopman
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/EthanJamesLew/AutoKoopman" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="autokoopman.html">autokoopman package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.benchmark.html">autokoopman.benchmark package</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">autokoopman.core package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.estimator.html">autokoopman.estimator package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.tuner.html">autokoopman.tuner package</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="modules.html" class="nav-link">autokoopman</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="autokoopman.html" class="nav-link">autokoopman package</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">autokoopman....</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="autokoopman-core-package">
+<h1>autokoopman.core package<a class="headerlink" href="#autokoopman-core-package" title="Link to this heading">#</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-autokoopman.core.estimator">
+<span id="autokoopman-core-estimator-module"></span><h2>autokoopman.core.estimator module<a class="headerlink" href="#module-autokoopman.core.estimator" title="Link to this heading">#</a></h2>
+<p>Model has:</p>
+<ul class="simple">
+<li><p>a set of hyperparameters</p></li>
+</ul>
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.estimator.GradientEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.estimator.</span></span><span class="sig-name descname"><span class="pre">GradientEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.estimator.GradientEstimator" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.estimator.TrajectoryEstimator" title="autokoopman.core.estimator.TrajectoryEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrajectoryEstimator</span></code></a></p>
+<p>Estimator of discrete time dynamical systems</p>
+<p>Requires that the data be uniform time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>normalize</strong> – apply MinMax normalization to the fit data</p></li>
+<li><p><strong>feature_range</strong> – range for MinMax scaler</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.estimator.GradientEstimator.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">TrajectoriesData</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#autokoopman.core.estimator.GradientEstimator.fit" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.estimator.GradientEstimator.fit_gradient">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit_gradient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#autokoopman.core.estimator.GradientEstimator.fit_gradient" title="Link to this definition">#</a></dt>
+<dd><p>an alternative fit method that uses a trajectories data structure</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.estimator.NextStepEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.estimator.</span></span><span class="sig-name descname"><span class="pre">NextStepEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-1,</span> <span class="pre">1)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.estimator.NextStepEstimator" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.estimator.TrajectoryEstimator" title="autokoopman.core.estimator.TrajectoryEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrajectoryEstimator</span></code></a></p>
+<p>Estimator of discrete time dynamical systems</p>
+<p>Requires that the data be uniform time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>normalize</strong> – apply MinMax normalization to the fit data</p></li>
+<li><p><strong>feature_range</strong> – range for MinMax scaler</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.estimator.NextStepEstimator.fit">
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">TrajectoriesData</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#autokoopman.core.estimator.NextStepEstimator.fit" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.estimator.NextStepEstimator.fit_next_step">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit_next_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">U</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#autokoopman.core.estimator.NextStepEstimator.fit_next_step" title="Link to this definition">#</a></dt>
+<dd><p>an alternative fit method that uses a trajectories data structure</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.estimator.TrajectoryEstimator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.estimator.</span></span><span class="sig-name descname"><span class="pre">TrajectoryEstimator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(-1,</span> <span class="pre">1)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.estimator.TrajectoryEstimator" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Trajectory based estimator base class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>normalize</strong> – apply MinMax normalization to the fit data</p></li>
+<li><p><strong>feature_range</strong> – range for MinMax scaler</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.estimator.TrajectoryEstimator.fit">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">TrajectoriesData</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#autokoopman.core.estimator.TrajectoryEstimator.fit" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.estimator.TrajectoryEstimator.model">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#autokoopman.core.system.System" title="autokoopman.core.system.System"><span class="pre">System</span></a></em><a class="headerlink" href="#autokoopman.core.estimator.TrajectoryEstimator.model" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-autokoopman.core.format">
+<span id="autokoopman-core-format-module"></span><h2>autokoopman.core.format module<a class="headerlink" href="#module-autokoopman.core.format" title="Link to this heading">#</a></h2>
+<p>Utilties to format strings</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.format.hide_prints">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.format.</span></span><span class="sig-name descname"><span class="pre">hide_prints</span></span><a class="headerlink" href="#autokoopman.core.format.hide_prints" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>context manager to suppress python print output</p>
+<p>this was created to hide “ugly stuff”
+(e.g., GPyOpt prints)</p>
+</dd></dl>
+
+</section>
+<section id="autokoopman-core-observables-module">
+<h2>autokoopman.core.observables module<a class="headerlink" href="#autokoopman-core-observables-module" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-autokoopman.core.system">
+<span id="autokoopman-core-system-module"></span><h2>autokoopman.core.system module<a class="headerlink" href="#module-autokoopman.core.system" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.system.ContinuousSystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.system.</span></span><span class="sig-name descname"><span class="pre">ContinuousSystem</span></span><a class="headerlink" href="#autokoopman.core.system.ContinuousSystem" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.system.System" title="autokoopman.core.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a></p>
+<dl class="simple">
+<dt>Continuous Time System</dt><dd><p>In this case, a CT system is a system whose evolution function is defined by a gradient.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.system.ContinuousSystem.gradient">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">gradient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sinput</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#autokoopman.core.system.ContinuousSystem.gradient" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.system.ContinuousSystem.solve_ivp">
+<span class="sig-name descname"><span class="pre">solve_ivp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tspan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">teval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.trajectory.Trajectory" title="autokoopman.core.trajectory.Trajectory"><span class="pre">Trajectory</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#autokoopman.core.trajectory.UniformTimeTrajectory" title="autokoopman.core.trajectory.UniformTimeTrajectory"><span class="pre">UniformTimeTrajectory</span></a></span></span><a class="headerlink" href="#autokoopman.core.system.ContinuousSystem.solve_ivp" title="Link to this definition">#</a></dt>
+<dd><dl>
+<dt>Solve the initial value (IV) problem for Continuous Time Systems</dt><dd><p>Given a system with a state space, specify how the system evolves with time given the initial conditions
+of the problem. The solution of a particular IV returns a trajectory over time teval if specified, or
+uniformly sampled over a time span given a sampling period.</p>
+<p>A differential equation of the form <span class="math notranslate nohighlight">\(\dot X_t = \operatorname{grad}(t, X_t)\)</span>.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initial_state</strong> – IV state of system</p></li>
+<li><p><strong>tspan</strong> – (if no teval is set) timespan to evolve system from iv (starting at tspan[0])</p></li>
+<li><p><strong>teval</strong> – (optional) values of time sample the IVP trajectory</p></li>
+<li><p><strong>sampling_period</strong> – (if no teval is set) sampling period of solution</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>TimeTrajectory if teval is set, or UniformTimeTrajectory if not</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.system.ContinuousSystem.solve_ivps">
+<span class="sig-name descname"><span class="pre">solve_ivps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_states</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tspan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">teval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData" title="autokoopman.core.trajectory.UniformTimeTrajectoriesData"><span class="pre">UniformTimeTrajectoriesData</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">TrajectoriesData</span></a></span></span><a class="headerlink" href="#autokoopman.core.system.ContinuousSystem.solve_ivps" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.system.DiscreteSystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.system.</span></span><span class="sig-name descname"><span class="pre">DiscreteSystem</span></span><a class="headerlink" href="#autokoopman.core.system.DiscreteSystem" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.system.System" title="autokoopman.core.system.System"><code class="xref py py-class docutils literal notranslate"><span class="pre">System</span></code></a></p>
+<dl>
+<dt>Discrete Time System</dt><dd><p>In this case, a CT system is a system whose evolution function is defined by a next step function. For IVP, the
+discrete time can be related to continuous time via a sampling period. This trajectory can be interpolated to
+evaluate time points nonuniformly.</p>
+<p>TODO: should this have a sampling period instance member?</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.system.DiscreteSystem.solve_ivp">
+<span class="sig-name descname"><span class="pre">solve_ivp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tspan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">teval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.trajectory.Trajectory" title="autokoopman.core.trajectory.Trajectory"><span class="pre">Trajectory</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#autokoopman.core.trajectory.UniformTimeTrajectory" title="autokoopman.core.trajectory.UniformTimeTrajectory"><span class="pre">UniformTimeTrajectory</span></a></span></span><a class="headerlink" href="#autokoopman.core.system.DiscreteSystem.solve_ivp" title="Link to this definition">#</a></dt>
+<dd><dl>
+<dt>Solve the initial value (IV) problem for Discrete Time Systems</dt><dd><p>Given a system with a state space, specify how the system evolves with time given the initial conditions
+of the problem. The solution of a particular IV returns a trajectory over time teval if specified, or
+uniformly sampled over a time span given a sampling period.</p>
+<p>A difference equation of the form <span class="math notranslate nohighlight">\(X_{t+1} = \operatorname{step}(t, X_t)\)</span>.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initial_state</strong> – IV state of system</p></li>
+<li><p><strong>tspan</strong> – (if no teval is set) timespan to evolve system from iv (starting at tspan[0])</p></li>
+<li><p><strong>teval</strong> – (optional) values of time sample the IVP trajectory</p></li>
+<li><p><strong>sampling_period</strong> – (if no teval is set) sampling period of solution</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>TimeTrajectory if teval is set, or UniformTimeTrajectory if not</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.system.DiscreteSystem.step">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sinput</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#autokoopman.core.system.DiscreteSystem.step" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.system.GradientContinuousSystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.system.</span></span><span class="sig-name descname"><span class="pre">GradientContinuousSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gradient_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.system.GradientContinuousSystem" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.system.ContinuousSystem" title="autokoopman.core.system.ContinuousSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousSystem</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.system.GradientContinuousSystem.gradient">
+<span class="sig-name descname"><span class="pre">gradient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sinput</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#autokoopman.core.system.GradientContinuousSystem.gradient" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.system.GradientContinuousSystem.names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">names</span></span><a class="headerlink" href="#autokoopman.core.system.GradientContinuousSystem.names" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.system.KoopmanContinuousSystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.system.</span></span><span class="sig-name descname"><span class="pre">KoopmanContinuousSystem</span></span><a class="headerlink" href="#autokoopman.core.system.KoopmanContinuousSystem" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.system.LinearContinuousSystem" title="autokoopman.core.system.LinearContinuousSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinearContinuousSystem</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.system.KoopmanGradientContinuousSystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.system.</span></span><span class="sig-name descname"><span class="pre">KoopmanGradientContinuousSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.system.KoopmanGradientContinuousSystem" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.system.KoopmanSystem" title="autokoopman.core.system.KoopmanSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">KoopmanSystem</span></code></a>, <a class="reference internal" href="#autokoopman.core.system.GradientContinuousSystem" title="autokoopman.core.system.GradientContinuousSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">GradientContinuousSystem</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.system.KoopmanStepDiscreteSystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.system.</span></span><span class="sig-name descname"><span class="pre">KoopmanStepDiscreteSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.system.KoopmanStepDiscreteSystem" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.system.KoopmanSystem" title="autokoopman.core.system.KoopmanSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">KoopmanSystem</span></code></a>, <a class="reference internal" href="#autokoopman.core.system.StepDiscreteSystem" title="autokoopman.core.system.StepDiscreteSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">StepDiscreteSystem</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.system.KoopmanSystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.system.</span></span><span class="sig-name descname"><span class="pre">KoopmanSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.system.KoopmanSystem" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>mixin class for Koopman systems</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.system.KoopmanSystem.A">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">A</span></span><a class="headerlink" href="#autokoopman.core.system.KoopmanSystem.A" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.system.KoopmanSystem.B">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">B</span></span><a class="headerlink" href="#autokoopman.core.system.KoopmanSystem.B" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.system.KoopmanSystem.koopman_operator">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">koopman_operator</span></span><a class="headerlink" href="#autokoopman.core.system.KoopmanSystem.koopman_operator" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.system.KoopmanSystem.obs_func">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">obs_func</span></span><a class="headerlink" href="#autokoopman.core.system.KoopmanSystem.obs_func" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.system.LinearContinuousSystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.system.</span></span><span class="sig-name descname"><span class="pre">LinearContinuousSystem</span></span><a class="headerlink" href="#autokoopman.core.system.LinearContinuousSystem" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.system.ContinuousSystem" title="autokoopman.core.system.ContinuousSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousSystem</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.system.StepDiscreteSystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.system.</span></span><span class="sig-name descname"><span class="pre">StepDiscreteSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.system.StepDiscreteSystem" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.system.DiscreteSystem" title="autokoopman.core.system.DiscreteSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">DiscreteSystem</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.system.StepDiscreteSystem.names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">names</span></span><a class="headerlink" href="#autokoopman.core.system.StepDiscreteSystem.names" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.system.StepDiscreteSystem.step">
+<span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sinput</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#autokoopman.core.system.StepDiscreteSystem.step" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.system.SymbolicContinuousSystem">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.system.</span></span><span class="sig-name descname"><span class="pre">SymbolicContinuousSystem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Symbol</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient_exprs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Expr</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Symbol</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.system.SymbolicContinuousSystem" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.system.ContinuousSystem" title="autokoopman.core.system.ContinuousSystem"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousSystem</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.system.SymbolicContinuousSystem.gradient">
+<span class="sig-name descname"><span class="pre">gradient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sinput</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#autokoopman.core.system.SymbolicContinuousSystem.gradient" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.system.SymbolicContinuousSystem.names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#autokoopman.core.system.SymbolicContinuousSystem.names" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.system.System">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.system.</span></span><span class="sig-name descname"><span class="pre">System</span></span><a class="headerlink" href="#autokoopman.core.system.System" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.system.System.dimension">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dimension</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#autokoopman.core.system.System.dimension" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.system.System.names">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#autokoopman.core.system.System.names" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.system.System.solve_ivp">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">solve_ivp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tspan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">teval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.trajectory.Trajectory" title="autokoopman.core.trajectory.Trajectory"><span class="pre">Trajectory</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#autokoopman.core.trajectory.UniformTimeTrajectory" title="autokoopman.core.trajectory.UniformTimeTrajectory"><span class="pre">UniformTimeTrajectory</span></a></span></span><a class="headerlink" href="#autokoopman.core.system.System.solve_ivp" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>Solve the initial value (IV) problem</dt><dd><p>Given a system with a state space, specify how the system evolves with time given the initial conditions
+of the problem. The solution of a particular IV returns a trajectory over time teval if specified, or
+uniformly sampled over a time span given a sampling period.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>initial_state</strong> – IV state of system</p></li>
+<li><p><strong>tspan</strong> – (if no teval is set) timespan to evolve system from iv (starting at tspan[0])</p></li>
+<li><p><strong>teval</strong> – (optional) values of time sample the IVP trajectory</p></li>
+<li><p><strong>sampling_period</strong> – (if no teval is set) sampling period of solution</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>TimeTrajectory if teval is set, or UniformTimeTrajectory if not</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.system.System.solve_ivps">
+<span class="sig-name descname"><span class="pre">solve_ivps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial_states</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tspan</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">teval</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData" title="autokoopman.core.trajectory.UniformTimeTrajectoriesData"><span class="pre">UniformTimeTrajectoriesData</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">TrajectoriesData</span></a></span></span><a class="headerlink" href="#autokoopman.core.system.System.solve_ivps" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-autokoopman.core.trajectory">
+<span id="autokoopman-core-trajectory-module"></span><h2>autokoopman.core.trajectory module<a class="headerlink" href="#module-autokoopman.core.trajectory" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.trajectory.</span></span><span class="sig-name descname"><span class="pre">TrajectoriesData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#autokoopman.core.trajectory.UniformTimeTrajectory" title="autokoopman.core.trajectory.UniformTimeTrajectory"><span class="pre">UniformTimeTrajectory</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#autokoopman.core.trajectory.Trajectory" title="autokoopman.core.trajectory.Trajectory"><span class="pre">Trajectory</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="simple">
+<dt>A Dataset of Trajectories (Multiple Time Series Vectors)</dt><dd><p>This is a data access object (DAO) for datasets used to learn dynamical systems from observed trajectories. The
+object supports</p>
+<ul class="simple">
+<li><p><strong>state / trajectory identifiers</strong> trajectories can be accessed and manipulated by name</p></li>
+<li><p><strong>iteration</strong> the trajectories can be iterated through</p></li>
+<li><p><strong>serialization</strong> trajectory datasets can be read and saved from CSV files and Pandas DataFrames</p></li>
+<li><p><strong>interpolation</strong> trajectories can be resampled in time (e.g. convert to uniform time for certain technique)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.abs">
+<span class="sig-name descname"><span class="pre">abs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.abs" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.equal_lists">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">equal_lists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lists</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.equal_lists" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>List Equality</dt><dd><p>In a sequence of lists, determine if all list are equal to one another.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.from_csv">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traj_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.from_csv" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>Create TrajectoriesData DAO from CSV File</dt><dd><p>To be a valid CSV the file must have a “time” field to record the sample time and an “id” field to distinguish
+the different trajectories.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fname</strong> – CSV filename (path included).</p></li>
+<li><p><strong>threshold</strong> – trajectories threshold value.</p></li>
+<li><p><strong>traj_id</strong> – column name for trajectory identifier.</p></li>
+<li><p><strong>time_id</strong> – column name for time identifier.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>TrajectoriesData</p>
+</dd>
+</dl>
+<dl>
+<dt>Examples</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">autokoopman.core.trajectory</span> <span class="k">as</span> <span class="nn">atraj</span>
+
+<span class="n">trajs</span> <span class="o">=</span> <span class="n">atraj</span><span class="o">.</span><span class="n">TrajectoriesData</span><span class="o">.</span><span class="n">from_csv</span><span class="p">(</span><span class="s2">&quot;./path/my_csv.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.from_pandas">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traj_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">TrajectoriesData</span></a></span></span><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.from_pandas" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>Create TrajectoriesData DAO from Pandas DataFrame</dt><dd><p>To be a valid DataFrame the object must have a “time” field to record the sample time and an “id” field to distinguish
+the different trajectories.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_df</strong> – Pandas Dataframe to convert to trajectories.</p></li>
+<li><p><strong>threshold</strong> – trajectories threshold value.</p></li>
+<li><p><strong>traj_id</strong> – column name for trajectory identifier.</p></li>
+<li><p><strong>time_id</strong> – column name for time identifier.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>TrajectoriesData</p>
+</dd>
+</dl>
+<dl>
+<dt>Examples</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">autokoopman.core.trajectory</span> <span class="k">as</span> <span class="nn">atraj</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1"># create example dataframe</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">my_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">],</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">t</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="p">])</span><span class="o">.</span><span class="n">T</span>
+<span class="p">)</span>
+
+<span class="c1"># create TrajectoriesData from the DataFrame</span>
+<span class="n">trajs</span> <span class="o">=</span> <span class="n">atraj</span><span class="o">.</span><span class="n">TrajectoriesData</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">my_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.get_trajectory">
+<span class="sig-name descname"><span class="pre">get_trajectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">traj_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Hashable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.trajectory.Trajectory" title="autokoopman.core.trajectory.Trajectory"><span class="pre">Trajectory</span></a></span></span><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.get_trajectory" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.input_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.input_names" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.interp_uniform_time">
+<span class="sig-name descname"><span class="pre">interp_uniform_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData" title="autokoopman.core.trajectory.UniformTimeTrajectoriesData"><span class="pre">UniformTimeTrajectoriesData</span></a></span></span><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.interp_uniform_time" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.n_trajs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">n_trajs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.n_trajs" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.norm">
+<span class="sig-name descname"><span class="pre">norm</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.norm" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.state_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">state_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.state_names" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.time_id_hname">
+<span class="sig-name descname"><span class="pre">time_id_hname</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'time'</span></em><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.time_id_hname" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.to_csv">
+<span class="sig-name descname"><span class="pre">to_csv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fname</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.to_csv" title="Link to this definition">#</a></dt>
+<dd><p>Convert to CSV File (serialization)</p>
+<dl>
+<dt>Examples</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">autokoopman.benchmark.prde20</span> <span class="k">as</span> <span class="nn">prde</span>
+
+<span class="n">sys</span> <span class="o">=</span> <span class="n">prde</span><span class="o">.</span><span class="n">ProdDestr</span><span class="p">()</span>
+<span class="n">trajs</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">solve_ivps</span><span class="p">(</span>
+    <span class="n">initial_states</span><span class="o">=</span><span class="p">[[</span><span class="mf">9.98</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]],</span>
+    <span class="n">tspan</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">),</span>
+    <span class="n">sampling_period</span><span class="o">=</span><span class="mf">0.01</span>
+<span class="p">)</span>
+<span class="n">trajs</span><span class="o">.</span><span class="n">to_csv</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.to_pandas">
+<span class="sig-name descname"><span class="pre">to_pandas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.to_pandas" title="Link to this definition">#</a></dt>
+<dd><p>Convert to Pandas DataFrame</p>
+<dl>
+<dt>Examples</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">autokoopman.benchmark.prde20</span> <span class="k">as</span> <span class="nn">prde</span>
+
+<span class="n">sys</span> <span class="o">=</span> <span class="n">prde</span><span class="o">.</span><span class="n">ProdDestr</span><span class="p">()</span>
+<span class="n">trajs</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">solve_ivps</span><span class="p">(</span>
+    <span class="n">initial_states</span><span class="o">=</span><span class="p">[[</span><span class="mf">9.98</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">]],</span>
+    <span class="n">tspan</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">),</span>
+    <span class="n">sampling_period</span><span class="o">=</span><span class="mf">0.01</span>
+<span class="p">)</span>
+<span class="n">trajs</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.traj_id_hname">
+<span class="sig-name descname"><span class="pre">traj_id_hname</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'id'</span></em><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.traj_id_hname" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.TrajectoriesData.traj_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">traj_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#autokoopman.core.trajectory.TrajectoriesData.traj_names" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.trajectory.</span></span><span class="sig-name descname"><span class="pre">Trajectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">states</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>a trajectory is a time series of vectors</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory.abs">
+<span class="sig-name descname"><span class="pre">abs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.trajectory.Trajectory" title="autokoopman.core.trajectory.Trajectory"><span class="pre">Trajectory</span></a></span></span><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory.abs" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory.dimension">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dimension</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory.dimension" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory.input_dimension">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_dimension</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory.input_dimension" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory.input_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory.input_names" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory.inputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory.inputs" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory.interp1d">
+<span class="sig-name descname"><span class="pre">interp1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">times</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.trajectory.Trajectory" title="autokoopman.core.trajectory.Trajectory"><span class="pre">Trajectory</span></a></span></span><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory.interp1d" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory.interp_uniform_time">
+<span class="sig-name descname"><span class="pre">interp_uniform_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.trajectory.UniformTimeTrajectory" title="autokoopman.core.trajectory.UniformTimeTrajectory"><span class="pre">UniformTimeTrajectory</span></a></span></span><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory.interp_uniform_time" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory.is_uniform_time">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_uniform_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory.is_uniform_time" title="Link to this definition">#</a></dt>
+<dd><p>determine if a trajectory is uniform time</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory.names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span></em><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory.names" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory.norm">
+<span class="sig-name descname"><span class="pre">norm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.trajectory.Trajectory" title="autokoopman.core.trajectory.Trajectory"><span class="pre">Trajectory</span></a></span></span><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory.norm" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory.size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">size</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory.size" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory.states">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">states</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory.states" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory.times">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">times</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory.times" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.Trajectory.to_uniform_time_traj">
+<span class="sig-name descname"><span class="pre">to_uniform_time_traj</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.trajectory.UniformTimeTrajectory" title="autokoopman.core.trajectory.UniformTimeTrajectory"><span class="pre">UniformTimeTrajectory</span></a></span></span><a class="headerlink" href="#autokoopman.core.trajectory.Trajectory.to_uniform_time_traj" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.UniformTimeTrajectoriesData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.trajectory.</span></span><span class="sig-name descname"><span class="pre">UniformTimeTrajectoriesData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trajs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Hashable</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#autokoopman.core.trajectory.UniformTimeTrajectory" title="autokoopman.core.trajectory.UniformTimeTrajectory"><span class="pre">UniformTimeTrajectory</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#autokoopman.core.trajectory.Trajectory" title="autokoopman.core.trajectory.Trajectory"><span class="pre">Trajectory</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrajectoriesData</span></code></a></p>
+<p>a dataset of uniform time trajectories</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.UniformTimeTrajectoriesData.differentiate">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">differentiate</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData.differentiate" title="Link to this definition">#</a></dt>
+<dd><p>Numerical Differentiation – Current State, Gradient State Estimate, Input</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.UniformTimeTrajectoriesData.differentiate_weights">
+<span class="sig-name descname"><span class="pre">differentiate_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData.differentiate_weights" title="Link to this definition">#</a></dt>
+<dd><p>Numerical Differentiation with Weights – Current State, Gradient State Estimate, Input, weight</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.UniformTimeTrajectoriesData.from_pandas">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traj_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'id'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData.from_pandas" title="Link to this definition">#</a></dt>
+<dd><dl class="simple">
+<dt>Create UniformTimeTrajectoriesData DAO from Pandas DataFrame</dt><dd><p>To be a valid DataFrame the object must have a “time” field to record the sample time and an “id” field to distinguish
+the different trajectories.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_df</strong> – Pandas Dataframe to convert to trajectories.</p></li>
+<li><p><strong>threshold</strong> – trajectories threshold value.</p></li>
+<li><p><strong>traj_id</strong> – column name for trajectory identifier.</p></li>
+<li><p><strong>time_id</strong> – column name for time identifier.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>TrajectoriesData</p>
+</dd>
+</dl>
+<dl>
+<dt>Examples</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">autokoopman.core.trajectory</span> <span class="k">as</span> <span class="nn">atraj</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1"># create example dataframe</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">my_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">],</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+        <span class="n">t</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="p">])</span><span class="o">.</span><span class="n">T</span>
+<span class="p">)</span>
+
+<span class="c1"># create UniformTimeTrajectoriesData from the DataFrame</span>
+<span class="n">trajs</span> <span class="o">=</span> <span class="n">atraj</span><span class="o">.</span><span class="n">UniformTimeTrajectoriesData</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="n">my_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.UniformTimeTrajectoriesData.n_step_matrices">
+<span class="sig-name descname"><span class="pre">n_step_matrices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nstep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData.n_step_matrices" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.UniformTimeTrajectoriesData.next_step_matrices">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">next_step_matrices</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData.next_step_matrices" title="Link to this definition">#</a></dt>
+<dd><dl>
+<dt>Next Step Snapshot Matrices</dt><dd><p>Return the two “snapshot matrices” <span class="math notranslate nohighlight">\(\mathbf X, \mathbf X'\)</span> of observations <span class="math notranslate nohighlight">\(\{x_1, x_2, ..., x_n \}\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\mathbf X = \begin{bmatrix} x_1 &amp;&amp; x_2 &amp;&amp; ... &amp;&amp; x_{n-1}  \end{bmatrix}, \quad \mathbf X = \begin{bmatrix} x_2 &amp;&amp; x_3 &amp;&amp; ... &amp;&amp; x_{n}  \end{bmatrix}\]</div>
+<p>Note this is useful for DMD techniques where the relationship</p>
+<div class="math notranslate nohighlight">
+\[\mathbf X' \approx A \mathbf X\]</div>
+<p>is used. Importantly, note that the observations are column vectors, which is counter to convention commonly
+used in vector processing.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nstep</strong> – number of time steps in the future</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>tuple of (<span class="math notranslate nohighlight">\(\mathbf X, \mathbf X'\)</span>).</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>References</dt><dd><p>Brunton, S. L., &amp; Kutz, J. N. (2022). Data-driven science and engineering: Machine learning,
+dynamical systems, and control. Cambridge University Press. pp 236-7</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.UniformTimeTrajectoriesData.next_step_matrices_weights">
+<span class="sig-name descname"><span class="pre">next_step_matrices_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nstep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData.next_step_matrices_weights" title="Link to this definition">#</a></dt>
+<dd><p>Weighted Next Step Snapshot Matrices</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.UniformTimeTrajectoriesData.sampling_period">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sampling_period</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData.sampling_period" title="Link to this definition">#</a></dt>
+<dd><dl>
+<dt>Sampling Period</dt><dd><p>A sampling period allows the trajectories to relate to discrete and continuous time signals. Given a
+discrete time signal <span class="math notranslate nohighlight">\(x_d\)</span>, it relates to an analog signal <span class="math notranslate nohighlight">\(x_a\)</span> by a sampling time
+<span class="math notranslate nohighlight">\(T_s\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[x_a(n T_s) = x_d(n)\]</div>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.UniformTimeTrajectory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.trajectory.</span></span><span class="sig-name descname"><span class="pre">UniformTimeTrajectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_period</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_names</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.trajectory.UniformTimeTrajectory" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.trajectory.Trajectory" title="autokoopman.core.trajectory.Trajectory"><code class="xref py py-class docutils literal notranslate"><span class="pre">Trajectory</span></code></a></p>
+<p>uniform time is a trajectory advanced by a sampling period</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.UniformTimeTrajectory.is_uniform_time">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_uniform_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#autokoopman.core.trajectory.UniformTimeTrajectory.is_uniform_time" title="Link to this definition">#</a></dt>
+<dd><p>determine if a trajectory is uniform time</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.UniformTimeTrajectory.sampling_frequency">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sampling_frequency</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#autokoopman.core.trajectory.UniformTimeTrajectory.sampling_frequency" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.trajectory.UniformTimeTrajectory.sampling_period">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sampling_period</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#autokoopman.core.trajectory.UniformTimeTrajectory.sampling_period" title="Link to this definition">#</a></dt>
+<dd><dl>
+<dt>Sampling Period</dt><dd><p>A sampling period allows the trajectories to relate to discrete and continuous time signals. Given a
+discrete time signal <span class="math notranslate nohighlight">\(x_d\)</span>, it relates to an analog signal <span class="math notranslate nohighlight">\(x_a\)</span> by a sampling time
+<span class="math notranslate nohighlight">\(T_s\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[x_a(n T_s) = x_d(n)\]</div>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-autokoopman.core.tuner">
+<span id="autokoopman-core-tuner-module"></span><h2>autokoopman.core.tuner module<a class="headerlink" href="#module-autokoopman.core.tuner" title="Link to this heading">#</a></h2>
+<p>Model Tuning</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.ContinuousParameter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.tuner.</span></span><span class="sig-name descname"><span class="pre">ContinuousParameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_lower</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_upper</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distribution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uniform'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.ContinuousParameter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.tuner.Parameter" title="autokoopman.core.tuner.Parameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameter</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.ContinuousParameter.is_member">
+<span class="sig-name descname"><span class="pre">is_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#autokoopman.core.tuner.ContinuousParameter.is_member" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.ContinuousParameter.loguniform">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">loguniform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.ContinuousParameter.loguniform" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.ContinuousParameter.random">
+<span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.ContinuousParameter.random" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.ContinuousParameter.uniform">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">uniform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">low</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.ContinuousParameter.uniform" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.DiscreteParameter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.tuner.</span></span><span class="sig-name descname"><span class="pre">DiscreteParameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain_upper</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.DiscreteParameter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.tuner.FiniteParameter" title="autokoopman.core.tuner.FiniteParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">FiniteParameter</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.FiniteParameter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.tuner.</span></span><span class="sig-name descname"><span class="pre">FiniteParameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.FiniteParameter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.tuner.Parameter" title="autokoopman.core.tuner.Parameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameter</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.FiniteParameter.is_member">
+<span class="sig-name descname"><span class="pre">is_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#autokoopman.core.tuner.FiniteParameter.is_member" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.FiniteParameter.random">
+<span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.FiniteParameter.random" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.HyperparameterMap">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.tuner.</span></span><span class="sig-name descname"><span class="pre">HyperparameterMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#autokoopman.core.tuner.ParameterSpace" title="autokoopman.core.tuner.ParameterSpace"><span class="pre">ParameterSpace</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.HyperparameterMap" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>define and associate a hyperparameter space with a moddel</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.HyperparameterMap.get_model">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hyperparams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.estimator.TrajectoryEstimator" title="autokoopman.core.estimator.TrajectoryEstimator"><span class="pre">TrajectoryEstimator</span></a></span></span><a class="headerlink" href="#autokoopman.core.tuner.HyperparameterMap.get_model" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.HyperparameterTuner">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.tuner.</span></span><span class="sig-name descname"><span class="pre">HyperparameterTuner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parameter_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#autokoopman.core.tuner.HyperparameterMap" title="autokoopman.core.tuner.HyperparameterMap"><span class="pre">HyperparameterMap</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">training_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">TrajectoriesData</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_splits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_progress</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.HyperparameterTuner" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="simple">
+<dt>Tune a HyperparameterMap Object</dt><dd><p>The tuner implements a model learning pipeline that can take a mapping from hyperparameters to a model and
+training data and learn an optimized model. For example, given a SINDy estimator, hyperparameter tuner can
+implement gridsearch to find the best sparsity threshold and library type.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.HyperparameterTuner.generate_predictions">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_predictions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trained_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#autokoopman.core.estimator.TrajectoryEstimator" title="autokoopman.core.estimator.TrajectoryEstimator"><span class="pre">TrajectoryEstimator</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">holdout_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">TrajectoriesData</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.HyperparameterTuner.generate_predictions" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.HyperparameterTuner.tune">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tune</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">nattempts=100,</span> <span class="pre">scoring_func:</span> <span class="pre">~typing.Callable[[~autokoopman.core.trajectory.TrajectoriesData,</span> <span class="pre">~autokoopman.core.trajectory.TrajectoriesData],</span> <span class="pre">float]</span> <span class="pre">=</span> <span class="pre">&lt;function</span> <span class="pre">TrajectoryScoring.total_score&gt;</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#autokoopman.core.tuner.TuneResults" title="autokoopman.core.tuner.TuneResults"><span class="pre">TuneResults</span></a></span></span><a class="headerlink" href="#autokoopman.core.tuner.HyperparameterTuner.tune" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.HyperparameterTuner.tune_sampling">
+<span class="sig-name descname"><span class="pre">tune_sampling</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nattempts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scoring_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">TrajectoriesData</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#autokoopman.core.trajectory.TrajectoriesData" title="autokoopman.core.trajectory.TrajectoriesData"><span class="pre">TrajectoriesData</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.HyperparameterTuner.tune_sampling" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.Parameter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.tuner.</span></span><span class="sig-name descname"><span class="pre">Parameter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.Parameter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.Parameter.is_member">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#autokoopman.core.tuner.Parameter.is_member" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.Parameter.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#autokoopman.core.tuner.Parameter.name" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.Parameter.random">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.Parameter.random" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.ParameterSpace">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.tuner.</span></span><span class="sig-name descname"><span class="pre">ParameterSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coords</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#autokoopman.core.tuner.Parameter" title="autokoopman.core.tuner.Parameter"><span class="pre">Parameter</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.ParameterSpace" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#autokoopman.core.tuner.Parameter" title="autokoopman.core.tuner.Parameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Parameter</span></code></a></p>
+<dl class="py property">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.ParameterSpace.dimension">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dimension</span></span><a class="headerlink" href="#autokoopman.core.tuner.ParameterSpace.dimension" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.ParameterSpace.is_member">
+<span class="sig-name descname"><span class="pre">is_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="headerlink" href="#autokoopman.core.tuner.ParameterSpace.is_member" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.ParameterSpace.random">
+<span class="sig-name descname"><span class="pre">random</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#autokoopman.core.tuner.ParameterSpace.random" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.TuneResults">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">autokoopman.core.tuner.</span></span><span class="sig-name descname"><span class="pre">TuneResults</span></span><a class="headerlink" href="#autokoopman.core.tuner.TuneResults" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypedDict</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.TuneResults.model">
+<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#autokoopman.core.estimator.TrajectoryEstimator" title="autokoopman.core.estimator.TrajectoryEstimator"><span class="pre">TrajectoryEstimator</span></a></em><a class="headerlink" href="#autokoopman.core.tuner.TuneResults.model" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.TuneResults.param">
+<span class="sig-name descname"><span class="pre">param</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#autokoopman.core.tuner.TuneResults.param" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="autokoopman.core.tuner.TuneResults.score">
+<span class="sig-name descname"><span class="pre">score</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#autokoopman.core.tuner.TuneResults.score" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-autokoopman.core.visualizer">
+<span id="autokoopman-core-visualizer-module"></span><h2>autokoopman.core.visualizer module<a class="headerlink" href="#module-autokoopman.core.visualizer" title="Link to this heading">#</a></h2>
+</section>
+<section id="module-autokoopman.core">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-autokoopman.core" title="Link to this heading">#</a></h2>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="autokoopman.benchmark.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">autokoopman.benchmark package</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="autokoopman.estimator.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">autokoopman.estimator package</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-autokoopman.core.estimator">autokoopman.core.estimator module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.estimator.GradientEstimator"><code class="docutils literal notranslate"><span class="pre">GradientEstimator</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.estimator.GradientEstimator.fit"><code class="docutils literal notranslate"><span class="pre">GradientEstimator.fit()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.estimator.GradientEstimator.fit_gradient"><code class="docutils literal notranslate"><span class="pre">GradientEstimator.fit_gradient()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.estimator.NextStepEstimator"><code class="docutils literal notranslate"><span class="pre">NextStepEstimator</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.estimator.NextStepEstimator.fit"><code class="docutils literal notranslate"><span class="pre">NextStepEstimator.fit()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.estimator.NextStepEstimator.fit_next_step"><code class="docutils literal notranslate"><span class="pre">NextStepEstimator.fit_next_step()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.estimator.TrajectoryEstimator"><code class="docutils literal notranslate"><span class="pre">TrajectoryEstimator</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.estimator.TrajectoryEstimator.fit"><code class="docutils literal notranslate"><span class="pre">TrajectoryEstimator.fit()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.estimator.TrajectoryEstimator.model"><code class="docutils literal notranslate"><span class="pre">TrajectoryEstimator.model</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-autokoopman.core.format">autokoopman.core.format module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.format.hide_prints"><code class="docutils literal notranslate"><span class="pre">hide_prints</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman-core-observables-module">autokoopman.core.observables module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-autokoopman.core.system">autokoopman.core.system module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.ContinuousSystem"><code class="docutils literal notranslate"><span class="pre">ContinuousSystem</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.ContinuousSystem.gradient"><code class="docutils literal notranslate"><span class="pre">ContinuousSystem.gradient()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.ContinuousSystem.solve_ivp"><code class="docutils literal notranslate"><span class="pre">ContinuousSystem.solve_ivp()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.ContinuousSystem.solve_ivps"><code class="docutils literal notranslate"><span class="pre">ContinuousSystem.solve_ivps()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.DiscreteSystem"><code class="docutils literal notranslate"><span class="pre">DiscreteSystem</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.DiscreteSystem.solve_ivp"><code class="docutils literal notranslate"><span class="pre">DiscreteSystem.solve_ivp()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.DiscreteSystem.step"><code class="docutils literal notranslate"><span class="pre">DiscreteSystem.step()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.GradientContinuousSystem"><code class="docutils literal notranslate"><span class="pre">GradientContinuousSystem</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.GradientContinuousSystem.gradient"><code class="docutils literal notranslate"><span class="pre">GradientContinuousSystem.gradient()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.GradientContinuousSystem.names"><code class="docutils literal notranslate"><span class="pre">GradientContinuousSystem.names</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.KoopmanContinuousSystem"><code class="docutils literal notranslate"><span class="pre">KoopmanContinuousSystem</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.KoopmanGradientContinuousSystem"><code class="docutils literal notranslate"><span class="pre">KoopmanGradientContinuousSystem</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.KoopmanStepDiscreteSystem"><code class="docutils literal notranslate"><span class="pre">KoopmanStepDiscreteSystem</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.KoopmanSystem"><code class="docutils literal notranslate"><span class="pre">KoopmanSystem</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.KoopmanSystem.A"><code class="docutils literal notranslate"><span class="pre">KoopmanSystem.A</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.KoopmanSystem.B"><code class="docutils literal notranslate"><span class="pre">KoopmanSystem.B</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.KoopmanSystem.koopman_operator"><code class="docutils literal notranslate"><span class="pre">KoopmanSystem.koopman_operator</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.KoopmanSystem.obs_func"><code class="docutils literal notranslate"><span class="pre">KoopmanSystem.obs_func</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.LinearContinuousSystem"><code class="docutils literal notranslate"><span class="pre">LinearContinuousSystem</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.StepDiscreteSystem"><code class="docutils literal notranslate"><span class="pre">StepDiscreteSystem</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.StepDiscreteSystem.names"><code class="docutils literal notranslate"><span class="pre">StepDiscreteSystem.names</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.StepDiscreteSystem.step"><code class="docutils literal notranslate"><span class="pre">StepDiscreteSystem.step()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.SymbolicContinuousSystem"><code class="docutils literal notranslate"><span class="pre">SymbolicContinuousSystem</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.SymbolicContinuousSystem.gradient"><code class="docutils literal notranslate"><span class="pre">SymbolicContinuousSystem.gradient()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.SymbolicContinuousSystem.names"><code class="docutils literal notranslate"><span class="pre">SymbolicContinuousSystem.names</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.System"><code class="docutils literal notranslate"><span class="pre">System</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.System.dimension"><code class="docutils literal notranslate"><span class="pre">System.dimension</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.System.names"><code class="docutils literal notranslate"><span class="pre">System.names</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.System.solve_ivp"><code class="docutils literal notranslate"><span class="pre">System.solve_ivp()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.system.System.solve_ivps"><code class="docutils literal notranslate"><span class="pre">System.solve_ivps()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-autokoopman.core.trajectory">autokoopman.core.trajectory module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.abs"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.abs()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.equal_lists"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.equal_lists()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.from_csv"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.from_csv()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.from_pandas"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.from_pandas()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.get_trajectory"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.get_trajectory()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.input_names"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.input_names</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.interp_uniform_time"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.interp_uniform_time()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.n_trajs"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.n_trajs</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.norm"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.norm()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.state_names"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.state_names</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.time_id_hname"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.time_id_hname</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.to_csv"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.to_csv()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.to_pandas"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.to_pandas()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.traj_id_hname"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.traj_id_hname</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.TrajectoriesData.traj_names"><code class="docutils literal notranslate"><span class="pre">TrajectoriesData.traj_names</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory"><code class="docutils literal notranslate"><span class="pre">Trajectory</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory.abs"><code class="docutils literal notranslate"><span class="pre">Trajectory.abs()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory.dimension"><code class="docutils literal notranslate"><span class="pre">Trajectory.dimension</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory.input_dimension"><code class="docutils literal notranslate"><span class="pre">Trajectory.input_dimension</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory.input_names"><code class="docutils literal notranslate"><span class="pre">Trajectory.input_names</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory.inputs"><code class="docutils literal notranslate"><span class="pre">Trajectory.inputs</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory.interp1d"><code class="docutils literal notranslate"><span class="pre">Trajectory.interp1d()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory.interp_uniform_time"><code class="docutils literal notranslate"><span class="pre">Trajectory.interp_uniform_time()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory.is_uniform_time"><code class="docutils literal notranslate"><span class="pre">Trajectory.is_uniform_time</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory.names"><code class="docutils literal notranslate"><span class="pre">Trajectory.names</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory.norm"><code class="docutils literal notranslate"><span class="pre">Trajectory.norm()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory.size"><code class="docutils literal notranslate"><span class="pre">Trajectory.size</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory.states"><code class="docutils literal notranslate"><span class="pre">Trajectory.states</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory.times"><code class="docutils literal notranslate"><span class="pre">Trajectory.times</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.Trajectory.to_uniform_time_traj"><code class="docutils literal notranslate"><span class="pre">Trajectory.to_uniform_time_traj()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData"><code class="docutils literal notranslate"><span class="pre">UniformTimeTrajectoriesData</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData.differentiate"><code class="docutils literal notranslate"><span class="pre">UniformTimeTrajectoriesData.differentiate</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData.differentiate_weights"><code class="docutils literal notranslate"><span class="pre">UniformTimeTrajectoriesData.differentiate_weights()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData.from_pandas"><code class="docutils literal notranslate"><span class="pre">UniformTimeTrajectoriesData.from_pandas()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData.n_step_matrices"><code class="docutils literal notranslate"><span class="pre">UniformTimeTrajectoriesData.n_step_matrices()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData.next_step_matrices"><code class="docutils literal notranslate"><span class="pre">UniformTimeTrajectoriesData.next_step_matrices</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData.next_step_matrices_weights"><code class="docutils literal notranslate"><span class="pre">UniformTimeTrajectoriesData.next_step_matrices_weights()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.UniformTimeTrajectoriesData.sampling_period"><code class="docutils literal notranslate"><span class="pre">UniformTimeTrajectoriesData.sampling_period</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.UniformTimeTrajectory"><code class="docutils literal notranslate"><span class="pre">UniformTimeTrajectory</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.UniformTimeTrajectory.is_uniform_time"><code class="docutils literal notranslate"><span class="pre">UniformTimeTrajectory.is_uniform_time</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.UniformTimeTrajectory.sampling_frequency"><code class="docutils literal notranslate"><span class="pre">UniformTimeTrajectory.sampling_frequency</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.trajectory.UniformTimeTrajectory.sampling_period"><code class="docutils literal notranslate"><span class="pre">UniformTimeTrajectory.sampling_period</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-autokoopman.core.tuner">autokoopman.core.tuner module</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.ContinuousParameter"><code class="docutils literal notranslate"><span class="pre">ContinuousParameter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.ContinuousParameter.is_member"><code class="docutils literal notranslate"><span class="pre">ContinuousParameter.is_member()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.ContinuousParameter.loguniform"><code class="docutils literal notranslate"><span class="pre">ContinuousParameter.loguniform()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.ContinuousParameter.random"><code class="docutils literal notranslate"><span class="pre">ContinuousParameter.random()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.ContinuousParameter.uniform"><code class="docutils literal notranslate"><span class="pre">ContinuousParameter.uniform()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.DiscreteParameter"><code class="docutils literal notranslate"><span class="pre">DiscreteParameter</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.FiniteParameter"><code class="docutils literal notranslate"><span class="pre">FiniteParameter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.FiniteParameter.is_member"><code class="docutils literal notranslate"><span class="pre">FiniteParameter.is_member()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.FiniteParameter.random"><code class="docutils literal notranslate"><span class="pre">FiniteParameter.random()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.HyperparameterMap"><code class="docutils literal notranslate"><span class="pre">HyperparameterMap</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.HyperparameterMap.get_model"><code class="docutils literal notranslate"><span class="pre">HyperparameterMap.get_model()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.HyperparameterTuner"><code class="docutils literal notranslate"><span class="pre">HyperparameterTuner</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.HyperparameterTuner.generate_predictions"><code class="docutils literal notranslate"><span class="pre">HyperparameterTuner.generate_predictions()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.HyperparameterTuner.tune"><code class="docutils literal notranslate"><span class="pre">HyperparameterTuner.tune()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.HyperparameterTuner.tune_sampling"><code class="docutils literal notranslate"><span class="pre">HyperparameterTuner.tune_sampling()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.Parameter"><code class="docutils literal notranslate"><span class="pre">Parameter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.Parameter.is_member"><code class="docutils literal notranslate"><span class="pre">Parameter.is_member()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.Parameter.name"><code class="docutils literal notranslate"><span class="pre">Parameter.name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.Parameter.random"><code class="docutils literal notranslate"><span class="pre">Parameter.random()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.ParameterSpace"><code class="docutils literal notranslate"><span class="pre">ParameterSpace</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.ParameterSpace.dimension"><code class="docutils literal notranslate"><span class="pre">ParameterSpace.dimension</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.ParameterSpace.is_member"><code class="docutils literal notranslate"><span class="pre">ParameterSpace.is_member()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.ParameterSpace.random"><code class="docutils literal notranslate"><span class="pre">ParameterSpace.random()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.TuneResults"><code class="docutils literal notranslate"><span class="pre">TuneResults</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.TuneResults.model"><code class="docutils literal notranslate"><span class="pre">TuneResults.model</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.TuneResults.param"><code class="docutils literal notranslate"><span class="pre">TuneResults.param</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#autokoopman.core.tuner.TuneResults.score"><code class="docutils literal notranslate"><span class="pre">TuneResults.score</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-autokoopman.core.visualizer">autokoopman.core.visualizer module</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-autokoopman.core">Module contents</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/autokoopman.core.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2022, Ethan Lew.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

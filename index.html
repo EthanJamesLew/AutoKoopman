@@ -1,0 +1,623 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>AutoKoopman &#8212; AutoKoopman 0.30.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="_static/documentation_options.js?v=6c63cdba"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="autokoopman" href="modules.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="#">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/EthanJamesLew/AutoKoopman/enhancement/v-0.30-tweaks/documentation/img/brand/logo-small.svg" class="logo__image only-light" alt="AutoKoopman 0.30.7 documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/EthanJamesLew/AutoKoopman/enhancement/v-0.30-tweaks/documentation/img/brand/logo-small.svg" class="logo__image only-dark" alt="AutoKoopman 0.30.7 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="modules.html">
+                        autokoopman
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/EthanJamesLew/AutoKoopman" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="modules.html">
+                        autokoopman
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/EthanJamesLew/AutoKoopman" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <p><strong>Date</strong>: May 06, 2024 <strong>Version</strong>: 0.30.7</p>
+<a class="reference external image-reference" href="https://badge.fury.io/py/autokoopman"><img alt="PyPI version" src="https://badge.fury.io/py/autokoopman.svg" /></a>
+<a class="reference external image-reference" href="LICENSE"><img alt="license" src="https://img.shields.io/github/license/EthanJamesLew/AutoKoopman" /></a>
+<a class="reference external image-reference" href="https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml"><img alt="Conda CI Workflow" src="https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/python-package-conda.yml/badge.svg" /></a>
+<a class="reference external image-reference" href="https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/documentation.yml"><img alt="Sphinx Workflow" src="https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/documentation.yml/badge.svg" /></a>
+<a class="reference external image-reference" href="https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/notebook.yml"><img alt="Jupyter Workflow" src="https://github.com/EthanJamesLew/AutoKoopman/actions/workflows/notebook.yml/badge.svg" /></a>
+<a class="reference external image-reference" href="https://raw.githubusercontent.com/EthanJamesLew/AutoKoopman/enhancement/v-0.30-tweaks/documentation/img/brand/logo-full.svg"><img alt="" src="https://raw.githubusercontent.com/EthanJamesLew/AutoKoopman/enhancement/v-0.30-tweaks/documentation/img/brand/logo-full.svg" /></a>
+<section id="autokoopman">
+<h1>AutoKoopman<a class="headerlink" href="#autokoopman" title="Link to this heading">#</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>AutoKoopman is a high-level system identification tool that automatically optimizes all hyper-parameters to estimate accurate system models with globally linearized representations. Implemented as a python library under shared class interfaces, AutoKoopman uses a collection of Koopman-based algorithms centered on conventional dynamic mode decomposition and deep learning. Koopman theory relies on embedding system states to <em>observables</em>; AutoKoopman provides major types of static observables.</p>
+<p>The library supports</p>
+<ul class="simple">
+<li><p>Discrete-Time and Continuous-Time System Identification</p>
+<ul>
+<li><p>Extended Dynamic Mode Decomposition (EDMD) <span class="xref std std-ref">[Williams et al.]</span></p></li>
+<li><p>Deep Koopman <span class="xref std std-ref">[Li et al.]</span></p></li>
+<li><p>SINDy <span class="xref std std-ref">[Brunton et al.]</span></p></li>
+</ul>
+</li>
+<li><p>Static Observables</p>
+<ul>
+<li><p>Random Fourier Features <span class="xref std std-ref">[Bak et al.]</span></p></li>
+<li><p>Polynomial</p></li>
+<li><p>Neural Network <span class="xref std std-ref">[Li et al.]</span></p></li>
+</ul>
+</li>
+<li><p>System Identification with Input and Control</p>
+<ul>
+<li><p>Koopman with Input and Control (KIC) <span class="xref std std-ref">[Proctor et al.]</span></p></li>
+</ul>
+</li>
+<li><p>Online (Streaming) System Identification</p>
+<ul>
+<li><p>Online DMD <span class="xref std std-ref">[Zhang et al.]</span></p></li>
+</ul>
+</li>
+<li><p>Hyperparameter Optimization</p>
+<ul>
+<li><p>Random Search</p></li>
+<li><p>Grid Search</p></li>
+<li><p>Bayesian Optimization</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="use-cases">
+<h2>Use Cases<a class="headerlink" href="#use-cases" title="Link to this heading">#</a></h2>
+<p>The library is intended for a systems engineer / researcher who wishes to leverage data-driven dynamical systems techniques. The user may have measurements of their system with no prior model.</p>
+<ul class="simple">
+<li><p><strong>Prediction:</strong> Predict the evolution of a system over long time horizons</p></li>
+<li><p><strong>Control:</strong> Synthesize control signals that achieve desired closed-loop behaviors and are optimal with respect to some objective.</p></li>
+<li><p><strong>Verification:</strong> Prove or falsify the safety requirements of a system.</p></li>
+</ul>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
+<p>The module is published on <a class="reference external" href="https://pypi.org/project/autokoopman/">PyPI</a>. It requires python 3.8 or higher. With pip installed, run</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>autokoopman
+</pre></div>
+</div>
+<p>at the repo root. Run</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import autokoopman&quot;</span>
+</pre></div>
+</div>
+<p>to ensure that the module can be imported.</p>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<section id="a-complete-example">
+<h3>A Complete Example<a class="headerlink" href="#a-complete-example" title="Link to this heading">#</a></h3>
+<p>AutoKoopman has a convenience function <code class="docutils literal notranslate"><span class="pre">auto_koopman</span></code> that can learn dynamical systems from data in one call, given
+training data of trajectories (list of arrays),</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># this is the convenience function</span>
+<span class="kn">from</span> <span class="nn">autokoopman</span> <span class="kn">import</span> <span class="n">auto_koopman</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="c1"># for a complete example, let&#39;s create an example dataset using an included benchmark system</span>
+<span class="kn">import</span> <span class="nn">autokoopman.benchmark.fhn</span> <span class="k">as</span> <span class="nn">fhn</span>
+<span class="n">fhn</span> <span class="o">=</span> <span class="n">fhn</span><span class="o">.</span><span class="n">FitzHughNagumo</span><span class="p">()</span>
+<span class="n">training_data</span> <span class="o">=</span> <span class="n">fhn</span><span class="o">.</span><span class="n">solve_ivps</span><span class="p">(</span>
+    <span class="n">initial_states</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span>
+    <span class="n">tspan</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
+    <span class="n">sampling_period</span><span class="o">=</span><span class="mf">0.1</span>
+<span class="p">)</span>
+
+<span class="c1"># learn model from data</span>
+<span class="n">experiment_results</span> <span class="o">=</span> <span class="n">auto_koopman</span><span class="p">(</span>
+    <span class="n">training_data</span><span class="p">,</span>          <span class="c1"># list of trajectories</span>
+    <span class="n">sampling_period</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>    <span class="c1"># sampling period of trajectory snapshots</span>
+    <span class="n">obs_type</span><span class="o">=</span><span class="s2">&quot;rff&quot;</span><span class="p">,</span>         <span class="c1"># use Random Fourier Features Observables</span>
+    <span class="n">opt</span><span class="o">=</span><span class="s2">&quot;grid&quot;</span><span class="p">,</span>             <span class="c1"># grid search to find best hyperparameters</span>
+    <span class="n">n_obs</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>              <span class="c1"># maximum number of observables to try</span>
+    <span class="n">max_opt_iter</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>       <span class="c1"># maximum number of optimization iterations</span>
+    <span class="n">grid_param_slices</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>   <span class="c1"># for grid search, number of slices for each parameter</span>
+    <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>             <span class="c1"># k-folds validation for tuning, helps stabilize the scoring</span>
+    <span class="n">rank</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>       <span class="c1"># rank range (start, stop, step) DMD hyperparameter</span>
+<span class="p">)</span>
+
+<span class="c1"># get the model from the experiment results</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">experiment_results</span><span class="p">[</span><span class="s1">&#39;tuned_model&#39;</span><span class="p">]</span>
+
+<span class="c1"># simulate using the learned model</span>
+<span class="n">iv</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+<span class="n">trajectory</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span>
+    <span class="n">initial_state</span><span class="o">=</span><span class="n">iv</span><span class="p">,</span>
+    <span class="n">tspan</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>
+    <span class="n">sampling_period</span><span class="o">=</span><span class="mf">0.1</span>
+<span class="p">)</span>
+
+<span class="c1"># simulate the ground truth for comparison</span>
+<span class="n">true_trajectory</span> <span class="o">=</span> <span class="n">fhn</span><span class="o">.</span><span class="n">solve_ivp</span><span class="p">(</span>
+    <span class="n">initial_state</span><span class="o">=</span><span class="n">iv</span><span class="p">,</span>
+    <span class="n">tspan</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>
+    <span class="n">sampling_period</span><span class="o">=</span><span class="mf">0.1</span>
+<span class="p">)</span>
+
+<span class="c1"># plot the results</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">trajectory</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">true_trajectory</span><span class="o">.</span><span class="n">states</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="architecture">
+<h2>Architecture<a class="headerlink" href="#architecture" title="Link to this heading">#</a></h2>
+<p>The library architecture has a modular design, allowing users to implement custom modules and plug them into the learning pipeline with ease.</p>
+<a class="reference external image-reference" href="https://github.com/EthanJamesLew/AutoKoopman/raw/enhancement/v-0.30-tweaks/documentation/img/autokoopman_objects.png"><img alt="Library Architecture" src="https://github.com/EthanJamesLew/AutoKoopman/raw/enhancement/v-0.30-tweaks/documentation/img/autokoopman_objects.png" /></a>
+<p><em>AutoKoopman Class Structure in the Training Pipeline</em>. A user can implement any of the classes to extend AutoKoopman (e.g., custom observables, a custom tuner, a new system id estimator).</p>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h2>
+<p>See the
+<a class="reference external" href="https://ethanjameslew.github.io/AutoKoopman/">AutoKoopman Documentation</a>.</p>
+</section>
+<section id="citing-autokoopman">
+<h2>Citing AutoKoopman<a class="headerlink" href="#citing-autokoopman" title="Link to this heading">#</a></h2>
+<p>AutoKoopman has been published as a tool paper at ATVA 2023. The preprint can be found <a class="reference external" href="https://www.researchgate.net/profile/Ethan-Lew/publication/374805680_AutoKoopman_A_Toolbox_for_Automated_System_Identification_via_Koopman_Operator_Linearization/links/6537cf9f1d6e8a70704c7f31/AutoKoopman-A-Toolbox-for-Automated-System-Identification-via-Koopman-Operator-Linearization.pdf">here</a>.</p>
+<p>If you cite AutoKoopman, please cite</p>
+<p>Lew, E., Hekal, A., Potomkin, K., Kochdumper, N., Hencey, B., Bak, S., &amp; Bogomolov, S. (2023, October). Autokoopman: A toolbox for automated system identification via koopman operator linearization. In International Symposium on Automated Technology for Verification and Analysis (pp. 237-250). Cham: Springer Nature Switzerland.</p>
+<p>Bibtex:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@inproceedings</span><span class="p">{</span><span class="n">lew2023autokoopman</span><span class="p">,</span>
+  <span class="n">title</span><span class="o">=</span><span class="p">{</span><span class="n">Autokoopman</span><span class="p">:</span> <span class="n">A</span> <span class="n">toolbox</span> <span class="k">for</span> <span class="n">automated</span> <span class="n">system</span> <span class="n">identification</span> <span class="n">via</span> <span class="n">koopman</span> <span class="n">operator</span> <span class="n">linearization</span><span class="p">},</span>
+  <span class="n">author</span><span class="o">=</span><span class="p">{</span><span class="n">Lew</span><span class="p">,</span> <span class="n">Ethan</span> <span class="ow">and</span> <span class="n">Hekal</span><span class="p">,</span> <span class="n">Abdelrahman</span> <span class="ow">and</span> <span class="n">Potomkin</span><span class="p">,</span> <span class="n">Kostiantyn</span> <span class="ow">and</span> <span class="n">Kochdumper</span><span class="p">,</span> <span class="n">Niklas</span> <span class="ow">and</span> <span class="n">Hencey</span><span class="p">,</span> <span class="n">Brandon</span> <span class="ow">and</span> <span class="n">Bak</span><span class="p">,</span> <span class="n">Stanley</span> <span class="ow">and</span> <span class="n">Bogomolov</span><span class="p">,</span> <span class="n">Sergiy</span><span class="p">},</span>
+  <span class="n">booktitle</span><span class="o">=</span><span class="p">{</span><span class="n">International</span> <span class="n">Symposium</span> <span class="n">on</span> <span class="n">Automated</span> <span class="n">Technology</span> <span class="k">for</span> <span class="n">Verification</span> <span class="ow">and</span> <span class="n">Analysis</span><span class="p">},</span>
+  <span class="n">pages</span><span class="o">=</span><span class="p">{</span><span class="mi">237</span><span class="o">--</span><span class="mi">250</span><span class="p">},</span>
+  <span class="n">year</span><span class="o">=</span><span class="p">{</span><span class="mi">2023</span><span class="p">},</span>
+  <span class="n">organization</span><span class="o">=</span><span class="p">{</span><span class="n">Springer</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<p><span class="raw-html-md"><a id="1">[1]</a></span> Williams, M. O., Kevrekidis, I. G., &amp; Rowley, C. W. (2015). A data–driven approximation of the koopman operator: Extending dynamic mode decomposition. Journal of Nonlinear Science, 25, 1307-1346.</p>
+<p><span class="raw-html-md"><a id="2">[2]</a></span> Li, Y., He, H., Wu, J., Katabi, D., &amp; Torralba, A. (2019). Learning compositional koopman operators for model-based control. arXiv preprint arXiv:1910.08264.</p>
+<p><span class="raw-html-md"><a id="3">[3]</a></span> Brunton, S. L., Proctor, J. L., &amp; Kutz, J. N. (2016). Discovering governing equations from data by sparse identification of nonlinear dynamical systems. Proceedings of the national academy of sciences, 113(15), 3932-3937.</p>
+<p><span class="raw-html-md"><a id="4">[4]</a></span> Bak, S., Bogomolov, S., Hencey, B., Kochdumper, N., Lew, E., &amp; Potomkin, K. (2022, August). Reachability of Koopman linearized systems using random fourier feature observables and polynomial zonotope refinement. In Computer Aided Verification: 34th International Conference, CAV 2022, Haifa, Israel, August 7–10, 2022, Proceedings, Part I (pp. 490-510). Cham: Springer International Publishing.</p>
+<p><span class="raw-html-md"><a id="5">[5]</a></span> Proctor, J. L., Brunton, S. L., &amp; Kutz, J. N. (2018). Generalizing Koopman theory to allow for inputs and control. SIAM Journal on Applied Dynamical Systems, 17(1), 909-930.</p>
+<p><span class="raw-html-md"><a id="6">[6]</a></span> Zhang, H., Rowley, C. W., Deem, E. A., &amp; Cattafesta, L. N. (2019). Online dynamic mode decomposition for time-varying systems. SIAM Journal on Applied Dynamical Systems, 18(3), 1586-1609.</p>
+</section>
+</section>
+<section id="module-contents">
+<h1>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">#</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">autokoopman</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="autokoopman.html">autokoopman package</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="right-next"
+       href="modules.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">autokoopman</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">AutoKoopman</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-cases">Use Cases</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-complete-example">A Complete Example</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture">Architecture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#documentation">Documentation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#citing-autokoopman">Citing AutoKoopman</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+</li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#module-contents">Module Contents</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2022, Ethan Lew.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

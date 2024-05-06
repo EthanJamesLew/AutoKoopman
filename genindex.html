@@ -1,0 +1,1087 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Index &#8212; AutoKoopman 0.30.7 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=a746c00c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="_static/documentation_options.js?v=6c63cdba"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'genindex';</script>
+    <link rel="index" title="Index" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="https://raw.githubusercontent.com/EthanJamesLew/AutoKoopman/enhancement/v-0.30-tweaks/documentation/img/brand/logo-small.svg" class="logo__image only-light" alt="AutoKoopman 0.30.7 documentation - Home"/>
+    <script>document.write(`<img src="https://raw.githubusercontent.com/EthanJamesLew/AutoKoopman/enhancement/v-0.30-tweaks/documentation/img/brand/logo-small.svg" class="logo__image only-dark" alt="AutoKoopman 0.30.7 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="modules.html">
+                        autokoopman
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/EthanJamesLew/AutoKoopman" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="modules.html">
+                        autokoopman
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/EthanJamesLew/AutoKoopman" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article"></div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+
+<h1 id="index">Index</h1>
+
+<div class="genindex-jumpbox">
+ <a href="#A"><strong>A</strong></a>
+ | <a href="#B"><strong>B</strong></a>
+ | <a href="#C"><strong>C</strong></a>
+ | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
+ | <a href="#H"><strong>H</strong></a>
+ | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
+ | <a href="#O"><strong>O</strong></a>
+ | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#T"><strong>T</strong></a>
+ | <a href="#U"><strong>U</strong></a>
+ | <a href="#W"><strong>W</strong></a>
+ 
+</div>
+<h2 id="A">A</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.KoopmanSystem.A">A (autokoopman.core.system.KoopmanSystem property)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.abs">abs() (autokoopman.core.trajectory.TrajectoriesData method)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory.abs">(autokoopman.core.trajectory.Trajectory method)</a>
+</li>
+      </ul></li>
+      <li><a href="autokoopman.html#autokoopman.autokoopman.auto_koopman">auto_koopman() (in module autokoopman.autokoopman)</a>
+</li>
+      <li>
+    autokoopman
+
+      <ul>
+        <li><a href="autokoopman.html#module-autokoopman">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.autokoopman
+
+      <ul>
+        <li><a href="autokoopman.html#module-autokoopman.autokoopman">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.benchmark
+
+      <ul>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.benchmark.bio2
+
+      <ul>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark.bio2">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.benchmark.fhn
+
+      <ul>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark.fhn">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.benchmark.lalo20
+
+      <ul>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark.lalo20">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.benchmark.pendulum
+
+      <ul>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark.pendulum">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.benchmark.prde20
+
+      <ul>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark.prde20">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.benchmark.robe21
+
+      <ul>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark.robe21">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.benchmark.spring
+
+      <ul>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark.spring">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.core
+
+      <ul>
+        <li><a href="autokoopman.core.html#module-autokoopman.core">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    autokoopman.core.estimator
+
+      <ul>
+        <li><a href="autokoopman.core.html#module-autokoopman.core.estimator">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.core.format
+
+      <ul>
+        <li><a href="autokoopman.core.html#module-autokoopman.core.format">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.core.system
+
+      <ul>
+        <li><a href="autokoopman.core.html#module-autokoopman.core.system">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.core.trajectory
+
+      <ul>
+        <li><a href="autokoopman.core.html#module-autokoopman.core.trajectory">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.core.tuner
+
+      <ul>
+        <li><a href="autokoopman.core.html#module-autokoopman.core.tuner">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.core.visualizer
+
+      <ul>
+        <li><a href="autokoopman.core.html#module-autokoopman.core.visualizer">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.estimator
+
+      <ul>
+        <li><a href="autokoopman.estimator.html#module-autokoopman.estimator">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.estimator.dmd
+
+      <ul>
+        <li><a href="autokoopman.estimator.html#module-autokoopman.estimator.dmd">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.estimator.koopman
+
+      <ul>
+        <li><a href="autokoopman.estimator.html#module-autokoopman.estimator.koopman">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.tuner
+
+      <ul>
+        <li><a href="autokoopman.tuner.html#module-autokoopman.tuner">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.tuner.gridsearch
+
+      <ul>
+        <li><a href="autokoopman.tuner.html#module-autokoopman.tuner.gridsearch">module</a>
+</li>
+      </ul></li>
+      <li>
+    autokoopman.tuner.montecarlo
+
+      <ul>
+        <li><a href="autokoopman.tuner.html#module-autokoopman.tuner.montecarlo">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="B">B</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.KoopmanSystem.B">B (autokoopman.core.system.KoopmanSystem property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.benchmark.html#autokoopman.benchmark.bio2.Bio2">Bio2 (class in autokoopman.benchmark.bio2)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="C">C</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.ContinuousParameter">ContinuousParameter (class in autokoopman.core.tuner)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.ContinuousSystem">ContinuousSystem (class in autokoopman.core.system)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="D">D</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.UniformTimeTrajectoriesData.differentiate">differentiate (autokoopman.core.trajectory.UniformTimeTrajectoriesData property)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.UniformTimeTrajectoriesData.differentiate_weights">differentiate_weights() (autokoopman.core.trajectory.UniformTimeTrajectoriesData method)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.System.dimension">dimension (autokoopman.core.system.System property)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory.dimension">(autokoopman.core.trajectory.Trajectory property)</a>
+</li>
+        <li><a href="autokoopman.core.html#autokoopman.core.tuner.ParameterSpace.dimension">(autokoopman.core.tuner.ParameterSpace property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.DiscreteParameter">DiscreteParameter (class in autokoopman.core.tuner)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.DiscreteSystem">DiscreteSystem (class in autokoopman.core.system)</a>
+</li>
+      <li><a href="autokoopman.estimator.html#autokoopman.estimator.koopman.dmdc">dmdc() (in module autokoopman.estimator.koopman)</a>
+</li>
+      <li><a href="autokoopman.estimator.html#autokoopman.estimator.dmd.DMDEstimator">DMDEstimator (class in autokoopman.estimator.dmd)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.equal_lists">equal_lists() (autokoopman.core.trajectory.TrajectoriesData static method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.FiniteParameter">FiniteParameter (class in autokoopman.core.tuner)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.estimator.GradientEstimator.fit">fit() (autokoopman.core.estimator.GradientEstimator method)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.estimator.NextStepEstimator.fit">(autokoopman.core.estimator.NextStepEstimator method)</a>
+</li>
+        <li><a href="autokoopman.core.html#autokoopman.core.estimator.TrajectoryEstimator.fit">(autokoopman.core.estimator.TrajectoryEstimator method)</a>
+</li>
+      </ul></li>
+      <li><a href="autokoopman.core.html#autokoopman.core.estimator.GradientEstimator.fit_gradient">fit_gradient() (autokoopman.core.estimator.GradientEstimator method)</a>
+
+      <ul>
+        <li><a href="autokoopman.estimator.html#autokoopman.estimator.koopman.KoopmanContinuousEstimator.fit_gradient">(autokoopman.estimator.koopman.KoopmanContinuousEstimator method)</a>
+</li>
+      </ul></li>
+      <li><a href="autokoopman.estimator.html#autokoopman.estimator.dmd.MultiDMD.fit_multi">fit_multi() (autokoopman.estimator.dmd.MultiDMD method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.estimator.NextStepEstimator.fit_next_step">fit_next_step() (autokoopman.core.estimator.NextStepEstimator method)</a>
+
+      <ul>
+        <li><a href="autokoopman.estimator.html#autokoopman.estimator.dmd.DMDEstimator.fit_next_step">(autokoopman.estimator.dmd.DMDEstimator method)</a>
+</li>
+        <li><a href="autokoopman.estimator.html#autokoopman.estimator.koopman.KoopmanDiscEstimator.fit_next_step">(autokoopman.estimator.koopman.KoopmanDiscEstimator method)</a>
+</li>
+      </ul></li>
+      <li><a href="autokoopman.benchmark.html#autokoopman.benchmark.fhn.FitzHughNagumo">FitzHughNagumo (class in autokoopman.benchmark.fhn)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.from_csv">from_csv() (autokoopman.core.trajectory.TrajectoriesData class method)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.from_pandas">from_pandas() (autokoopman.core.trajectory.TrajectoriesData class method)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.trajectory.UniformTimeTrajectoriesData.from_pandas">(autokoopman.core.trajectory.UniformTimeTrajectoriesData class method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterTuner.generate_predictions">generate_predictions() (autokoopman.core.tuner.HyperparameterTuner static method)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterMap.get_model">get_model() (autokoopman.core.tuner.HyperparameterMap method)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.get_trajectory">get_trajectory() (autokoopman.core.trajectory.TrajectoriesData method)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.ContinuousSystem.gradient">gradient() (autokoopman.core.system.ContinuousSystem method)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.system.GradientContinuousSystem.gradient">(autokoopman.core.system.GradientContinuousSystem method)</a>
+</li>
+        <li><a href="autokoopman.core.html#autokoopman.core.system.SymbolicContinuousSystem.gradient">(autokoopman.core.system.SymbolicContinuousSystem method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.GradientContinuousSystem">GradientContinuousSystem (class in autokoopman.core.system)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.estimator.GradientEstimator">GradientEstimator (class in autokoopman.core.estimator)</a>
+</li>
+      <li><a href="autokoopman.tuner.html#autokoopman.tuner.gridsearch.GridSearchTuner">GridSearchTuner (class in autokoopman.tuner.gridsearch)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.format.hide_prints">hide_prints (class in autokoopman.core.format)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterMap">HyperparameterMap (class in autokoopman.core.tuner)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterTuner">HyperparameterTuner (class in autokoopman.core.tuner)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="I">I</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory.input_dimension">input_dimension (autokoopman.core.trajectory.Trajectory property)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.input_names">input_names (autokoopman.core.trajectory.TrajectoriesData property)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory.input_names">(autokoopman.core.trajectory.Trajectory property)</a>
+</li>
+      </ul></li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory.inputs">inputs (autokoopman.core.trajectory.Trajectory property)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory.interp1d">interp1d() (autokoopman.core.trajectory.Trajectory method)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.interp_uniform_time">interp_uniform_time() (autokoopman.core.trajectory.TrajectoriesData method)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory.interp_uniform_time">(autokoopman.core.trajectory.Trajectory method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.ContinuousParameter.is_member">is_member() (autokoopman.core.tuner.ContinuousParameter method)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.tuner.FiniteParameter.is_member">(autokoopman.core.tuner.FiniteParameter method)</a>
+</li>
+        <li><a href="autokoopman.core.html#autokoopman.core.tuner.Parameter.is_member">(autokoopman.core.tuner.Parameter method)</a>
+</li>
+        <li><a href="autokoopman.core.html#autokoopman.core.tuner.ParameterSpace.is_member">(autokoopman.core.tuner.ParameterSpace method)</a>
+</li>
+      </ul></li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory.is_uniform_time">is_uniform_time (autokoopman.core.trajectory.Trajectory property)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.trajectory.UniformTimeTrajectory.is_uniform_time">(autokoopman.core.trajectory.UniformTimeTrajectory property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.KoopmanSystem.koopman_operator">koopman_operator (autokoopman.core.system.KoopmanSystem property)</a>
+</li>
+      <li><a href="autokoopman.estimator.html#autokoopman.estimator.koopman.KoopmanContinuousEstimator">KoopmanContinuousEstimator (class in autokoopman.estimator.koopman)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.KoopmanContinuousSystem">KoopmanContinuousSystem (class in autokoopman.core.system)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.estimator.html#autokoopman.estimator.koopman.KoopmanDiscEstimator">KoopmanDiscEstimator (class in autokoopman.estimator.koopman)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.KoopmanGradientContinuousSystem">KoopmanGradientContinuousSystem (class in autokoopman.core.system)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.KoopmanStepDiscreteSystem">KoopmanStepDiscreteSystem (class in autokoopman.core.system)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.KoopmanSystem">KoopmanSystem (class in autokoopman.core.system)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.benchmark.html#autokoopman.benchmark.lalo20.LaubLoomis">LaubLoomis (class in autokoopman.benchmark.lalo20)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.LinearContinuousSystem">LinearContinuousSystem (class in autokoopman.core.system)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.ContinuousParameter.loguniform">loguniform() (autokoopman.core.tuner.ContinuousParameter static method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.tuner.html#autokoopman.tuner.gridsearch.GridSearchTuner.make_grid">make_grid() (autokoopman.tuner.gridsearch.GridSearchTuner static method)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.estimator.TrajectoryEstimator.model">model (autokoopman.core.estimator.TrajectoryEstimator property)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.tuner.TuneResults.model">(autokoopman.core.tuner.TuneResults attribute)</a>
+</li>
+        <li><a href="autokoopman.estimator.html#autokoopman.estimator.dmd.DMDEstimator.model">(autokoopman.estimator.dmd.DMDEstimator property)</a>
+</li>
+        <li><a href="autokoopman.estimator.html#autokoopman.estimator.koopman.KoopmanContinuousEstimator.model">(autokoopman.estimator.koopman.KoopmanContinuousEstimator property)</a>
+</li>
+        <li><a href="autokoopman.estimator.html#autokoopman.estimator.koopman.KoopmanDiscEstimator.model">(autokoopman.estimator.koopman.KoopmanDiscEstimator property)</a>
+</li>
+      </ul></li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="autokoopman.html#module-autokoopman">autokoopman</a>
+</li>
+        <li><a href="autokoopman.html#module-autokoopman.autokoopman">autokoopman.autokoopman</a>
+</li>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark">autokoopman.benchmark</a>
+</li>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark.bio2">autokoopman.benchmark.bio2</a>
+</li>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark.fhn">autokoopman.benchmark.fhn</a>
+</li>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark.lalo20">autokoopman.benchmark.lalo20</a>
+</li>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark.pendulum">autokoopman.benchmark.pendulum</a>
+</li>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark.prde20">autokoopman.benchmark.prde20</a>
+</li>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark.robe21">autokoopman.benchmark.robe21</a>
+</li>
+        <li><a href="autokoopman.benchmark.html#module-autokoopman.benchmark.spring">autokoopman.benchmark.spring</a>
+</li>
+        <li><a href="autokoopman.core.html#module-autokoopman.core">autokoopman.core</a>
+</li>
+        <li><a href="autokoopman.core.html#module-autokoopman.core.estimator">autokoopman.core.estimator</a>
+</li>
+        <li><a href="autokoopman.core.html#module-autokoopman.core.format">autokoopman.core.format</a>
+</li>
+        <li><a href="autokoopman.core.html#module-autokoopman.core.system">autokoopman.core.system</a>
+</li>
+        <li><a href="autokoopman.core.html#module-autokoopman.core.trajectory">autokoopman.core.trajectory</a>
+</li>
+        <li><a href="autokoopman.core.html#module-autokoopman.core.tuner">autokoopman.core.tuner</a>
+</li>
+        <li><a href="autokoopman.core.html#module-autokoopman.core.visualizer">autokoopman.core.visualizer</a>
+</li>
+        <li><a href="autokoopman.estimator.html#module-autokoopman.estimator">autokoopman.estimator</a>
+</li>
+        <li><a href="autokoopman.estimator.html#module-autokoopman.estimator.dmd">autokoopman.estimator.dmd</a>
+</li>
+        <li><a href="autokoopman.estimator.html#module-autokoopman.estimator.koopman">autokoopman.estimator.koopman</a>
+</li>
+        <li><a href="autokoopman.tuner.html#module-autokoopman.tuner">autokoopman.tuner</a>
+</li>
+        <li><a href="autokoopman.tuner.html#module-autokoopman.tuner.gridsearch">autokoopman.tuner.gridsearch</a>
+</li>
+        <li><a href="autokoopman.tuner.html#module-autokoopman.tuner.montecarlo">autokoopman.tuner.montecarlo</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.tuner.html#autokoopman.tuner.montecarlo.MonteCarloTuner">MonteCarloTuner (class in autokoopman.tuner.montecarlo)</a>
+</li>
+      <li><a href="autokoopman.estimator.html#autokoopman.estimator.dmd.MultiDMD">MultiDMD (class in autokoopman.estimator.dmd)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.UniformTimeTrajectoriesData.n_step_matrices">n_step_matrices() (autokoopman.core.trajectory.UniformTimeTrajectoriesData method)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.n_trajs">n_trajs (autokoopman.core.trajectory.TrajectoriesData property)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.Parameter.name">name (autokoopman.core.tuner.Parameter property)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.GradientContinuousSystem.names">names (autokoopman.core.system.GradientContinuousSystem property)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.system.StepDiscreteSystem.names">(autokoopman.core.system.StepDiscreteSystem property)</a>
+</li>
+        <li><a href="autokoopman.core.html#autokoopman.core.system.SymbolicContinuousSystem.names">(autokoopman.core.system.SymbolicContinuousSystem property)</a>
+</li>
+        <li><a href="autokoopman.core.html#autokoopman.core.system.System.names">(autokoopman.core.system.System property)</a>
+</li>
+        <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory.names">(autokoopman.core.trajectory.Trajectory property)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.UniformTimeTrajectoriesData.next_step_matrices">next_step_matrices (autokoopman.core.trajectory.UniformTimeTrajectoriesData property)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.UniformTimeTrajectoriesData.next_step_matrices_weights">next_step_matrices_weights() (autokoopman.core.trajectory.UniformTimeTrajectoriesData method)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.estimator.NextStepEstimator">NextStepEstimator (class in autokoopman.core.estimator)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.norm">norm() (autokoopman.core.trajectory.TrajectoriesData method)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory.norm">(autokoopman.core.trajectory.Trajectory method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="O">O</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.KoopmanSystem.obs_func">obs_func (autokoopman.core.system.KoopmanSystem property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="P">P</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.TuneResults.param">param (autokoopman.core.tuner.TuneResults attribute)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.Parameter">Parameter (class in autokoopman.core.tuner)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.ParameterSpace">ParameterSpace (class in autokoopman.core.tuner)</a>
+</li>
+      <li><a href="autokoopman.benchmark.html#autokoopman.benchmark.pendulum.PendulumWithInput">PendulumWithInput (class in autokoopman.benchmark.pendulum)</a>
+</li>
+      <li><a href="autokoopman.benchmark.html#autokoopman.benchmark.prde20.ProdDestr">ProdDestr (class in autokoopman.benchmark.prde20)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.ContinuousParameter.random">random() (autokoopman.core.tuner.ContinuousParameter method)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.tuner.FiniteParameter.random">(autokoopman.core.tuner.FiniteParameter method)</a>
+</li>
+        <li><a href="autokoopman.core.html#autokoopman.core.tuner.Parameter.random">(autokoopman.core.tuner.Parameter method)</a>
+</li>
+        <li><a href="autokoopman.core.html#autokoopman.core.tuner.ParameterSpace.random">(autokoopman.core.tuner.ParameterSpace method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.benchmark.html#autokoopman.benchmark.robe21.RobBench">RobBench (class in autokoopman.benchmark.robe21)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.UniformTimeTrajectory.sampling_frequency">sampling_frequency (autokoopman.core.trajectory.UniformTimeTrajectory property)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.UniformTimeTrajectoriesData.sampling_period">sampling_period (autokoopman.core.trajectory.UniformTimeTrajectoriesData property)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.trajectory.UniformTimeTrajectory.sampling_period">(autokoopman.core.trajectory.UniformTimeTrajectory property)</a>
+</li>
+      </ul></li>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.TuneResults.score">score (autokoopman.core.tuner.TuneResults attribute)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory.size">size (autokoopman.core.trajectory.Trajectory property)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.ContinuousSystem.solve_ivp">solve_ivp() (autokoopman.core.system.ContinuousSystem method)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.system.DiscreteSystem.solve_ivp">(autokoopman.core.system.DiscreteSystem method)</a>
+</li>
+        <li><a href="autokoopman.core.html#autokoopman.core.system.System.solve_ivp">(autokoopman.core.system.System method)</a>
+</li>
+      </ul></li>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.ContinuousSystem.solve_ivps">solve_ivps() (autokoopman.core.system.ContinuousSystem method)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.system.System.solve_ivps">(autokoopman.core.system.System method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.benchmark.html#autokoopman.benchmark.spring.Spring">Spring (class in autokoopman.benchmark.spring)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.state_names">state_names (autokoopman.core.trajectory.TrajectoriesData property)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory.states">states (autokoopman.core.trajectory.Trajectory property)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.DiscreteSystem.step">step() (autokoopman.core.system.DiscreteSystem method)</a>
+
+      <ul>
+        <li><a href="autokoopman.core.html#autokoopman.core.system.StepDiscreteSystem.step">(autokoopman.core.system.StepDiscreteSystem method)</a>
+</li>
+      </ul></li>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.StepDiscreteSystem">StepDiscreteSystem (class in autokoopman.core.system)</a>
+</li>
+      <li><a href="autokoopman.estimator.html#autokoopman.estimator.koopman.swdmdc">swdmdc() (in module autokoopman.estimator.koopman)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.SymbolicContinuousSystem">SymbolicContinuousSystem (class in autokoopman.core.system)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.system.System">System (class in autokoopman.core.system)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="T">T</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.time_id_hname">time_id_hname (autokoopman.core.trajectory.TrajectoriesData attribute)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory.times">times (autokoopman.core.trajectory.Trajectory property)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.to_csv">to_csv() (autokoopman.core.trajectory.TrajectoriesData method)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.to_pandas">to_pandas() (autokoopman.core.trajectory.TrajectoriesData method)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory.to_uniform_time_traj">to_uniform_time_traj() (autokoopman.core.trajectory.Trajectory method)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.traj_id_hname">traj_id_hname (autokoopman.core.trajectory.TrajectoriesData attribute)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData.traj_names">traj_names (autokoopman.core.trajectory.TrajectoriesData property)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.TrajectoriesData">TrajectoriesData (class in autokoopman.core.trajectory)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.Trajectory">Trajectory (class in autokoopman.core.trajectory)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.estimator.TrajectoryEstimator">TrajectoryEstimator (class in autokoopman.core.estimator)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterTuner.tune">tune() (autokoopman.core.tuner.HyperparameterTuner method)</a>
+
+      <ul>
+        <li><a href="autokoopman.tuner.html#autokoopman.tuner.gridsearch.GridSearchTuner.tune">(autokoopman.tuner.gridsearch.GridSearchTuner method)</a>
+</li>
+        <li><a href="autokoopman.tuner.html#autokoopman.tuner.montecarlo.MonteCarloTuner.tune">(autokoopman.tuner.montecarlo.MonteCarloTuner method)</a>
+</li>
+      </ul></li>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.HyperparameterTuner.tune_sampling">tune_sampling() (autokoopman.core.tuner.HyperparameterTuner method)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.TuneResults">TuneResults (class in autokoopman.core.tuner)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="U">U</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.tuner.ContinuousParameter.uniform">uniform() (autokoopman.core.tuner.ContinuousParameter static method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.UniformTimeTrajectoriesData">UniformTimeTrajectoriesData (class in autokoopman.core.trajectory)</a>
+</li>
+      <li><a href="autokoopman.core.html#autokoopman.core.trajectory.UniformTimeTrajectory">UniformTimeTrajectory (class in autokoopman.core.trajectory)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="W">W</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="autokoopman.estimator.html#autokoopman.estimator.koopman.wdmdc">wdmdc() (in module autokoopman.estimator.koopman)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2022, Ethan Lew.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.3.7.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

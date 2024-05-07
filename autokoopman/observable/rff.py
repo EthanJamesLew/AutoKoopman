@@ -1,11 +1,12 @@
 import numpy as np
-from scipy.stats import cauchy, laplace
 
 from .observables import KoopmanObservable
 
 
 class RFFObservable(KoopmanObservable):
     def __init__(self, dimension, num_features, gamma, metric="rbf"):
+        from scipy.stats import cauchy, laplace
+
         super(RFFObservable, self).__init__()
         self.gamma = gamma
         self.dimension = dimension
